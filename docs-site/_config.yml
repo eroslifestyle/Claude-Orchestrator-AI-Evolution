@@ -1,0 +1,55 @@
+# Orchestrator Documentation Site Configuration
+# Jekyll configuration for static site generation
+
+title: Orchestrator V12.0 Documentation
+description: Multi-agent orchestration system for Claude Code
+author: LeoDg
+version: 12.0.0
+
+# Site settings
+baseurl: "/orchestrator-docs"
+url: ""
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Navigation
+navigation:
+  - title: Home
+    url: /
+  - title: Architecture
+    url: /architecture
+  - title: Setup Guide
+    url: /setup-guide
+  - title: Routing Table
+    url: /routing-table
+  - title: Skills Reference
+    url: /skills-reference
+  - title: MCP Integration
+    url: /mcp-integration
+  - title: Troubleshooting
+    url: /troubleshooting
+
+# Collections
+collections_dir: docs
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+
+# Plugins (GitHub Pages compatible)
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Exclude from build
+exclude:
+  - generate-site.sh
+  - README.md
+  - Gemfile
+  - Gemfile.lock

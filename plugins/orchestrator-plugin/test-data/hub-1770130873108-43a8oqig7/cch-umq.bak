@@ -1,0 +1,25 @@
+{
+  "messages": {
+    "a4a36bb2-c7cc-4c35-8b70-850e03872f41": {
+      "id": "a4a36bb2-c7cc-4c35-8b70-850e03872f41",
+      "topic": "agent.gui.task",
+      "payload": {
+        "type": "gui_task",
+        "description": "Create a main window"
+      },
+      "timestamp": 1770130873114,
+      "priority": 2,
+      "retryCount": 0,
+      "headers": {},
+      "sequence": 1,
+      "status": "pending",
+      "expiresAt": 1770134473114,
+      "_version": 1
+    }
+  },
+  "deadLetters": {},
+  "sequences": {
+    "agent.gui.task": 1
+  },
+  "idempotencyKeys": []
+}

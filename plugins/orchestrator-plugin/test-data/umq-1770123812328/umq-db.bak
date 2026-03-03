@@ -1,0 +1,65 @@
+{
+  "messages": {
+    "msg-1770123812369": {
+      "id": "msg-1770123812369",
+      "topic": "agent.gui",
+      "payload": {
+        "data": "test"
+      },
+      "timestamp": 1770123812369,
+      "priority": 2,
+      "retryCount": 0,
+      "headers": {},
+      "sequence": 1,
+      "status": "acked",
+      "expiresAt": 1770127412369,
+      "_version": 3,
+      "deliveredAt": 1770123812375,
+      "subscriptionId": "87bb96ed-2b07-4f19-98a1-cca2a7e34e8c",
+      "ackedAt": 1770123812378
+    },
+    "msg-1770123812375": {
+      "id": "msg-1770123812375",
+      "topic": "agent.database",
+      "payload": {
+        "data": "test"
+      },
+      "timestamp": 1770123812375,
+      "priority": 2,
+      "retryCount": 0,
+      "headers": {},
+      "sequence": 1,
+      "status": "acked",
+      "expiresAt": 1770127412375,
+      "_version": 3,
+      "deliveredAt": 1770123812379,
+      "subscriptionId": "87bb96ed-2b07-4f19-98a1-cca2a7e34e8c",
+      "ackedAt": 1770123812380
+    },
+    "msg-1770123812379": {
+      "id": "msg-1770123812379",
+      "topic": "system.status",
+      "payload": {
+        "data": "test"
+      },
+      "timestamp": 1770123812379,
+      "priority": 2,
+      "retryCount": 0,
+      "headers": {},
+      "sequence": 1,
+      "status": "acked",
+      "expiresAt": 1770127412379,
+      "_version": 2,
+      "deliveredAt": 1770123812381,
+      "subscriptionId": "87bb96ed-2b07-4f19-98a1-cca2a7e34e8c",
+      "ackedAt": 1770123812389
+    }
+  },
+  "deadLetters": {},
+  "sequences": {
+    "agent.gui": 1,
+    "agent.database": 1,
+    "system.status": 1
+  },
+  "idempotencyKeys": []
+}

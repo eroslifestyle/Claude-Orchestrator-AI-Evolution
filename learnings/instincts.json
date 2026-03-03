@@ -1,0 +1,76 @@
+{
+  "version": "1.0",
+  "instincts": [
+    {
+      "pattern_id": "safe_module_integration",
+      "description": "Pattern per aggiungere moduli senza toccare codice esistente",
+      "steps": [
+        "1. Creare modulo isolato in src/<module>/",
+        "2. Creare GUI tab in gui_nicegui/tab_<module>.py",
+        "3. Aggiungere feature flag in config.json",
+        "4. Aggiungere lazy import in shared_state.py",
+        "5. Aggiungere tab in app.py",
+        "6. Usare callback system per integrazione (non hook diretti)"
+      ],
+      "confidence": 0.5,
+      "source": "TelegramCopy notifications module",
+      "created": "2026-02-28"
+    },
+    {
+      "pattern_id": "windows_process_orchestration",
+      "description": "Windows ProcessManager pattern per garantire NO orphan processes",
+      "steps": [
+        "1. Usare Windows Job Objects con JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE flag",
+        "2. Thread-safe singleton con threading.Lock per registry",
+        "3. Context manager per auto-cleanup garantito",
+        "4. Signal handlers (SIGTERM, SIGINT, SIGABRT) + atexit + Windows console handler",
+        "5. Instance isolation con UUID + lock file",
+        "6. Escalation strategy: terminate -> kill -> taskkill"
+      ],
+      "confidence": 0.5,
+      "source": "ProcessManager implementation verified working",
+      "created": "2026-02-28",
+      "file": "C:/Users/LeoDg/.claude/lib/process_manager.py"
+    },
+    {
+      "pattern_id": "i18n_observer_pattern",
+      "description": "Sistema traduzioni centralizzato con observer pattern per refresh UI immediato",
+      "steps": [
+        "1. Creare modulo centralizzato gui/utils/translations.py con dizionario TRANSLATIONS",
+        "2. Implementare classe I18n singleton con observer registration",
+        "3. Funzione tr(key, **kwargs) per traduzione con interpolazione",
+        "4. register_observer(callback) per notifiche cambio lingua",
+        "5. Persistenza lingua in config.json",
+        "6. UI switch chiama set_language() che notifica tutti gli observer",
+        "7. Ogni componente UI registra callback per aggiornare testo"
+      ],
+      "confidence": 0.3,
+      "source": "TelegramCopy i18n system V2.3.0",
+      "created": "2026-03-03",
+      "tags": ["architecture", "i18n", "observer-pattern"]
+    },
+    {
+      "pattern_id": "parallel_file_migration",
+      "description": "Migrazione parallela file multipli con Coder agent per efficienza",
+      "steps": [
+        "1. Identificare file indipendenti da migrare (no dipendenze tra loro)",
+        "2. Lanciare N Coder agent in parallelo in un singolo messaggio",
+        "3. Ogni agent riceve contesto completo (sistema i18n, chiavi disponibili)",
+        "4. Ogni agent modifica un file independente",
+        "5. Raccogliere risultati e identificare chiavi mancanti comuni",
+        "6. Task finale per aggiungere chiavi mancanti ai file JSON"
+      ],
+      "confidence": 0.3,
+      "source": "TelegramCopy GUI i18n migration - 12 file in parallelo",
+      "created": "2026-03-03",
+      "tags": ["parallelism", "migration", "efficiency"]
+    }
+  ],
+  "metadata": {
+    "created": "2026-02-26",
+    "total_learned": 4,
+    "total_evolved": 0,
+    "last_evolution": null,
+    "format_note": "evolved_to must be array: [] or ['skill_id_1', 'skill_id_2']"
+  }
+}

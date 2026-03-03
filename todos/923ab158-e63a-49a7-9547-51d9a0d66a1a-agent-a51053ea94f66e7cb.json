@@ -1,0 +1,27 @@
+[
+  {
+    "content": "Read VERSION.json, SKILL.md, MEMORY.md, and rules directory in parallel",
+    "status": "completed",
+    "activeForm": "Reading VERSION.json, SKILL.md, MEMORY.md, and rules directory in parallel"
+  },
+  {
+    "content": "Validate VERSION.json structure and version number",
+    "status": "completed",
+    "activeForm": "Validating VERSION.json structure and version number"
+  },
+  {
+    "content": "Check SESSION HOOKS section in SKILL.md for 6 hook points",
+    "status": "completed",
+    "activeForm": "Checking SESSION HOOKS section for 6 hook points"
+  },
+  {
+    "content": "Cross-reference counts between SKILL.md, MEMORY.md, VERSION.json",
+    "status": "completed",
+    "activeForm": "Cross-referencing counts between files"
+  },
+  {
+    "content": "Generate audit report with PRO/CONTRO and consistency table",
+    "status": "in_progress",
+    "activeForm": "Generating audit report"
+  }
+]

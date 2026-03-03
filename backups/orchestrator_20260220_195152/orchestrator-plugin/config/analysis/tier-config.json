@@ -1,0 +1,369 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "Configurazione performance e soglie per Sistema 3-Tier Analysis Layer",
+    "author": "Analysis Layer Team",
+    "created": "2026-01-30",
+    "target_coverage": {
+      "tier1": "70%",
+      "tier2": "95%",
+      "tier3": "100%"
+    }
+  },
+
+  "tier1_fast_path": {
+    "name": "Fast Path",
+    "description": "Enhanced regex + word boundaries + cache",
+    "enabled": true,
+    "performance": {
+      "target_time_ms": 10,
+      "timeout_ms": 20,
+      "max_retries": 1,
+      "cache_ttl_seconds": 300
+    },
+    "thresholds": {
+      "confidence_threshold": 0.7,
+      "fallback_threshold": 0.5,
+      "max_input_length": 1000
+    },
+    "configuration": {
+      "enable_word_boundaries": true,
+      "case_sensitive": false,
+      "enable_caching": true,
+      "cache_size": 500,
+      "regex_timeout_ms": 5
+    },
+    "patterns": {
+      "exact_match_confidence": 1.0,
+      "partial_match_confidence": 0.8,
+      "word_boundary_bonus": 0.1,
+      "frequency_bonus": 0.05
+    },
+    "success_criteria": {
+      "min_coverage_percentage": 70,
+      "max_response_time_p95": 15,
+      "max_memory_mb": 5
+    }
+  },
+
+  "tier2_smart_path": {
+    "name": "Smart Path",
+    "description": "Synonyms + phrase patterns + context rules + NLP",
+    "enabled": true,
+    "performance": {
+      "target_time_ms": 50,
+      "timeout_ms": 100,
+      "max_retries": 2,
+      "cache_ttl_seconds": 600
+    },
+    "thresholds": {
+      "confidence_threshold": 0.6,
+      "fallback_threshold": 0.4,
+      "max_input_length": 2000,
+      "min_synonym_confidence": 0.7,
+      "min_phrase_confidence": 0.6,
+      "min_context_confidence": 0.5
+    },
+    "configuration": {
+      "enable_synonyms": true,
+      "enable_phrases": true,
+      "enable_context_rules": true,
+      "enable_nlp": false,
+      "synonym_max_depth": 3,
+      "phrase_max_length": 5,
+      "context_window": 5
+    },
+    "algorithms": {
+      "synonym_matching": {
+        "algorithm": "exact_and_fuzzy",
+        "fuzzy_distance_max": 2,
+        "stem_matching": true
+      },
+      "phrase_detection": {
+        "algorithm": "sliding_window",
+        "overlap_penalty": 0.1,
+        "order_sensitivity": true
+      },
+      "context_analysis": {
+        "algorithm": "proximity_weighted",
+        "distance_decay": 0.1,
+        "amplifier_boost": 0.2
+      }
+    },
+    "success_criteria": {
+      "min_coverage_percentage": 95,
+      "max_response_time_p95": 80,
+      "max_memory_mb": 20
+    }
+  },
+
+  "tier3_deep_path": {
+    "name": "Deep Path",
+    "description": "Claude LLM analysis per richieste complesse",
+    "enabled": true,
+    "performance": {
+      "target_time_ms": 2000,
+      "timeout_ms": 5000,
+      "max_retries": 3,
+      "cache_ttl_seconds": 3600
+    },
+    "thresholds": {
+      "confidence_threshold": 0.5,
+      "max_input_length": 10000,
+      "min_complexity_score": 0.8
+    },
+    "configuration": {
+      "provider": "claude",
+      "model": "claude-3-sonnet",
+      "max_tokens": 1000,
+      "temperature": 0.1,
+      "enable_caching": true,
+      "cache_by_semantic_hash": true
+    },
+    "llm_settings": {
+      "system_prompt": "Analizza questa richiesta e identifica: 1) Domini tecnici coinvolti 2) Agent esperti necessari 3) Complessità stimata 4) Dipendenze tra task",
+      "response_format": "json",
+      "include_reasoning": true,
+      "max_domains": 5,
+      "confidence_calibration": true
+    },
+    "fallback": {
+      "on_api_failure": "tier2",
+      "on_timeout": "tier2",
+      "on_quota_exceeded": "tier2",
+      "max_consecutive_failures": 3
+    },
+    "success_criteria": {
+      "min_coverage_percentage": 100,
+      "max_response_time_p95": 3000,
+      "max_cost_per_request": 0.01
+    }
+  },
+
+  "global_settings": {
+    "description": "Configurazioni globali per tutto l'Analysis Engine",
+    "caching": {
+      "global_cache_enabled": true,
+      "cache_strategy": "lru",
+      "max_cache_size_mb": 50,
+      "default_ttl_seconds": 300,
+      "cache_key_algorithm": "sha256_truncated"
+    },
+    "performance": {
+      "max_parallel_requests": 10,
+      "request_queue_size": 100,
+      "memory_limit_mb": 100,
+      "cpu_throttling_enabled": false
+    },
+    "monitoring": {
+      "enable_metrics": true,
+      "enable_profiling": false,
+      "log_level": "info",
+      "metrics_collection_interval_ms": 1000
+    },
+    "fallback_behavior": {
+      "on_total_failure": "return_error",
+      "max_tier_failures": 3,
+      "circuit_breaker_enabled": true,
+      "circuit_breaker_threshold": 5
+    }
+  },
+
+  "confidence_scoring": {
+    "description": "Sistema di scoring confidence unificato tra tier",
+    "base_scores": {
+      "exact_keyword_match": 1.0,
+      "fuzzy_keyword_match": 0.8,
+      "synonym_match": 0.7,
+      "phrase_match": 0.85,
+      "context_inference": 0.6,
+      "llm_analysis": 0.9
+    },
+    "modifiers": {
+      "word_boundary_bonus": 0.1,
+      "case_match_bonus": 0.05,
+      "frequency_penalty": -0.02,
+      "domain_amplifier_bonus": 0.2,
+      "multi_domain_penalty": -0.1,
+      "length_penalty_factor": 0.001
+    },
+    "aggregation": {
+      "algorithm": "weighted_average",
+      "tier1_weight": 0.4,
+      "tier2_weight": 0.6,
+      "tier3_weight": 1.0,
+      "confidence_floor": 0.1,
+      "confidence_ceiling": 0.99
+    }
+  },
+
+  "domain_priorities": {
+    "description": "Priorità dei domini per resolution conflicts",
+    "priority_order": [
+      "security",
+      "architecture",
+      "testing",
+      "database",
+      "trading",
+      "integration",
+      "gui",
+      "mql",
+      "ai",
+      "mobile",
+      "devops",
+      "languages",
+      "social",
+      "n8n",
+      "claude"
+    ],
+    "critical_domains": [
+      "security",
+      "architecture"
+    ],
+    "parallel_compatible": [
+      ["gui", "database"],
+      ["integration", "testing"],
+      ["devops", "languages"]
+    ],
+    "sequential_required": [
+      ["architecture", "implementation"],
+      ["security", "implementation"],
+      ["analysis", "implementation"]
+    ]
+  },
+
+  "model_selection_matrix": {
+    "description": "Matrice per selezione automatica del model Claude",
+    "domain_defaults": {
+      "security": "sonnet",
+      "architecture": "opus",
+      "testing": "sonnet",
+      "database": "sonnet",
+      "trading": "sonnet",
+      "integration": "sonnet",
+      "gui": "sonnet",
+      "mql": "sonnet",
+      "ai": "sonnet",
+      "mobile": "sonnet",
+      "devops": "haiku",
+      "languages": "sonnet",
+      "social": "sonnet",
+      "n8n": "sonnet",
+      "claude": "sonnet"
+    },
+    "complexity_overrides": {
+      "low": {
+        "default": "haiku",
+        "exceptions": ["security", "architecture"]
+      },
+      "medium": {
+        "default": "sonnet",
+        "exceptions": ["architecture"]
+      },
+      "high": {
+        "default": "sonnet",
+        "escalation_candidates": ["architecture", "security", "ai"]
+      },
+      "extreme": {
+        "default": "opus",
+        "always_opus": true
+      }
+    },
+    "escalation_rules": {
+      "failure_escalation": true,
+      "max_escalations": 2,
+      "escalation_path": ["haiku", "sonnet", "opus"],
+      "escalation_triggers": [
+        "task_failure",
+        "low_confidence_result",
+        "user_dissatisfaction",
+        "complexity_underestimation"
+      ]
+    }
+  },
+
+  "quality_gates": {
+    "description": "Quality gates per ogni tier",
+    "tier1_gates": [
+      {
+        "metric": "response_time",
+        "threshold": 10,
+        "unit": "ms",
+        "action": "warning"
+      },
+      {
+        "metric": "confidence",
+        "threshold": 0.7,
+        "unit": "percentage",
+        "action": "fallback_to_tier2"
+      },
+      {
+        "metric": "cache_hit_rate",
+        "threshold": 0.8,
+        "unit": "percentage",
+        "action": "optimize_cache"
+      }
+    ],
+    "tier2_gates": [
+      {
+        "metric": "response_time",
+        "threshold": 50,
+        "unit": "ms",
+        "action": "warning"
+      },
+      {
+        "metric": "confidence",
+        "threshold": 0.6,
+        "unit": "percentage",
+        "action": "fallback_to_tier3"
+      },
+      {
+        "metric": "memory_usage",
+        "threshold": 20,
+        "unit": "mb",
+        "action": "garbage_collection"
+      }
+    ],
+    "tier3_gates": [
+      {
+        "metric": "response_time",
+        "threshold": 2000,
+        "unit": "ms",
+        "action": "timeout"
+      },
+      {
+        "metric": "api_cost",
+        "threshold": 0.01,
+        "unit": "dollars",
+        "action": "cost_alert"
+      },
+      {
+        "metric": "confidence",
+        "threshold": 0.5,
+        "unit": "percentage",
+        "action": "error"
+      }
+    ]
+  },
+
+  "development_settings": {
+    "description": "Configurazioni per development e testing",
+    "debug_mode": false,
+    "verbose_logging": false,
+    "enable_profiling": false,
+    "mock_tier3": false,
+    "test_mode": false,
+    "performance_testing": {
+      "enable_synthetic_load": false,
+      "synthetic_requests_per_second": 10,
+      "test_duration_seconds": 60
+    },
+    "feature_flags": {
+      "enable_tier3": true,
+      "enable_nlp": false,
+      "enable_ml_features": false,
+      "enable_advanced_caching": true,
+      "enable_circuit_breaker": true
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "messages": {
+    "msg-1770130980100-jk18h7n4y": {
+      "id": "msg-1770130980100-jk18h7n4y",
+      "topic": "agent.gui",
+      "payload": {
+        "data": "test"
+      },
+      "timestamp": 1770130980100,
+      "priority": 2,
+      "retryCount": 0,
+      "headers": {},
+      "sequence": 1,
+      "status": "acked",
+      "expiresAt": 1770134580100,
+      "_version": 3,
+      "deliveredAt": 1770130980104,
+      "subscriptionId": "0e5ea6c4-0285-443c-9c2b-9de8e5209427",
+      "ackedAt": 1770130980106
+    },
+    "msg-1770130980104-torsg04x1": {
+      "id": "msg-1770130980104-torsg04x1",
+      "topic": "agent.database",
+      "payload": {
+        "data": "test"
+      },
+      "timestamp": 1770130980104,
+      "priority": 2,
+      "retryCount": 0,
+      "headers": {},
+      "sequence": 1,
+      "status": "acked",
+      "expiresAt": 1770134580104,
+      "_version": 3,
+      "deliveredAt": 1770130980106,
+      "subscriptionId": "0e5ea6c4-0285-443c-9c2b-9de8e5209427",
+      "ackedAt": 1770130980110
+    },
+    "msg-1770130980106-fwxoiasp3": {
+      "id": "msg-1770130980106-fwxoiasp3",
+      "topic": "system.status",
+      "payload": {
+        "data": "test"
+      },
+      "timestamp": 1770130980106,
+      "priority": 2,
+      "retryCount": 0,
+      "headers": {},
+      "sequence": 1,
+      "status": "acked",
+      "expiresAt": 1770134580106,
+      "_version": 2,
+      "deliveredAt": 1770130980110,
+      "subscriptionId": "0e5ea6c4-0285-443c-9c2b-9de8e5209427",
+      "ackedAt": 1770130980111
+    }
+  },
+  "deadLetters": {},
+  "sequences": {
+    "agent.gui": 1,
+    "agent.database": 1,
+    "system.status": 1
+  },
+  "idempotencyKeys": []
+}

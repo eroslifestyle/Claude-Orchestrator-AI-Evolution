@@ -1,0 +1,351 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "Context-aware rules per Analysis Layer - Tier 2 Smart Path",
+    "author": "Analysis Layer Team",
+    "created": "2026-01-30",
+    "total_rules": 100,
+    "context_window": 5
+  },
+
+  "proximity_rules": {
+    "description": "Regole basate su vicinanza di keyword nel testo",
+    "window_size": 5,
+    "rules": [
+      {
+        "id": "gui_security_combo",
+        "trigger_words": ["login", "form"],
+        "context_words": ["sicur", "password", "auth"],
+        "max_distance": 3,
+        "result": {
+          "primary_domain": "security",
+          "secondary_domain": "gui",
+          "confidence_boost": 0.2,
+          "agent": "experts/security_unified_expert.md"
+        }
+      },
+      {
+        "id": "database_performance",
+        "trigger_words": ["query", "sql"],
+        "context_words": ["lent", "ottimizz", "performance", "slow"],
+        "max_distance": 4,
+        "result": {
+          "primary_domain": "database",
+          "secondary_domain": "testing",
+          "confidence_boost": 0.25,
+          "agent": "experts/database_expert.md"
+        }
+      },
+      {
+        "id": "trading_risk",
+        "trigger_words": ["position", "trade"],
+        "context_words": ["risk", "rischio", "stop", "loss"],
+        "max_distance": 3,
+        "result": {
+          "primary_domain": "trading",
+          "confidence_boost": 0.3,
+          "agent": "experts/trading_strategy_expert.md"
+        }
+      },
+      {
+        "id": "api_integration",
+        "trigger_words": ["api", "service"],
+        "context_words": ["integr", "connect", "webhook", "endpoint"],
+        "max_distance": 4,
+        "result": {
+          "primary_domain": "integration",
+          "confidence_boost": 0.2,
+          "agent": "experts/integration_expert.md"
+        }
+      }
+    ]
+  },
+
+  "negation_rules": {
+    "description": "Regole per gestire negazioni che cambiano il contesto",
+    "negation_words": ["non", "no", "not", "never", "without", "senza"],
+    "rules": [
+      {
+        "id": "not_secure",
+        "pattern": "(non|not|senza) (sicur|secure|auth)",
+        "effect": {
+          "domain": "security",
+          "confidence_penalty": -0.5,
+          "alternative_domain": "implementation"
+        }
+      },
+      {
+        "id": "without_testing",
+        "pattern": "(senza|without|no) (test|debug|qa)",
+        "effect": {
+          "domain": "testing",
+          "confidence_penalty": -0.4,
+          "alternative_domain": "implementation"
+        }
+      }
+    ]
+  },
+
+  "sequence_rules": {
+    "description": "Regole basate sulla sequenza di parole",
+    "rules": [
+      {
+        "id": "implementation_sequence",
+        "sequence": ["crea", "implement", "sviluppa"],
+        "followed_by": {
+          "gui": {
+            "keywords": ["interface", "form", "dialog"],
+            "boost": 0.15
+          },
+          "database": {
+            "keywords": ["table", "query", "schema"],
+            "boost": 0.15
+          },
+          "security": {
+            "keywords": ["auth", "login", "token"],
+            "boost": 0.2
+          }
+        }
+      },
+      {
+        "id": "optimization_sequence",
+        "sequence": ["ottimizza", "migliora", "velocizza"],
+        "followed_by": {
+          "database": {
+            "keywords": ["query", "index", "performance"],
+            "boost": 0.25
+          },
+          "testing": {
+            "keywords": ["performance", "speed", "benchmark"],
+            "boost": 0.2
+          }
+        }
+      },
+      {
+        "id": "fix_sequence",
+        "sequence": ["fix", "correggi", "risolvi"],
+        "followed_by": {
+          "testing": {
+            "keywords": ["bug", "error", "issue"],
+            "boost": 0.3
+          },
+          "security": {
+            "keywords": ["vulnerability", "exploit", "breach"],
+            "boost": 0.35
+          }
+        }
+      }
+    ]
+  },
+
+  "domain_conflict_rules": {
+    "description": "Regole per risolvere conflitti tra domini",
+    "conflict_resolution": [
+      {
+        "domains": ["gui", "security"],
+        "resolution": "security_priority",
+        "reason": "Security sempre prioritario su GUI",
+        "result": {
+          "primary": "security",
+          "secondary": "gui",
+          "agents": ["experts/security_unified_expert.md", "experts/gui-super-expert.md"]
+        }
+      },
+      {
+        "domains": ["database", "testing"],
+        "resolution": "context_dependent",
+        "triggers": {
+          "performance_context": {
+            "keywords": ["performance", "slow", "optimization"],
+            "primary": "database",
+            "secondary": "testing"
+          },
+          "bug_context": {
+            "keywords": ["bug", "error", "debug"],
+            "primary": "testing",
+            "secondary": "database"
+          }
+        }
+      },
+      {
+        "domains": ["trading", "mql"],
+        "resolution": "scope_based",
+        "triggers": {
+          "algorithm_scope": {
+            "keywords": ["ea", "expert", "advisor", "robot"],
+            "primary": "mql",
+            "secondary": "trading"
+          },
+          "strategy_scope": {
+            "keywords": ["strategy", "risk", "portfolio"],
+            "primary": "trading",
+            "secondary": "mql"
+          }
+        }
+      }
+    ]
+  },
+
+  "context_amplifiers": {
+    "description": "Parole che amplificano il confidence di certi domini",
+    "amplifiers": [
+      {
+        "domain": "security",
+        "strong_amplifiers": ["critica", "vulnerabil", "attack", "breach", "hack"],
+        "boost": 0.4,
+        "weak_amplifiers": ["protect", "safe", "secure"],
+        "boost": 0.2
+      },
+      {
+        "domain": "testing",
+        "strong_amplifiers": ["critico", "urgent", "production", "live"],
+        "boost": 0.35,
+        "weak_amplifiers": ["verifica", "check", "validate"],
+        "boost": 0.15
+      },
+      {
+        "domain": "trading",
+        "strong_amplifiers": ["money", "profit", "loss", "risk"],
+        "boost": 0.3,
+        "weak_amplifiers": ["market", "price", "signal"],
+        "boost": 0.15
+      },
+      {
+        "domain": "architecture",
+        "strong_amplifiers": ["refactor", "redesign", "scalability"],
+        "boost": 0.25,
+        "weak_amplifiers": ["structure", "pattern", "organize"],
+        "boost": 0.1
+      }
+    ]
+  },
+
+  "complexity_indicators": {
+    "description": "Indicatori che aumentano la complessità del task",
+    "indicators": [
+      {
+        "category": "scale_indicators",
+        "keywords": ["enterprise", "large-scale", "production", "massive"],
+        "complexity_boost": 0.3,
+        "model_recommendation": "opus"
+      },
+      {
+        "category": "integration_complexity",
+        "keywords": ["multiple", "various", "different", "integrate", "connect"],
+        "complexity_boost": 0.25,
+        "model_recommendation": "sonnet"
+      },
+      {
+        "category": "time_pressure",
+        "keywords": ["urgent", "asap", "quickly", "immediate", "emergency"],
+        "complexity_boost": 0.2,
+        "model_recommendation": "sonnet"
+      },
+      {
+        "category": "quality_requirements",
+        "keywords": ["enterprise-grade", "production-ready", "robust", "reliable"],
+        "complexity_boost": 0.15,
+        "model_recommendation": "sonnet"
+      }
+    ]
+  },
+
+  "model_selection_rules": {
+    "description": "Regole per selezione automatica del model basata su context",
+    "rules": [
+      {
+        "condition": "security_critical",
+        "triggers": ["security", "auth", "password", "encryption", "vulnerability"],
+        "required_model": "sonnet",
+        "escalation_triggers": ["critical", "breach", "hack", "exploit"],
+        "escalation_model": "opus"
+      },
+      {
+        "condition": "architecture_design",
+        "triggers": ["architecture", "design", "pattern", "microservice", "scalability"],
+        "required_model": "opus",
+        "reason": "Requires creative and lateral thinking"
+      },
+      {
+        "condition": "simple_implementation",
+        "triggers": ["simple", "basic", "quick", "straightforward"],
+        "required_model": "haiku",
+        "escalation_triggers": ["but", "however", "complex", "advanced"],
+        "escalation_model": "sonnet"
+      },
+      {
+        "condition": "performance_critical",
+        "triggers": ["performance", "optimization", "speed", "fast", "efficient"],
+        "required_model": "sonnet",
+        "escalation_triggers": ["enterprise", "production", "massive"],
+        "escalation_model": "opus"
+      }
+    ]
+  },
+
+  "multi_domain_patterns": {
+    "description": "Pattern che indicano richieste multi-dominio",
+    "patterns": [
+      {
+        "pattern": "end_to_end",
+        "triggers": ["complete", "full", "entire", "end-to-end", "e2e"],
+        "effect": {
+          "suggests_multiple_agents": true,
+          "coordination_required": true,
+          "complexity_boost": 0.3
+        }
+      },
+      {
+        "pattern": "system_integration",
+        "triggers": ["integrate", "connect", "link", "bridge", "combine"],
+        "effect": {
+          "suggests_multiple_agents": true,
+          "requires_coordination": true,
+          "complexity_boost": 0.25
+        }
+      },
+      {
+        "pattern": "full_stack",
+        "triggers": ["full-stack", "frontend", "backend", "database", "complete"],
+        "effect": {
+          "suggests_domains": ["gui", "integration", "database"],
+          "coordination_agent": "experts/architect_expert.md",
+          "complexity_boost": 0.4
+        }
+      }
+    ]
+  },
+
+  "temporal_context": {
+    "description": "Context temporale che influenza priorità e approccio",
+    "time_indicators": [
+      {
+        "urgency": "immediate",
+        "keywords": ["now", "urgent", "emergency", "asap", "immediately"],
+        "effect": {
+          "model_preference": "sonnet",
+          "complexity_penalty": -0.1,
+          "parallel_execution": true
+        }
+      },
+      {
+        "urgency": "planned",
+        "keywords": ["future", "plan", "roadmap", "eventually", "later"],
+        "effect": {
+          "model_preference": "opus",
+          "complexity_boost": 0.1,
+          "design_focus": true
+        }
+      },
+      {
+        "urgency": "maintenance",
+        "keywords": ["update", "maintain", "refactor", "cleanup"],
+        "effect": {
+          "model_preference": "sonnet",
+          "quality_focus": true,
+          "testing_required": true
+        }
+      }
+    ]
+  }
+}

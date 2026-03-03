@@ -1,0 +1,8 @@
+{
+  "cachedGrowthBookFeatures": {
+    "tengu_log_datadog_events": true,
+    "tengu_marble_anvil": true,
+    "tengu_tool_pear": false,
+    "tengu_scarf_coffee": false
+  }
+}

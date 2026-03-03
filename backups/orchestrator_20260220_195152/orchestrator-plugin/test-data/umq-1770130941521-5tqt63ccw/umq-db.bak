@@ -1,0 +1,27 @@
+{
+  "messages": {
+    "msg-1770130941588-luwe8inqw": {
+      "id": "msg-1770130941588-luwe8inqw",
+      "topic": "test.retry",
+      "payload": {
+        "data": "test"
+      },
+      "timestamp": 1770130941588,
+      "priority": 2,
+      "retryCount": 1,
+      "headers": {},
+      "sequence": 1,
+      "status": "retrying",
+      "expiresAt": 1770134541588,
+      "_version": 2,
+      "deliveredAt": 1770130941643,
+      "subscriptionId": "efb9c3b8-44ed-4e87-b444-3381272fdf8a",
+      "nextRetryAt": 1770130944211.393
+    }
+  },
+  "deadLetters": {},
+  "sequences": {
+    "test.retry": 1
+  },
+  "idempotencyKeys": []
+}

@@ -1,0 +1,27 @@
+{
+  "messages": {
+    "msg-1770122409273": {
+      "id": "msg-1770122409273",
+      "topic": "test.stats",
+      "payload": {
+        "data": "test"
+      },
+      "timestamp": 1770122409273,
+      "priority": 2,
+      "retryCount": 0,
+      "headers": {},
+      "sequence": 1,
+      "status": "acked",
+      "expiresAt": 1770126009273,
+      "_version": 2,
+      "deliveredAt": 1770122409274,
+      "subscriptionId": "509f226f-b32e-44fb-a6a3-b57314d97337",
+      "ackedAt": 1770122409275
+    }
+  },
+  "deadLetters": {},
+  "sequences": {
+    "test.stats": 1
+  },
+  "idempotencyKeys": []
+}
