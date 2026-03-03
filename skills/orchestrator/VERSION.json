@@ -1,0 +1,18 @@
+{
+    "components": [
+        "Core (skills + agents)",
+        "PowerShell Profile Integration",
+        "Settings Templates",
+        "Installation Scripts",
+        "Quick Start Documentation",
+        "Process Manager",
+        "Cleanup System V2",
+        "Request Pre-Processing"
+    ],
+    "installed": "12.5.1",
+    "installDate": "2026-03-03T00:00:00+01:00",
+    "changelog": "V12.5.1 TMP PATTERNS - Extended temp file patterns for Claude Code",
+    "channel": "stable",
+    "lastCheck": null,
+    "updateAvailable": false
+}
