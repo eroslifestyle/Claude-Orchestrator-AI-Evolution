@@ -1,6 +1,6 @@
-# Claude Orchestrator Plugin V12.5.2
+# Claude Orchestrator Plugin V12.6
 
-A powerful multi-agent orchestration system for Claude Code with hierarchical command structure, parallel execution, intelligent cleanup, and 100% guaranteed fallback.
+A powerful multi-agent orchestration system for Claude Code with hierarchical command structure, parallel execution, intelligent cleanup, NO-IMPROVISE protocol, and 100% guaranteed fallback.
 
 ```
 +==============================================================================+
@@ -11,7 +11,7 @@ A powerful multi-agent orchestration system for Claude Code with hierarchical co
 |    O    O  R  R   C      H   H  E          S    T    R  R   A    A          |
 |     OOOO   R   R   CCCC  H   H  EEEEE  SSSS     T    R   R  A    A          |
 |                                                                              |
-|               V12.5.2 - CLEAN SESSION - ROBUST ORCHESTRATION                |
+|               V12.6 - NO-IMPROVISE - 100% CONTEXT BEFORE ACTION             |
 |                                                                              |
 +==============================================================================+
 ```
@@ -28,8 +28,25 @@ A powerful multi-agent orchestration system for Claude Code with hierarchical co
 - **Robust Cleanup System** - Startup + Session + Emergency cleanup
 - **Process Manager** - Centralized process spawning with guaranteed cleanup
 - **Rules Engine** - Context-aware rule injection per task
+- **NO-IMPROVISE Protocol** - 100% context required before any action
 
-## What's New in V12.5.1
+## What's New in V12.6
+
+### NO-IMPROVISE Protocol (March 4, 2026)
+- **MANDATORY**: 100% context required before executing ANY task
+- **Context Completeness Score** - Quantitative scoring for request complexity
+- **Anti-Hallucination Protocol** - READ-FIRST rule, hallucination prevention checklist
+- **Overeagerness Control** - EXACT SCOPE rule, no scope creep allowed
+- **Clarifying Questions** - Mandatory if context is incomplete
+- **Profile Support** - Both `cca` (Anthropic) and `ccg` (GLM5/Z.AI) fully supported
+
+### CHANGES TO EXISTING FEATURES
+- **EXECUTION RULES**: Added Rule 4 (NO-IMPROVISE) and Rule 5 (delegation)
+- **SUBAGENT PROTOCOL**: Extended with 4 new mandatory principles
+- **STEP 0.5**: Completely rewritten with Context Completeness Score
+- **prompt-engineering-patterns**: Upgraded to V2.0 with Context-First Principle
+
+### V12.5.2 CLEAN SESSION (March 3, 2026)
 
 ### TMP PATTERNS (March 3, 2026)
 - **Extended temp patterns** for Claude Code files:
@@ -62,7 +79,7 @@ A powerful multi-agent orchestration system for Claude Code with hierarchical co
 ```
                        +---------------------+
                        |    ORCHESTRATOR     |
-                       |   V12.5.1           |
+                       |   V12.6             |
                        |  (SUPREME COMMAND)  |
                        +---------+-----------+
                                  |
@@ -264,6 +281,59 @@ LEVEL 6: ORCHESTRATOR DIRECT
 ```
 
 ## Changelog
+
+### V12.6 NO-IMPROVISE (March 4, 2026)
+
+**Breaking Changes - Mandatory Protocols**
+
+#### New Features
+
+- **NO-IMPROVISE Protocol** (MANDATORY)
+  - 100% context required before executing ANY task
+  - Mandatory clarifying questions if context is incomplete
+  - No assumptions, inventions, or improvisation allowed
+  - Explicit programmer approval required for modifying existing functions
+
+- **Context Completeness Check** (STEP 0.5)
+  - Quantitative scoring system for request complexity
+  - Score-based decision: proceed, ask questions, or mandatory questions
+  - Anti-patterns documented
+
+- **Anti-Hallucination Protocol**
+  - READ-FIRST rule: Read files before modifying
+  - Hallucination prevention checklist
+  - Common hallucination patterns documented
+
+- **Overeagerness Control**
+  - EXACT SCOPE rule: Do only what is requested
+  - NO scope creep
+  - Scope verification checklist
+
+#### Changes to Existing Features
+
+- **EXECUTION RULES**: Added Rule 4 (NO-IMPROVISE) and Rule 5 (delegation)
+- **SUBAGENT PROTOCOL**: Extended with 4 new mandatory principles
+- **STEP 0.5**: Completely rewritten with Context Completeness Score
+- **prompt-engineering-patterns**: Upgraded to V2.0
+  - Context-First Principle
+  - XML Structure Output
+  - 5 Few-Shot Examples
+
+#### Profile Support
+
+Both `cca` (Anthropic Claude Opus 4.6) and `ccg` (GLM5 via Z.AI) profiles are fully supported. All orchestrator features work identically on both profiles.
+
+#### Files Modified
+
+- `orchestrator/SKILL.md` - V12.5.2 -> V12.6
+- `prompt-engineering-patterns/SKILL.md` - V1.0 -> V2.0
+- `CLAUDE.md` - Updated with profile references
+
+### V12.5.2 (March 3, 2026)
+
+- Cleanup runs only at session end (Step 11)
+- Extended temp patterns
+- Clean session. Clean exit.
 
 ### V12.5.1 TMP PATTERNS (March 3, 2026)
 - **NEW:** Extended temp patterns for Claude Code files
