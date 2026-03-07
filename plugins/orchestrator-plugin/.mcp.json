@@ -1,6 +1,0 @@
-{
-  "orchestrator": {
-    "command": "python",
-    "args": ["c:\\Users\\LeoDg\\.claude\\plugins\\orchestrator-plugin\\mcp_server\\server.py"]
-  }
-}

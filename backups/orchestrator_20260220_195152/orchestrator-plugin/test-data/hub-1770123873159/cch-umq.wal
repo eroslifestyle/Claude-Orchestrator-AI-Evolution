@@ -1,1 +1,0 @@
-[{"timestamp":1770123873168,"operation":"insert","table":"messages","data":{"id":"57b0c50b-893f-45d5-957a-41afe33f6583","topic":"agent.gui.task","payload":{"type":"gui_task","description":"Create a main window"},"timestamp":1770123873168,"priority":2,"retryCount":0,"headers":{},"sequence":1,"status":"pending","expiresAt":1770127473168,"_version":1}}]
