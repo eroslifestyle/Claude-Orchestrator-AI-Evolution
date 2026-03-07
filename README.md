@@ -1,6 +1,4 @@
-# Claude Orchestrator Plugin V12.6
-
-A powerful multi-agent orchestration system for Claude Code with hierarchical command structure, parallel execution, intelligent cleanup, NO-IMPROVISE protocol, and 100% guaranteed fallback.
+# Claude Orchestrator - AI Evolution
 
 ```
 +==============================================================================+
@@ -11,376 +9,246 @@ A powerful multi-agent orchestration system for Claude Code with hierarchical co
 |    O    O  R  R   C      H   H  E          S    T    R  R   A    A          |
 |     OOOO   R   R   CCCC  H   H  EEEEE  SSSS     T    R   R  A    A          |
 |                                                                              |
-|               V12.6 - NO-IMPROVISE - 100% CONTEXT BEFORE ACTION             |
+|               V14.0.3 - AI-NATIVE - PREDICTIVE MULTI-AGENT SYSTEM           |
 |                                                                              |
 +==============================================================================+
 ```
 
-## Features
-
-- **43 Specialized Agents** - 6 Core + 22 Experts + 15 L2 Sub-agents
-- **31 Skills** - Core, Utility, Workflow, Language, Learning categories
-- **6-Level Fallback System** - 100% guaranteed task completion
-- **Forced Global Parallelism** - Up to 64 concurrent agents
-- **Intelligent Model Selection** - Haiku/Sonnet/Opus based on task complexity
-- **Auto-Execute Mode** - No confirmation needed, immediate action
-- **Request Pre-Processing** - Automatic complexity evaluation and expansion
-- **Robust Cleanup System** - Startup + Session + Emergency cleanup
-- **Process Manager** - Centralized process spawning with guaranteed cleanup
-- **Rules Engine** - Context-aware rule injection per task
-- **NO-IMPROVISE Protocol** - 100% context required before any action
-
-## What's New in V12.6
-
-### NO-IMPROVISE Protocol (March 4, 2026)
-- **MANDATORY**: 100% context required before executing ANY task
-- **Context Completeness Score** - Quantitative scoring for request complexity
-- **Anti-Hallucination Protocol** - READ-FIRST rule, hallucination prevention checklist
-- **Overeagerness Control** - EXACT SCOPE rule, no scope creep allowed
-- **Clarifying Questions** - Mandatory if context is incomplete
-- **Profile Support** - Both `cca` (Anthropic) and `ccg` (GLM5/Z.AI) fully supported
-
-### CHANGES TO EXISTING FEATURES
-- **EXECUTION RULES**: Added Rule 4 (NO-IMPROVISE) and Rule 5 (delegation)
-- **SUBAGENT PROTOCOL**: Extended with 4 new mandatory principles
-- **STEP 0.5**: Completely rewritten with Context Completeness Score
-- **prompt-engineering-patterns**: Upgraded to V2.0 with Context-First Principle
-
-### V12.5.2 CLEAN SESSION (March 3, 2026)
-
-### TMP PATTERNS (March 3, 2026)
-- **Extended temp patterns** for Claude Code files:
-  - `*.*.tmp.*` - Any file with .tmp in middle
-  - `*.md.tmp.*` - Markdown temp files
-  - `CLAUDE.md.tmp.*` - Specific CLAUDE.md temps
-  - `*.py.tmp.*` - Python temp files
-- **Comprehensive cleanup** of orphan temp files
-
-### V12.5 ROBUST CLEANUP (March 3, 2026)
-- **STEP 0.6 STARTUP CLEANUP** - Removes stale temp files on session start
-- **STEP 11.5 EMERGENCY CLEANUP** - Signal handlers for crash recovery
-- **25+ temp patterns** - Covers generic, editor, OS, Python, Claude files
-- **Windows Job Objects** - Guaranteed process tree cleanup
-
-### V12.4 REQUEST PRE-PROCESSING (March 3, 2026)
-- **NEW Skill**: `prompt-engineering-patterns` for request optimization
-- **Complexity Evaluation** - Automatic detection of vague/complex requests
-- **Task Type Identification** - BUG_FIX, FEATURE, REFACTOR, ANALYSIS, etc.
-- **Vague Term Expansion** - "fix" -> "Identify root cause → Implement fix → Add tests → Verify"
-
-### V12.3 SKILL INTEGRATION (March 3, 2026)
-- **31 Skills** in catalog (was 26)
-- **NEW**: `prompt-engineering-patterns`, `python-performance-optimization`
-- **Skill Invocation** - Orchestrator can invoke skills directly
-- **Slash Commands** - Integrated skill mapping
-
-## Agent Hierarchy
-
-```
-                       +---------------------+
-                       |    ORCHESTRATOR     |
-                       |   V12.6             |
-                       |  (SUPREME COMMAND)  |
-                       +---------+-----------+
-                                 |
-          +----------------------+----------------------+
-          |                      |                      |
- +--------v--------+    +--------v--------+    +--------v--------+
- |   CORE AGENTS   |    | EXPERT AGENTS   |    |  L2 SUB-AGENTS  |
- |     (6 units)   |    |   (22 units)    |    |   (15 units)    |
- +--------+--------+    +--------+--------+    +--------+--------+
-          |                      |                      |
- +--------+--------+    +--------+--------+    +--------+--------+
- | * analyzer      |    | * gui-super     |    | * gui-layout    |
- | * coder         |    | * database      |    | * db-query      |
- | * reviewer      |    | * security      |    | * security-auth |
- | * documenter    |    | * mql           |    | * api-endpoint  |
- | * system_coord  |    | * trading       |    | * test-unit     |
- | * orchestrator  |    | * architect     |    | * mql-optim     |
- +-----------------+    | * integration   |    | * trading-risk  |
-                        | * devops        |    | * mobile-ui     |
-                        | * languages     |    | * n8n-workflow  |
-                        | * ai_integr     |    | * claude-prompt |
-                        | * claude_sys    |    +-----------------+
-                        | * mobile        |
-                        | * n8n           |
-                        | * social_id     |
-                        | * ... (13 more) |
-                        +-----------------+
-```
-
-## Installation
-
-### Quick Install (Recommended)
-
-1. **Backup your existing `.claude` directory** (if any):
-```bash
-# Windows
-move %USERPROFILE%\.claude %USERPROFILE%\.claude.backup
-
-# Linux/Mac
-mv ~/.claude ~/.claude.backup
-```
-
-2. **Clone this repository**:
-```bash
-# Windows
-git clone https://github.com/eroslifestyle/Claude-Orchestrator-Plugin.git %USERPROFILE%\.claude
-
-# Linux/Mac
-git clone https://github.com/eroslifestyle/Claude-Orchestrator-Plugin.git ~/.claude
-```
-
-3. **Set up configuration files**:
-```bash
-# Windows
-cd %USERPROFILE%\.claude
-copy settings.template.json settings.json
-copy settings.local.template.json settings.local.json
-
-# Linux/Mac
-cd ~/.claude
-cp settings.template.json settings.json
-cp settings.local.template.json settings.local.json
-```
-
-4. **Install MCP Server dependencies** (optional, for advanced features):
-```bash
-cd plugins/orchestrator-plugin
-npm install
-npm run build
-```
-
-5. **Restart Claude Code** to apply changes.
-
-## Usage
-
-```bash
-/orchestrator <your request>
-```
-
-**Examples:**
-- `/orchestrator Create a GUI for database management`
-- `/orchestrator Fix the auth module bug`
-- `/orchestrator Optimize MetaTrader EA`
-- `/orchestrator Design microservices architecture`
-
-## Model Selection
-
-| Model | When to Use | Task Tool Parameter |
-|-------|-------------|---------------------|
-| **Haiku** | Mechanical tasks, no reasoning | `model: "haiku"` |
-| **Sonnet** | Problem solving, coding, debugging | Omit `model` parameter |
-| **Opus** | Architecture, creative, complex | `model: "opus"` |
-
-### Important: Sonnet Workaround
-
-Due to a known bug in Claude Code Task tool ([GitHub #18873](https://github.com/anthropics/claude-code/issues/18873)), the `model: "sonnet"` parameter causes a 404 error.
-
-**Workaround:** Omit the `model` parameter to use Sonnet (inherits from parent context).
-
-```javascript
-// WRONG - causes 404
-Task({ model: "sonnet", ... })
-
-// CORRECT - uses Sonnet via inheritance
-Task({ ... })  // No model parameter
-```
-
-## Skills Catalog (31 Total)
-
-| Category | Skills |
-|----------|--------|
-| **Core (8)** | orchestrator, code-review, git-workflow, testing-strategy, debugging, api-design, remotion-best-practices, keybindings-help |
-| **Utility (7)** | strategic-compact, verification-loop, checkpoint, sessions, status, metrics, prompt-engineering-patterns |
-| **Workflow (9)** | plan, tdd-workflow, security-scan, refactor-clean, build-fix, multi-plan, fix, cleanup, simplify |
-| **Language (4)** | python-patterns, python-performance-optimization, typescript-patterns, go-patterns |
-| **Learning (2)** | learn, evolve |
-
-## Directory Structure
-
-```
-.claude/
-|
-+-- agents/
-|   +-- core/                    # Level 0 - Core Agents (6)
-|   +-- experts/                 # Level 1 - Expert Agents (22)
-|       +-- L2/                  # Level 2 - Sub-Agents (15)
-|
-+-- skills/                      # 31 Skills
-|   +-- orchestrator/            # Main orchestrator skill
-|   +-- prompt-engineering-patterns/  # NEW: Request pre-processing
-|   +-- cleanup/                 # Enhanced cleanup skill
-|   +-- ... (28 more)
-|
-+-- rules/                       # Context-aware rules engine
-|   +-- common/                  # Universal rules
-|   +-- python/                  # Python-specific
-|   +-- typescript/              # TypeScript-specific
-|   +-- go/                      # Go-specific
-|
-+-- lib/                         # Shared libraries
-|   +-- process_manager.py       # Centralized process management
-|
-+-- commands/
-|   +-- orchestrator.md          # Main orchestrator command
-|
-+-- config/
-|   +-- routing.md               # Agent routing tables
-|   +-- standards.md             # Coding standards
-|
-+-- plugins/
-    +-- orchestrator-plugin/     # MCP Server plugin
-```
-
-## 6-Level Fallback System
-
-```
-LEVEL 1: EXACT MATCH
--> Agent exists? USE IT
--> Not found? LEVEL 2
-
-LEVEL 2: L2 -> L1 PARENT
--> L2 sub-agent not found? USE PARENT L1
-
-LEVEL 3: DOMAIN PATTERN
--> Expert not found? PATTERN MATCH on domain
-
-LEVEL 4: CORE AGENT
--> No expert match? USE APPROPRIATE CORE AGENT
-
-LEVEL 5: UNIVERSAL CODER
--> Anything fails? core/coder.md handles it
-
-LEVEL 6: ORCHESTRATOR DIRECT
--> Everything fails? ORCHESTRATOR executes directly
-
-100% SUCCESS RATE GUARANTEED
-```
-
-## Configuration
-
-### Environment Variables
-
-| Variable | Description |
-|----------|-------------|
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | Model ID for Sonnet alias |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL` | Model ID for Opus alias |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | Model ID for Haiku alias |
-| `CLAUDE_CODE_SUBAGENT_MODEL` | Model for Task tool subagents |
-
-### Recommended Settings
-
-```json
-{
-  "env": {
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-5-20250929",
-    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-5-20250929"
-  }
-}
-```
-
-## Changelog
-
-### V12.6 NO-IMPROVISE (March 4, 2026)
-
-**Breaking Changes - Mandatory Protocols**
-
-#### New Features
-
-- **NO-IMPROVISE Protocol** (MANDATORY)
-  - 100% context required before executing ANY task
-  - Mandatory clarifying questions if context is incomplete
-  - No assumptions, inventions, or improvisation allowed
-  - Explicit programmer approval required for modifying existing functions
-
-- **Context Completeness Check** (STEP 0.5)
-  - Quantitative scoring system for request complexity
-  - Score-based decision: proceed, ask questions, or mandatory questions
-  - Anti-patterns documented
-
-- **Anti-Hallucination Protocol**
-  - READ-FIRST rule: Read files before modifying
-  - Hallucination prevention checklist
-  - Common hallucination patterns documented
-
-- **Overeagerness Control**
-  - EXACT SCOPE rule: Do only what is requested
-  - NO scope creep
-  - Scope verification checklist
-
-#### Changes to Existing Features
-
-- **EXECUTION RULES**: Added Rule 4 (NO-IMPROVISE) and Rule 5 (delegation)
-- **SUBAGENT PROTOCOL**: Extended with 4 new mandatory principles
-- **STEP 0.5**: Completely rewritten with Context Completeness Score
-- **prompt-engineering-patterns**: Upgraded to V2.0
-  - Context-First Principle
-  - XML Structure Output
-  - 5 Few-Shot Examples
-
-#### Profile Support
-
-Both `cca` (Anthropic Claude Opus 4.6) and `ccg` (GLM5 via Z.AI) profiles are fully supported. All orchestrator features work identically on both profiles.
-
-#### Files Modified
-
-- `orchestrator/SKILL.md` - V12.5.2 -> V12.6
-- `prompt-engineering-patterns/SKILL.md` - V1.0 -> V2.0
-- `CLAUDE.md` - Updated with profile references
-
-### V12.5.2 (March 3, 2026)
-
-- Cleanup runs only at session end (Step 11)
-- Extended temp patterns
-- Clean session. Clean exit.
-
-### V12.5.1 TMP PATTERNS (March 3, 2026)
-- **NEW:** Extended temp patterns for Claude Code files
-- **FIX:** Cleanup of orphan temp files (CLAUDE.md.tmp.*)
-- **IMPROVED:** 25+ temp patterns in cleanup system
-
-### V12.5 ROBUST CLEANUP (March 3, 2026)
-- **NEW:** STEP 0.6 STARTUP CLEANUP
-- **NEW:** STEP 11.5 EMERGENCY CLEANUP with signal handlers
-- **NEW:** Process Manager for centralized process spawning
-- **IMPROVED:** Windows Job Objects support
-
-### V12.4 REQUEST PRE-PROCESSING (March 3, 2026)
-- **NEW:** prompt-engineering-patterns skill
-- **NEW:** STEP 0.5 complexity evaluation
-- **NEW:** Task type identification (BUG_FIX, FEATURE, etc.)
-
-### V12.3 SKILL INTEGRATION (March 3, 2026)
-- **NEW:** 31 skills in catalog
-- **NEW:** Skill invocation from orchestrator
-- **NEW:** python-performance-optimization skill
-
-### V12.2 PROCESS MANAGER (February 28, 2026)
-- **NEW:** Centralized ProcessManager for Windows orphan prevention
-- **NEW:** 100 process management rules
-
-### V12.0 DEEP AUDIT (February 26, 2026)
-- **NEW:** 100% coherence verification
-- **NEW:** 43 agents verified
-- **NEW:** Full documentation alignment
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-MIT License - See [LICENSE](LICENSE) for details.
-
-## Author
-
-Created by [eroslifestyle](https://github.com/eroslifestyle)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Claude--Orchestrator--AI--Evolution-blue?logo=github)](https://github.com/eroslifestyle/Claude-Orchestrator-AI-Evolution)
+![Version](https://img.shields.io/badge/Version-14.0.3-green)
+![Tests](https://img.shields.io/badge/Tests-91_total-brightgreen)
+![Stress Test](https://img.shields.io/badge/Stress_Test-5%2F5_PASS-brightgreen)
+![Coverage](https://img.shields.io/badge/Coverage-99.7%25-brightgreen)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
 
-**Remember:**
-- Orchestrator commands, agents execute
-- Clean startup. Clean session. Clean exit.
-- 43 agents ready to command
-- 31 skills ready to invoke
+## 🚀 AI-Native Multi-Agent Orchestrator
+
+A **self-optimizing** multi-agent orchestration system for Claude Code with:
+- **Predictive Agent Caching** - ML-based pattern recognition (>90% accuracy)
+- **Adaptive Token Budgeting** - Dynamic 200-1500 token allocation
+- **A/B Testing Framework** - Multi-variant experiments with statistical significance
+- **Auto-Tuning Parameters** - Bayesian optimization for system parameters
+
+---
+
+## 📊 Performance Benchmarks (V14.0.3)
+
+| Test | Throughput | Status |
+|------|------------|--------|
+| Multi-Task | **4,228 task/sec** | ✅ PASS |
+| Multi-Agent | **4,149 pred/sec** | ✅ PASS |
+| Multi-Skill | **5,502 skill/sec** | ✅ PASS |
+| Simultaneous | **5,838 ops/sec** | ✅ PASS |
+| Memory | **128 bytes/op** | ✅ PASS |
+
+**Overall: 5/5 PASS - 0% error rate**
+
+---
+
+## 🏗️ Architecture
+
+### Agents (43 Total)
+
+| Tier | Count | Description |
+|------|-------|-------------|
+| **Core** | 6 | Orchestrator, Analyzer, Coder, Reviewer, Documenter, System Coordinator |
+| **L1 Experts** | 22 | GUI, Database, Security, API, Testing, MQL, Trading, Mobile, N8N, DevOps, etc. |
+| **L2 Specialists** | 15 | Layout, Query Optimizer, Auth, Endpoint, Unit Test, MQL Optimization, etc. |
+
+### Skills (32 Total)
+
+| Category | Skills |
+|----------|--------|
+| **Core** | orchestrator, code-review, git-workflow, testing-strategy, debugging, api-design |
+| **Workflow** | plan, tdd-workflow, security-scan, refactor-clean, build-fix, multi-plan, fix, cleanup |
+| **Utility** | strategic-compact, verification-loop, checkpoint, sessions, status, metrics |
+| **Language** | python-patterns, python-performance, typescript-patterns, go-patterns |
+| **Learning** | learn, evolve |
+
+---
+
+## 🧠 AI-Native Features (V14.0.2+)
+
+### 1. Predictive Agent Cache (`lib/predictive_cache.py`)
+
+```python
+from lib.predictive_cache import get_predictive_cache
+
+cache = get_predictive_cache()
+predictions = cache.predict_next_agents(task, context)
+# Accuracy: >90%, Cold start fallback, Tiered storage (hot/warm/cold)
+```
+
+### 2. Adaptive Token Budget (`lib/adaptive_budget.py`)
+
+```python
+from lib.adaptive_budget import get_budget_calculator
+
+budget = get_budget_calculator().calculate_budget(task, context)
+# Dynamic range: 200-1500 tokens based on complexity
+```
+
+### 3. A/B Testing Framework (`lib/ab_testing.py`)
+
+```python
+from lib.ab_testing import ABTestingFramework
+
+ab = ABTestingFramework()
+exp = ab.create_experiment("routing_test", control, treatment)
+variant = ab.assign_variant("routing_test", user_id)
+# Multi-variant (A/B/C/D), Z-test significance, Chi-square
+```
+
+### 4. Auto-Tuner (`lib/auto_tuner.py`)
+
+```python
+from lib.auto_tuner import AutoTuner
+
+tuner = AutoTuner()
+params = tuner.suggest_parameters()
+tuner.record_outcome(params, metrics)
+# Gaussian Process with RBF kernel, UCB exploration
+```
+
+---
+
+## 📁 Project Structure
+
+```
+.claude/
+├── agents/              # 43 agent definitions (.md files)
+├── skills/              # 32 skills + orchestrator/
+│   └── orchestrator/    # Main orchestrator skill
+│       ├── SKILL.md     # Skill definition (1200+ lines)
+│       ├── VERSION.json # Version tracking
+│       └── docs/        # 18 documentation files
+├── lib/                 # Python modules
+│   ├── predictive_cache.py    # V14.0.2 AI caching
+│   ├── adaptive_budget.py     # V14.0.2 Token budgeting
+│   ├── ab_testing.py          # V14.0.2 A/B testing
+│   ├── auto_tuner.py          # V14.0.2 Bayesian optimization
+│   ├── lazy_agents.py         # V13.1 Lazy L2 loading
+│   ├── rule_excerpts.py       # V13.1 Pre-computed rules
+│   ├── agent_performance.py   # V13.0 Performance tracking
+│   ├── agent_selector.py      # V13.0 ML-based routing
+│   ├── file_locks.py          # V13.0 Race condition prevention
+│   ├── skill_interface.py     # V13.0 Plugin interface
+│   └── skill_plugin.py        # V13.0 Dynamic loader
+├── rules/               # 11 rules files
+│   ├── common/          # Universal rules
+│   ├── python/          # Python patterns
+│   ├── typescript/      # TypeScript patterns
+│   └── go/              # Go patterns
+├── learnings/           # instincts.json (captured patterns)
+├── templates/           # 3 templates (task, review, integration)
+└── workflows/           # 4 workflows (bugfix, feature, refactor, optimized)
+```
+
+---
+
+## 🚦 Quick Start
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/eroslifestyle/Claude-Orchestrator-AI-Evolution.git
+cd Claude-Orchestrator-AI-Evolution
+```
+
+### 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Run Tests
+
+```bash
+# Unit tests
+pytest lib/tests/ -v --cov=lib --cov-report=term-missing
+
+# Stress test
+python tmp/stress_test_v14.py
+```
+
+### 4. Use with Claude Code
+
+Copy `.claude/` to your project or set as global:
+
+```bash
+# Windows
+xcopy /E /I .claude %USERPROFILE%\.claude
+
+# Linux/Mac
+cp -r .claude ~/.claude
+```
+
+---
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [architecture.md](skills/orchestrator/docs/architecture.md) | System architecture |
+| [quickstart-it.md](skills/orchestrator/docs/quickstart-it.md) | Italian quick start |
+| [setup-guide.md](skills/orchestrator/docs/setup-guide.md) | Setup guide |
+| [examples.md](skills/orchestrator/docs/examples.md) | Usage examples |
+| [test-suite.md](skills/orchestrator/docs/test-suite.md) | Test documentation |
+| [troubleshooting.md](skills/orchestrator/docs/troubleshooting.md) | Common issues |
+| [windows-support.md](skills/orchestrator/docs/windows-support.md) | Windows specifics |
+
+---
+
+## 🗺️ Roadmap
+
+### V14.0.3 (Current) ✅
+- [x] Predictive Agent Caching
+- [x] Adaptive Token Budgeting
+- [x] A/B Testing Framework
+- [x] Auto-Tuning Parameters
+- [x] Stress Test 5/5 PASS
+- [x] Memory optimization (gc.collect periodic)
+
+### V15.0 (Planned)
+- [ ] Distributed Cache (Redis support)
+- [ ] Analytics Dashboard
+- [ ] Multi-process coordination
+- [ ] Enhanced observability
+
+### V16.0 (Future)
+- [ ] Web UI Dashboard
+- [ ] Real-time metrics streaming
+- [ ] Cloud deployment templates
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+MIT License - See [LICENSE](LICENSE) for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- Anthropic for Claude API
+- All contributors and testers
+- The open-source community
+
+---
+
+**Made with ❤️ by [eroslifestyle](https://github.com/eroslifestyle)**
+
+*V14.0.3 - AI-Native - March 2026*
