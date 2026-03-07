@@ -60,3 +60,11 @@ orchestrator-plugin-v*/
 
 # Stats
 statsig/
+
+# Backup files (keep last 3 only)
+backups/*.backup.*
+\!backups/.gitkeep
+
+# Coverage
+.coverage
+plugins/orchestrator-plugin/.coverage

@@ -145,6 +145,7 @@ class TestExecutionPlan:
         )
         plan = ExecutionPlan(
             session_id="abc123",
+            user_request="Test request",
             tasks=[task],
             parallel_batches=[[task.id]],
             total_agents=1,
@@ -182,6 +183,7 @@ class TestOrchestrationSession:
         )
         plan = ExecutionPlan(
             session_id="abc123",
+            user_request="Test request",
             tasks=[task],
             parallel_batches=[[task.id]],
             total_agents=1,
@@ -16903,7 +16905,7 @@ class TestCleanupOldSessionsBranchCoverage:
     @pytest.mark.asyncio
     async def test_cleanup_old_sessions_no_old_sessions(self) -> None:
         """Test cleanup with no old sessions."""
-        result = await engine.cleanup_old_sessions()
+        result = await engine.cleanup_old_sessions_async()
         assert "deleted_sessions" in result
 
 
@@ -16960,6 +16962,7 @@ class TestFormatPlanTableBranchCoverage:
 
         plan = ExecutionPlan(
             session_id="test",
+            user_request="test",
             domains=[],
             complexity="BASSA",
             total_agents=0,
@@ -17288,6 +17291,7 @@ class TestFormatPlanTableAllLines:
 
         plan = ExecutionPlan(
             session_id="test",
+            user_request="test",
             domains=["Testing", "Security"],
             complexity="ALTA",
             total_agents=2,
@@ -17350,14 +17354,14 @@ class TestCleanupOldSessionsAllLines:
         """Test cleanup removes old sessions."""
         from mcp_server.server import SESSION_MAX_AGE_HOURS
 
-        result = await engine.cleanup_old_sessions()
+        result = await engine.cleanup_old_sessions_async()
         assert "deleted_sessions" in result
         assert isinstance(result["deleted_sessions"], int)
 
     @pytest.mark.asyncio
     async def test_cleanup_returns_total_count(self) -> None:
         """Test cleanup returns total_sessions count."""
-        result = await engine.cleanup_old_sessions()
+        result = await engine.cleanup_old_sessions_async()
         assert "total_sessions" in result
         assert isinstance(result["total_sessions"], int)
 
@@ -17588,6 +17592,7 @@ class TestFormatPlanTableComprehensive:
 
         plan = ExecutionPlan(
             session_id="empty",
+            user_request="empty",
             domains=[],
             complexity="BASSA",
             total_agents=0,
@@ -17605,6 +17610,7 @@ class TestFormatPlanTableComprehensive:
 
         plan = ExecutionPlan(
             session_id="test",
+            user_request="test",
             domains=["Testing"],
             complexity="MEDIA",
             total_agents=2,
@@ -17663,7 +17669,7 @@ class TestCleanupOldSessionsComprehensive:
     @pytest.mark.asyncio
     async def test_cleanup_returns_counts(self) -> None:
         """Test cleanup returns proper counts."""
-        result = await engine.cleanup_old_sessions()
+        result = await engine.cleanup_old_sessions_async()
         assert "total_sessions" in result
         assert "deleted_sessions" in result
         assert "kept_sessions" in result
@@ -18048,16 +18054,17 @@ class TestOrchestratorCancelSuccessPath:
     @pytest.mark.asyncio
     async def test_orchestrator_cancel_sets_status_cancelled(self) -> None:
         """Test cancel sets session status to CANCELLED."""
-        from mcp_server.server import handle_call_tool, TaskStatus, OrchestratorEngine
+        from mcp_server.server import handle_call_tool, TaskStatus, engine
 
-        test_engine = OrchestratorEngine()
-        plan = test_engine.generate_execution_plan("test")
-        session = test_engine.get_session(plan.session_id)
+        plan = engine.generate_execution_plan("test")
+        session = engine.get_session(plan.session_id)
 
         if session:
             result = await handle_call_tool("orchestrator_cancel", {"session_id": plan.session_id})
             assert len(result) > 0
-            # Session should be cancelled
+            # Session should be cancelled - re-fetch to get updated state
+            session = engine.get_session(plan.session_id)
+            assert session is not None
             assert session.status == TaskStatus.CANCELLED
 
 
@@ -18099,12 +18106,14 @@ class TestServerCapabilities:
     def test_server_has_name(self) -> None:
         """Test server has name in capabilities."""
         from mcp_server.server import server
+        from mcp.server import NotificationOptions
 
         capabilities = server.get_capabilities(
             notification_options=NotificationOptions(),
             experimental_capabilities={}
         )
         # Should have some capabilities
+        assert capabilities is not None
 
 
 class TestMCPToolHandlerAllPaths:
@@ -18437,6 +18446,7 @@ class TestFormatTableVariousPlans:
 
         plan = ExecutionPlan(
             session_id="empty",
+            user_request="empty",
             domains=[],
             complexity="BASSA",
             total_agents=0,
@@ -18503,7 +18513,7 @@ class TestCleanupFunctionsCoverage:
         """Test cleanup_old_sessions coverage."""
         from mcp_server.server import engine
 
-        result = await engine.cleanup_old_sessions()
+        result = await engine.cleanup_old_sessions_async()
         assert isinstance(result, dict)
 
 
@@ -18569,11 +18579,6 @@ class TestExecutionPlanCoverage:
         plan = ExecutionPlan(
             session_id="test",
             user_request="test",
-            domains=[],
-            complexity="MEDIA",
-            total_agents=1,
-            estimated_time=1.0,
-            estimated_cost=0.1,
             tasks=[
                 AgentTask(
                     id="T1",
@@ -18588,7 +18593,12 @@ class TestExecutionPlanCoverage:
                     estimated_cost=0.1
                 )
             ],
-            parallel_batches=[[]]
+            parallel_batches=[[]],
+            total_agents=1,
+            estimated_time=1.0,
+            estimated_cost=0.1,
+            complexity="media",
+            domains=[]
         )
         assert plan.session_id == "test"
 
@@ -18598,7 +18608,7 @@ class TestOrchestrationSessionCoverage:
 
     def test_orchestration_session_creation(self) -> None:
         """Test OrchestrationSession object creation."""
-        from mcp_server.server import OrchestrationSession, ExecutionPlan, AgentTask
+        from mcp_server.server import OrchestrationSession, ExecutionPlan, AgentTask, TaskStatus
         from datetime import datetime
 
         plan = ExecutionPlan(
@@ -18630,8 +18640,10 @@ class TestOrchestrationSessionCoverage:
             session_id="test",
             user_request="test",
             plan=plan,
-            status="IN_PROGRESS",
+            status=TaskStatus.IN_PROGRESS,
             started_at=datetime.now(),
+            completed_at=None,
+            results=[],
             task_docs=[],
         )
         assert session.session_id == "test"
@@ -18964,6 +18976,7 @@ class TestFormatPlanTableFullFunctionCoverage:
 
         plan = ExecutionPlan(
             session_id="test",
+            user_request="test",
             domains=[],
             complexity="BASSA",
             total_agents=0,
@@ -19120,7 +19133,7 @@ class TestCleanupOldSessionsFullCoverage:
         """Test gets current time."""
         from mcp_server.server import engine
 
-        result = await engine.cleanup_old_sessions()
+        result = await engine.cleanup_old_sessions_async()
         assert isinstance(result, dict)
 
     @pytest.mark.asyncio
@@ -19128,7 +19141,7 @@ class TestCleanupOldSessionsFullCoverage:
         """Test iterates through sessions."""
         from mcp_server.server import engine
 
-        result = await engine.cleanup_old_sessions()
+        result = await engine.cleanup_old_sessions_async()
         assert isinstance(result, dict)
 
     @pytest.mark.asyncio
@@ -19136,7 +19149,7 @@ class TestCleanupOldSessionsFullCoverage:
         """Test deletes old sessions."""
         from mcp_server.server import engine
 
-        result = await engine.cleanup_old_sessions()
+        result = await engine.cleanup_old_sessions_async()
         assert "deleted_sessions" in result
 
     @pytest.mark.asyncio
@@ -19144,7 +19157,7 @@ class TestCleanupOldSessionsFullCoverage:
         """Test returns deletion counts."""
         from mcp_server.server import engine
 
-        result = await engine.cleanup_old_sessions()
+        result = await engine.cleanup_old_sessions_async()
         assert "deleted_sessions" in result
         assert "total_sessions" in result
 
@@ -19735,7 +19748,7 @@ class TestAnalyzeRequestAllCodePaths:
             ("integration", "API"),
             ("mql", "MQL"),
             ("trading", "Trading"),
-            ("architect", "Architecture"),
+            ("architecture", "Architecture"),
             ("tester", "Testing"),
             ("devops", "DevOps"),
             ("claude", "AI"),
@@ -19997,33 +20010,40 @@ class TestMCPServerResourcesCoverage:
     async def test_read_sessions_resource(self) -> None:
         """Test reading sessions resource."""
         from mcp_server.server import handle_read_resource
+        import json
 
         result = await handle_read_resource("sessions")
-        assert isinstance(result, list)
+        # Result is JSON string, parse it
+        data = json.loads(result)
+        assert isinstance(data, list)
 
     @pytest.mark.asyncio
     async def test_read_agents_resource(self) -> None:
         """Test reading agents resource."""
         from mcp_server.server import handle_read_resource
+        import json
 
         result = await handle_read_resource("agents")
-        assert isinstance(result, list)
+        # Result is JSON string, parse it
+        data = json.loads(result)
+        assert isinstance(data, list)
 
     @pytest.mark.asyncio
     async def test_read_config_resource(self) -> None:
         """Test reading config resource."""
         from mcp_server.server import handle_read_resource
-
+        import json
         result = await handle_read_resource("config")
-        assert isinstance(result, list)
+        data = json.loads(result)
+        assert isinstance(data, dict)
 
     @pytest.mark.asyncio
     async def test_read_unknown_resource(self) -> None:
         """Test reading unknown resource."""
         from mcp_server.server import handle_read_resource
 
-        result = await handle_read_resource("unknown")
-        assert isinstance(result, list)
+        with pytest.raises(ValueError, match="Unknown resource"):
+            await handle_read_resource("unknown")
 
 
 class TestMCPServerToolsListCoverage:
@@ -20043,7 +20063,7 @@ class TestOrchestrationSessionStrRepresentation:
 
     def test_session_str_representation(self) -> None:
         """Test session has string representation."""
-        from mcp_server.server import OrchestrationSession, ExecutionPlan, AgentTask
+        from mcp_server.server import OrchestrationSession, ExecutionPlan, AgentTask, TaskStatus
         from datetime import datetime
 
         plan = ExecutionPlan(
@@ -20075,11 +20095,18 @@ class TestOrchestrationSessionStrRepresentation:
             session_id="test",
             user_request="test",
             plan=plan,
-            status="IN_PROGRESS",
+            status=TaskStatus.IN_PROGRESS,
             started_at=datetime.now(),
+            completed_at=None,
+            results=[],
             task_docs=[],
         )
         # Should have str representation
+        str_repr = str(session)
+        assert "OrchestrationSession" in str_repr
+        assert "session_id=test" in str_repr
+        assert "status=in_progress" in str_repr
+        assert "user_request=test" in str_repr
 
 
 class TestEngineStrAndRepr:
@@ -20127,11 +20154,6 @@ class TestExecutionPlanStrRepresentation:
         plan = ExecutionPlan(
             session_id="test",
             user_request="test",
-            domains=[],
-            complexity="MEDIA",
-            total_agents=1,
-            estimated_time=1.0,
-            estimated_cost=0.1,
             tasks=[
                 AgentTask(
                     id="T1",
@@ -20146,7 +20168,12 @@ class TestExecutionPlanStrRepresentation:
                     estimated_cost=0.1
                 )
             ],
-            parallel_batches=[[]]
+            parallel_batches=[[]],
+            total_agents=1,
+            estimated_time=1.0,
+            estimated_cost=0.1,
+            complexity="media",
+            domains=[]
         )
         str_repr = str(plan)
         assert isinstance(str_repr, str)
@@ -20157,7 +20184,7 @@ class TestOrchestrationSessionPostInitCoverage:
 
     def test_post_init_with_none_task_docs(self) -> None:
         """Test __post_init__ initializes task_docs when None."""
-        from mcp_server.server import OrchestrationSession, ExecutionPlan, AgentTask
+        from mcp_server.server import OrchestrationSession, ExecutionPlan, AgentTask, TaskStatus
         from datetime import datetime
 
         plan = ExecutionPlan(
@@ -20189,7 +20216,7 @@ class TestOrchestrationSessionPostInitCoverage:
             session_id="test",
             user_request="test",
             plan=plan,
-            status="IN_PROGRESS",
+            status=TaskStatus.IN_PROGRESS,
             started_at=datetime.now(),
             completed_at=None,
             results=[],
@@ -20367,7 +20394,7 @@ class TestCleanupOldSessionsComplete:
         """Test returns dict structure."""
         from mcp_server.server import engine
 
-        result = await engine.cleanup_old_sessions()
+        result = await engine.cleanup_old_sessions_async()
         assert isinstance(result, dict)
 
     @pytest.mark.asyncio
@@ -20375,7 +20402,7 @@ class TestCleanupOldSessionsComplete:
         """Test has deleted_sessions count."""
         from mcp_server.server import engine
 
-        result = await engine.cleanup_old_sessions()
+        result = await engine.cleanup_old_sessions_async()
         assert "deleted_sessions" in result
         assert isinstance(result["deleted_sessions"], int)
 
@@ -20572,11 +20599,6 @@ class TestAllDataclassesComplete:
         plan = ExecutionPlan(
             session_id="test",
             user_request="test",
-            domains=[],
-            complexity="MEDIA",
-            total_agents=1,
-            estimated_time=1.0,
-            estimated_cost=0.1,
             tasks=[
                 AgentTask(
                     id="T1",
@@ -20591,13 +20613,18 @@ class TestAllDataclassesComplete:
                     estimated_cost=0.1
                 )
             ],
-            parallel_batches=[[]]
+            parallel_batches=[[]],
+            total_agents=1,
+            estimated_time=1.0,
+            estimated_cost=0.1,
+            complexity="media",
+            domains=[]
         )
         assert plan.session_id == "test"
 
     def test_orchestration_session_all_fields(self) -> None:
         """Test OrchestrationSession all fields."""
-        from mcp_server.server import OrchestrationSession, ExecutionPlan, AgentTask
+        from mcp_server.server import OrchestrationSession, ExecutionPlan, AgentTask, TaskStatus
         from datetime import datetime
 
         plan = ExecutionPlan(
@@ -20629,7 +20656,7 @@ class TestAllDataclassesComplete:
             session_id="test",
             user_request="test",
             plan=plan,
-            status="IN_PROGRESS",
+            status=TaskStatus.IN_PROGRESS,
             started_at=datetime.now(),
             completed_at=None,
             results=[],
@@ -20663,11 +20690,11 @@ class TestAllEnumsComplete:
         """Test TaskStatus all values."""
         from mcp_server.server import TaskStatus
 
-        assert TaskStatus.PENDING.value == "PENDING"
-        assert TaskStatus.IN_PROGRESS.value == "IN_PROGRESS"
-        assert TaskStatus.COMPLETED.value == "COMPLETED"
-        assert TaskStatus.FAILED.value == "FAILED"
-        assert TaskStatus.CANCELLED.value == "CANCELLED"
+        assert TaskStatus.PENDING.value == "pending"
+        assert TaskStatus.IN_PROGRESS.value == "in_progress"
+        assert TaskStatus.COMPLETED.value == "completed"
+        assert TaskStatus.FAILED.value == "failed"
+        assert TaskStatus.CANCELLED.value == "cancelled"
 
 
 class TestSessionManagementComplete:
@@ -20948,16 +20975,16 @@ class TestSessionSaveLoadFullCoverage:
     def test_save_sessions_exception_handling(self) -> None:
         """Test save_sessions handles exceptions."""
         from mcp_server.server import engine
-        import tempfile
+        import asyncio
 
         # Test with invalid path to trigger exception handling
         original_sessions_file = engine.sessions_file
 
         try:
             engine.sessions_file = "/invalid/path/that/cannot/be/created/sessions.json"
-            # Should not raise exception
-            count = engine._save_sessions()
-            assert count >= 0
+            # Should not raise exception (async method)
+            count = asyncio.run(engine._save_sessions())
+            assert count >= 0 or count == -1  # -1 indicates error
         finally:
             engine.sessions_file = original_sessions_file
 
@@ -21266,58 +21293,65 @@ class TestGenerateExecutionPlanFull:
 class TestMCPToolHandlersFullCoverage:
     """Complete coverage for MCP tool handlers (lines 1427-1688)."""
 
-    def test_orchestrator_analyze_tool(self) -> None:
+    @pytest.mark.asyncio
+    async def test_orchestrator_analyze_tool(self) -> None:
         """Test orchestrator_analyze tool handler."""
         from mcp_server.server import handle_call_tool
 
-        result = handle_call_tool("orchestrator_analyze", {"request": "test request"})
+        result = await handle_call_tool("orchestrator_analyze", {"request": "test request"})
         assert isinstance(result, list)
         assert len(result) > 0
 
-    def test_orchestrator_execute_tool(self) -> None:
+    @pytest.mark.asyncio
+    async def test_orchestrator_execute_tool(self) -> None:
         """Test orchestrator_execute tool handler."""
         from mcp_server.server import handle_call_tool
 
-        result = handle_call_tool("orchestrator_execute", {"request": "test"})
+        result = await handle_call_tool("orchestrator_execute", {"request": "test"})
         assert isinstance(result, list)
 
-    def test_orchestrator_status_tool(self) -> None:
+    @pytest.mark.asyncio
+    async def test_orchestrator_status_tool(self) -> None:
         """Test orchestrator_status tool handler."""
         from mcp_server.server import handle_call_tool, engine
 
         # Create a session first
         plan = engine.generate_execution_plan("test")
-        result = handle_call_tool("orchestrator_status", {"session_id": plan.session_id})
+        result = await handle_call_tool("orchestrator_status", {"session_id": plan.session_id})
         assert isinstance(result, list)
 
-    def test_orchestrator_cancel_tool(self) -> None:
+    @pytest.mark.asyncio
+    async def test_orchestrator_cancel_tool(self) -> None:
         """Test orchestrator_cancel tool handler."""
         from mcp_server.server import handle_call_tool, engine
 
         # Create a session first
         plan = engine.generate_execution_plan("test")
-        result = handle_call_tool("orchestrator_cancel", {"session_id": plan.session_id})
+        result = await handle_call_tool("orchestrator_cancel", {"session_id": plan.session_id})
         assert isinstance(result, list)
 
-    def test_orchestrator_agents_tool(self) -> None:
+    @pytest.mark.asyncio
+    async def test_orchestrator_agents_tool(self) -> None:
         """Test orchestrator_agents tool handler."""
         from mcp_server.server import handle_call_tool
 
-        result = handle_call_tool("orchestrator_agents", {"filter": "coder"})
+        result = await handle_call_tool("orchestrator_agents", {"filter": "coder"})
         assert isinstance(result, list)
 
-    def test_orchestrator_list_tool(self) -> None:
+    @pytest.mark.asyncio
+    async def test_orchestrator_list_tool(self) -> None:
         """Test orchestrator_list tool handler."""
         from mcp_server.server import handle_call_tool
 
-        result = handle_call_tool("orchestrator_list", {"limit": 10})
+        result = await handle_call_tool("orchestrator_list", {"limit": 10})
         assert isinstance(result, list)
 
-    def test_orchestrator_preview_tool(self) -> None:
+    @pytest.mark.asyncio
+    async def test_orchestrator_preview_tool(self) -> None:
         """Test orchestrator_preview tool handler."""
         from mcp_server.server import handle_call_tool
 
-        result = handle_call_tool("orchestrator_preview", {"request": "test", "show_table": True})
+        result = await handle_call_tool("orchestrator_preview", {"request": "test", "show_table": True})
         assert isinstance(result, list)
 
 
@@ -21690,15 +21724,16 @@ class TestSessionSaveExceptionHandling:
     def test_save_sessions_exception_path(self) -> None:
         """Test exception handling in _save_sessions."""
         from mcp_server import server as server_module
+        import asyncio
 
         # Use a path that will cause an error
         original_file = server_module.SESSIONS_FILE
         try:
             server_module.SESSIONS_FILE = "/invalid/path/sessions.json"
-            # Try to save sessions - should handle gracefully
-            result = server_module.engine._save_sessions()
-            # Should handle exception gracefully (returns None on error)
-            assert result is None or result >= 0
+            # Try to save sessions - should handle gracefully (async method)
+            result = asyncio.run(server_module.engine._save_sessions())
+            # Should handle exception gracefully (returns -1 on error per task requirement)
+            assert result == -1 or result >= 0
         finally:
             server_module.SESSIONS_FILE = original_file
 
@@ -24365,6 +24400,7 @@ class TestMCPResourceHandlersFullCoverage:
     async def test_all_resources_accessible(self) -> None:
         """Test that all defined resources are accessible."""
         from mcp_server.server import handle_read_resource
+        import json
 
         resources = [
             "sessions://",
@@ -24374,18 +24410,23 @@ class TestMCPResourceHandlersFullCoverage:
 
         for resource in resources:
             result = await handle_read_resource(resource)
-            assert "content" in result or "error" in result
+            # Result should be a valid JSON string
+            data = json.loads(result)
+            # Each resource should return a dict or list
+            assert isinstance(data, (dict, list))
 
     @pytest.mark.asyncio
     async def test_read_agents_resource_structure(self) -> None:
         """Test that agents resource has correct structure."""
         from mcp_server.server import handle_read_resource
+        import json
 
         result = await handle_read_resource("agents://")
-
-        assert "content" in result
-        content = result["content"]
-        assert len(content) > 0
+        # Result is a JSON string, parse it
+        data = json.loads(result)
+        # Agents should return a list of agent information
+        assert isinstance(data, list)
+        assert len(data) > 0
 
 
 class TestToolExecutionPaths:
@@ -26109,8 +26150,8 @@ class TestCleanupOldSessionsFullCoverage:
         )
         engine.sessions["old123"] = old_session
 
-        # Mock _save_sessions to verify it's called
-        with patch.object(engine, '_save_sessions') as mock_save:
+        # Mock _save_sessions_sync to verify it's called
+        with patch.object(engine, '_save_sessions_sync') as mock_save:
             removed = engine.cleanup_old_sessions()
 
             if removed > 0:
@@ -26813,11 +26854,10 @@ class TestCleanupOldSessionsSaveBranchCoverage:
 
         # Track if save was called
         save_called = []
-        original_save = engine._save_sessions
         def mock_save():
             save_called.append(True)
-            original_save()
 
+        # Patch _save_sessions to track if it's called
         with patch.object(engine, '_save_sessions', side_effect=mock_save):
             removed = engine.cleanup_old_sessions()
 
