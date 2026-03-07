@@ -1,4 +1,4 @@
-# Orchestrator Documentation Index V14.0.2
+# Orchestrator Documentation Index V14.0.3
 
 > **Version:** 14.0.2 AI-Native | **Last Updated:** 2026-03-07
 > **Total Documents:** 20 | **Total Lines:** ~7,300
@@ -10,7 +10,7 @@
 
 | # | Document | Description | Lines |
 |---|----------|-------------|-------|
-| 1 | [changelog.md](./changelog.md) | Version history and release notes (V14.0.2 AI-Native) | 220 |
+| 1 | [changelog.md](./changelog.md) | Version history and release notes (V14.0.3 AI-Native) | 220 |
 | 2 | [AUDIT-REPORT-V12.0.md](./AUDIT-REPORT-V12.0.md) | Deep audit findings and resolutions | 413 |
 | 3 | [setup-guide.md](./setup-guide.md) | Step-by-step installation and configuration | 74 |
 | 4 | [architecture.md](./architecture.md) | System architecture and component overview | 124 |
@@ -145,7 +145,7 @@ LEGACY
 
 ## Version History
 
-### V14.0.2 - Bug Fix Release (2026-03-07)
+### V14.0.3 - Bug Fix Release (2026-03-07)
 
 #### Limitazioni Risolte (8/8)
 
@@ -232,7 +232,7 @@ LEGACY
 ## Maintenance Notes
 
 ### Last Updated
-- **V14.0.2:** 2026-03-07 - Bug fix release, 8 limitazioni risolte, stress test passed, 91 new tests
+- **V14.0.3:** 2026-03-07 - Bug fix release, 8 limitazioni risolte, stress test passed, 91 new tests
 - **V14.0 AI-NATIVE:** 2026-03-07 - PredictiveAgentCache, AdaptiveTokenBudget, ABTestingFramework, AutoTuner
 - **V13.1 Super-Performance:** 2026-03-07 - DB indexes, Rule Excerpts system, Lazy L2 loading, 6 bug fixes
 - **V13.0.1:** 2026-03-07 - Bug fixes (3 CRITICAL, 4 HIGH, 6 MEDIUM/LOW), 3 ADRs, performance optimizations
@@ -250,4 +250,4 @@ The following files are retained for backward compatibility but content has been
 
 ---
 
-*Orchestrator Documentation Index V14.0.2 AI-Native - Generated 2026-03-07*
+*Orchestrator Documentation Index V14.0.3 AI-Native - Generated 2026-03-07*

@@ -20,11 +20,11 @@ Critical test coverage improvements for previously untested modules and document
 | Issue | Fix |
 |-------|-----|
 | 13 `except Exception: pass` | Replaced with proper logging |
-| bimodal-routing.md V13.0 | Updated to V14.0.2 |
+| bimodal-routing.md V13.0 | Updated to V14.0.3 |
 | INDEX.md counts | Agent 26->43, Skills added 32 |
 
 ### Documentation
-- 11 docs updated with V14.0.2 header
+- 11 docs updated with V14.0.3 header
 - INDEX.md counts corrected
 - bimodal-routing.md version aligned
 
@@ -35,7 +35,7 @@ Critical test coverage improvements for previously untested modules and document
 
 ---
 
-## V14.0.2 AI-NATIVE FIXES - 2026-03-07
+## V14.0.3 AI-NATIVE FIXES - 2026-03-07
 
 ### Overview
 Major enhancements to V14.0 AI-Native components with cold start handling, tiered storage, adaptive thresholds, and proper statistical implementations.
@@ -61,7 +61,7 @@ Major enhancements to V14.0 AI-Native components with cold start handling, tiere
 | Error rate | 0% |
 
 ### Tests
-- **91 new tests** for V14.0.2 fixes
+- **91 new tests** for V14.0.3 fixes
 - **100% pass rate**
 
 ---

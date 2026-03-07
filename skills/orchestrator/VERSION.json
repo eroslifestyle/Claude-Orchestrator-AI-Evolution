@@ -1,5 +1,5 @@
 {
-  "version": "14.0.2",
+  "version": "14.0.3",
   "release_date": "2026-03-07",
   "status": "active",
   "features": {
@@ -52,7 +52,7 @@
     "adaptive_budget": 24,
     "ab_testing": 18,
     "auto_tuner": 18,
-    "total": 91
+    "total": 264
   },
-  "previous_version": "14.0.1"
+  "previous_version": "14.0.2"
 }

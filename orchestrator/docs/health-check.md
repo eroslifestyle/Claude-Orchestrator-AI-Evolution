@@ -1,6 +1,6 @@
-> Updated for V14.0.2: Health checks now include AI-Native features (Predictive Cache, Adaptive Budget, A/B Testing, Auto-Tuner).
+> Updated for V14.0.3: Health checks now include AI-Native features (Predictive Cache, Adaptive Budget, A/B Testing, Auto-Tuner).
 
-# Health Check Module V14.0.2
+# Health Check Module V14.0.3
 
 > **Version:** 14.0.2 AI-Native | **Last Updated:** 2026-03-07
 

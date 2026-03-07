@@ -1,7 +1,7 @@
-# Skills Reference V14.0.2
+# Skills Reference V14.0.3
 
 > **Version:** 14.0.2 AI-Native | **Last Updated:** 2026-03-07
-> Orchestrator V14.0.2 - Skills Reference Guide
+> Orchestrator V14.0.3 - Skills Reference Guide
 
 Source: https://code.claude.com/docs/en/skills
 
@@ -224,7 +224,7 @@ for pred in predictions:
 # Falls back to keyword-based prediction when AgentUsageTracker unavailable
 ```
 
-**V14.0.2 Features:**
+**V14.0.3 Features:**
 - Cold start handling with keyword fallback
 - Tiered storage protects high-value patterns
 - Optional distributed lock for multi-process
@@ -256,7 +256,7 @@ budget = budget_calc.calculate_budget("complex security refactor", {"files": ["a
 print(f"Budget: {budget.final_budget} tokens (tier: {budget_calc.get_complexity_tier(budget.factors['complexity_raw'])})")
 ```
 
-**V14.0.2 Features:**
+**V14.0.3 Features:**
 - Adaptive thresholds from distribution
 - Dynamic rule budget (20-60%)
 - Auto-adjust with 100+ samples
@@ -273,7 +273,7 @@ from lib.ab_testing import ABTestingFramework, RoutingStrategy
 
 ab = ABTestingFramework()
 
-# Multi-variant experiment (V14.0.2)
+# Multi-variant experiment (V14.0.3)
 control = RoutingStrategy("control", {"mode": "haiku"})
 treatment_b = RoutingStrategy("fast", {"mode": "haiku", "cache": True})
 treatment_c = RoutingStrategy("opus", {"mode": "opus"})
@@ -297,7 +297,7 @@ if result and result.is_significant:
     print(f"Winner: {result.winner}")
 ```
 
-**V14.0.2 Features:**
+**V14.0.3 Features:**
 - Multi-variant support (A/B/C/D)
 - Chi-square test for N variants
 - Configurable weights
@@ -334,7 +334,7 @@ tuner.record_outcome(params, {
 # tuner._gp.predict() returns mean + variance
 ```
 
-**V14.0.2 Features:**
+**V14.0.3 Features:**
 - Real Gaussian Process with RBF kernel
 - Adaptive n_candidates (5-100)
 - Latin Hypercube Sampling

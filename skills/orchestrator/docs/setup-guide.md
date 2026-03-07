@@ -1,4 +1,4 @@
-# Setup Guide - Orchestrator V14.0.2 AI-NATIVE
+# Setup Guide - Orchestrator V14.0.3 AI-NATIVE
 
 > Step-by-step setup for the multi-agent orchestrator system with AI-Native features.
 
@@ -74,7 +74,7 @@ Optional: Enable additional MCP servers (slack, firebase) by adding to the array
 
 ---
 
-## Optional Dependencies (V14.0.2)
+## Optional Dependencies (V14.0.3)
 
 ### Per Distributed Lock (multi-process):
 ```bash
@@ -103,10 +103,10 @@ export REDIS_PORT=6379
 
 ---
 
-## Running Tests (V14.0.2)
+## Running Tests (V14.0.3)
 
 ```bash
-# Run all V14.0.2 tests
+# Run all V14.0.3 tests
 pytest lib/tests/test_predictive_cache_fixes.py -v
 pytest lib/tests/test_adaptive_budget_v14_1.py -v
 pytest lib/tests/test_ab_testing_multi_variant.py -v

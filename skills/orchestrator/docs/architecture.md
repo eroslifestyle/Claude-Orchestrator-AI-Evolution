@@ -1,4 +1,4 @@
-# Orchestrator System Architecture V14.0.2
+# Orchestrator System Architecture V14.0.3
 
 > Complete system architecture documentation for the multi-agent orchestrator.
 
@@ -9,7 +9,7 @@
 ```
 ================================================================================
                         ORCHESTRATOR SYSTEM ARCHITECTURE
-                              V14.0.2 AI-NATIVE
+                              V14.0.3 AI-NATIVE
 ================================================================================
 
 USER REQUEST
@@ -496,13 +496,13 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 
 ---
 
-## AI-NATIVE Architecture (V14.0.2)
+## AI-NATIVE Architecture (V14.0.3)
 
 ### Predictive Cache
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                  PredictiveAgentCache V14.0.2               │
+│                  PredictiveAgentCache V14.0.3               │
 ├─────────────────────────────────────────────────────────────┤
 │  Task Input → Pattern Engine → Agent Predictions           │
 │                                                              │
@@ -524,7 +524,7 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                 AdaptiveTokenBudget V14.0.2                 │
+│                 AdaptiveTokenBudget V14.0.3                 │
 ├─────────────────────────────────────────────────────────────┤
 │  Task → Complexity Assessment → Token Budget               │
 │                                                              │
@@ -547,7 +547,7 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                  ABTestingFramework V14.0.2                 │
+│                  ABTestingFramework V14.0.3                 │
 ├─────────────────────────────────────────────────────────────┤
 │  Multi-Variant Support (A/B/C/D):                           │
 │                                                              │
@@ -568,7 +568,7 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      AutoTuner V14.0.2                      │
+│                      AutoTuner V14.0.3                      │
 ├─────────────────────────────────────────────────────────────┤
 │  Gaussian Process Regressor:                                 │
 │  - Kernel: RBF with length_scale=0.5                        │
@@ -586,7 +586,7 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### V14.0.2 New Lib Modules
+### V14.0.3 New Lib Modules
 
 | Module | Lines | Purpose |
 |--------|-------|---------|
@@ -595,9 +595,9 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 | `lib/ab_testing.py` | 320 | Multi-variant statistical testing |
 | `lib/auto_tuner.py` | 551 | Bayesian hyperparameter optimization |
 
-### V14.0.2 Performance Targets
+### V14.0.3 Performance Targets
 
-| Metric | V13.1 | V14.0.2 | Improvement |
+| Metric | V13.1 | V14.0.3 | Improvement |
 |--------|-------|---------|-------------|
 | Agent Prediction Accuracy | N/A | >90% | NEW |
 | Token Budget Precision | Fixed | Adaptive | 40% better |
@@ -610,7 +610,7 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 
 | Version | Date | Changes |
 |---------|------|---------|
-| **V14.0.2** | 2026-03-07 | AI-NATIVE: PredictiveAgentCache, AdaptiveTokenBudget, ABTestingFramework, AutoTuner, 4 new lib modules (~3208 lines), 54 new tests |
+| **V14.0.3** | 2026-03-07 | AI-NATIVE: PredictiveAgentCache, AdaptiveTokenBudget, ABTestingFramework, AutoTuner, 4 new lib modules (~3208 lines), 54 new tests |
 | **V13.1** | 2026-03-07 | Super-Performance: DB indexes, Rule Excerpts, Lazy L2 loading, 6 bug fixes (HIGH L-6, MEDIUM H-3, M-2, M-1, M-1x2) |
 | **V13.0** | 2026-03-07 | Dynamic Agent Selection, Plugin Skills, File Locks, 5 new lib modules, bug fixes (3 CRITICAL, 4 HIGH) |
 | **V11.3.1 AUDIT FIX** | 2026-02-26 | Deep audit: ~90 issues found, 22 fix categories, Windows syntax, routing entries, MCP honesty, subagent MCP access, learning threshold (0.5->0.6), multi-tag evolution |
@@ -677,5 +677,5 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 
 ---
 
-**ORCHESTRATOR SYSTEM ARCHITECTURE V14.0.2 AI-NATIVE**
+**ORCHESTRATOR SYSTEM ARCHITECTURE V14.0.3 AI-NATIVE**
 *Predictive cache. Adaptive budget. A/B testing. Auto-tuner.*
