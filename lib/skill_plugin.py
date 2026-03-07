@@ -6,11 +6,106 @@ Dynamic skill loading with hot-reload capability.
 import importlib
 import inspect
 import json
+import logging
+import re
+import time
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional, Type, List
+from collections import deque
+from typing import Dict, Optional, Type, List, Any
 import sys
 
-from skill_interface import SkillInterface
+logger = logging.getLogger(__name__)
+
+from .skill_interface import SkillInterface, SkillResult
+
+
+class SkillMdWrapper(SkillInterface):
+    """Wrapper per skill definite in SKILL.md.
+
+    Incapsula una skill basata su file SKILL.md, fornendo
+    un'interfaccia compatibile con SkillInterface.
+    """
+
+    def __init__(self, skill_id: str, skill_dir: Path, metadata: Dict[str, Any]):
+        """Inizializza il wrapper per skill SKILL.md.
+
+        Args:
+            skill_id: Identificatore univoco della skill
+            skill_dir: Directory contenente SKILL.md
+            metadata: Metadati estratti dal parsing di SKILL.md
+        """
+        super().__init__()
+        self._skill_id = skill_id
+        self._skill_dir = skill_dir
+        self._metadata = metadata
+        self._skill_name = metadata.get("name", skill_id)
+        self._description = metadata.get("description", "")
+        self._instructions = metadata.get("instructions", "")
+        self._algorithm = metadata.get("algorithm", "")
+
+    @property
+    def skill_id(self) -> str:
+        """ID univoco della skill."""
+        return self._skill_id
+
+    @property
+    def skill_name(self) -> str:
+        """Nome leggibile della skill."""
+        return self._skill_name
+
+    @property
+    def description(self) -> str:
+        """Descrizione della skill."""
+        return self._description
+
+    @property
+    def enabled(self) -> bool:
+        """Stato abilitato/disabilitato."""
+        return self._enabled
+
+    @enabled.setter
+    def enabled(self, value: bool) -> None:
+        """Imposta stato enabled."""
+        self._enabled = value
+
+    def validate_context(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Valida il context per l'esecuzione.
+
+        Args:
+            context: Context con user_request e parametri opzionali
+
+        Returns:
+            Dict con valid (bool) ed error (str opzionale)
+        """
+        required = self._metadata.get("required_context", ["user_request"])
+        missing = [k for k in required if k not in context]
+        if missing:
+            return {"valid": False, "error": f"Missing required context: {missing}"}
+        return {"valid": True, "error": None}
+
+    def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Esegue la skill ritornando le istruzioni per l'orchestrator.
+
+        Args:
+            context: Context di esecuzione
+
+        Returns:
+            Dict con success, skill_id, instructions, algorithm, context
+        """
+        return {
+            "success": True,
+            "skill_id": self._skill_id,
+            "skill_name": self._skill_name,
+            "instructions": self._instructions,
+            "algorithm": self._algorithm,
+            "description": self._description,
+            "context": context
+        }
+
+    def get_help(self) -> str:
+        """Help text esteso con descrizione."""
+        return f"{self._skill_name} (v{self.version})\n{self._description}"
 
 
 class SkillPluginLoader:
@@ -35,6 +130,7 @@ class SkillPluginLoader:
         self._loaded_skills: Dict[str, Type[SkillInterface]] = {}
         self._instances: Dict[str, SkillInterface] = {}
         self._manifest: Dict = {}
+        self._cleanup_failures: deque = deque(maxlen=100)
         self._load_manifest()
 
     def _load_manifest(self) -> None:
@@ -105,17 +201,93 @@ class SkillPluginLoader:
                         self._instances[skill_id] = instance
                         return instance
 
-                except (ImportError, AttributeError) as e:
+                except (ImportError, ModuleNotFoundError, AttributeError) as e:
                     # Fall through to skill file loading
                     pass
 
         # Load from SKILL.md based skill
-        # This is a simplified version - full implementation would
-        # parse SKILL.md and create a wrapper skill
+        skill_file = skill_dir / "SKILL.md"
+        if skill_file.exists():
+            metadata = self._parse_skill_md(skill_dir)
+            if metadata:
+                instance = SkillMdWrapper(skill_id, skill_dir, metadata)
+                self._instances[skill_id] = instance
+                return instance
+
         return None
+
+    def _parse_skill_md(self, skill_dir: Path) -> Optional[Dict[str, Any]]:
+        """Parse SKILL.md file and extract metadata.
+
+        Estrae dal file SKILL.md:
+        - Titolo dal primo heading #
+        - Descrizione dal primo paragrafo
+        - Algoritmo dalla sezione ## ALGORITHM
+        - Istruzioni complete del file
+
+        Args:
+            skill_dir: Directory contenente SKILL.md
+
+        Returns:
+            Dict con name, description, algorithm, instructions
+        """
+        skill_file = skill_dir / "SKILL.md"
+        if not skill_file.exists():
+            return None
+
+        try:
+            content = skill_file.read_text(encoding="utf-8")
+        except (IOError, OSError):
+            return None
+
+        metadata: Dict[str, Any] = {
+            "name": skill_dir.name,
+            "description": "",
+            "algorithm": "",
+            "instructions": content,
+            "required_context": ["user_request"]
+        }
+
+        # Estrai titolo dal primo heading # (es. "# ORCHESTRATOR V13.0")
+        title_match = re.search(r'^#\s+(.+?)$', content, re.MULTILINE)
+        if title_match:
+            metadata["name"] = title_match.group(1).strip()
+
+        # Estrai descrizione dal primo paragrafo dopo il titolo
+        # (righe non vuote tra il titolo e il prossimo heading)
+        if title_match:
+            start_pos = title_match.end()
+            after_title = content[start_pos:].strip()
+            # Trova il primo paragrafo (fino a doppio newline o heading)
+            desc_match = re.search(
+                r'^(.+?)(?=\n\n|\n#|\Z)',
+                after_title,
+                re.DOTALL
+            )
+            if desc_match:
+                desc = desc_match.group(1).strip()
+                # Rimuovi eventuali linee di separatori
+                desc = re.sub(r'^---+$', '', desc, flags=re.MULTILINE).strip()
+                if desc:
+                    metadata["description"] = desc
+
+        # Estrai algoritmo dalla sezione ## ALGORITHM
+        # Match dal heading ## ALGORITHM fino al prossimo heading ## o fine file
+        algo_match = re.search(
+            r'^##\s+ALGORITHM\s*$(.*?)(?=^##\s|\Z)',
+            content,
+            re.MULTILINE | re.DOTALL
+        )
+        if algo_match:
+            algorithm = algo_match.group(1).strip()
+            metadata["algorithm"] = algorithm
+
+        return metadata
 
     def reload_skill(self, skill_id: str) -> Optional[SkillInterface]:
         """Hot-reload a skill.
+
+        Calls cleanup on old instance before unloading to release resources.
 
         Args:
             skill_id: Skill identifier
@@ -123,8 +295,26 @@ class SkillPluginLoader:
         Returns:
             Reloaded skill instance or None
         """
-        # Unload existing
+        # Cleanup and unload existing instance
         if skill_id in self._instances:
+            old_instance = self._instances[skill_id]
+            # Call cleanup on old instance if available
+            try:
+                if hasattr(old_instance, 'cleanup'):
+                    old_instance.cleanup()
+                elif hasattr(old_instance, 'shutdown'):
+                    old_instance.shutdown()
+            except Exception as e:
+                # Log cleanup failure but don't fail reload
+                logger.warning(
+                    f"Skill cleanup failed during reload: {skill_id}, error: {e}"
+                )
+                # Track failed cleanup for potential manual cleanup
+                self._cleanup_failures.append({
+                    "skill_id": skill_id,
+                    "error": str(e),
+                    "timestamp": time.time()
+                })
             del self._instances[skill_id]
 
         if skill_id in self._loaded_skills:
@@ -154,7 +344,7 @@ class SkillPluginLoader:
         self._manifest["skills"][skill_id] = {
             "module": module,
             "class_name": class_name,
-            "registered_at": Path.cwd().as_posix()
+            "registered_at": datetime.now().isoformat()
         }
 
         self._save_manifest()
@@ -225,6 +415,18 @@ class SkillPluginLoader:
             Skill instance or None
         """
         return self._instances.get(skill_id)
+
+    def get_cleanup_failures(self) -> List[Dict]:
+        """Get list of cleanup failures for manual review.
+
+        Returns:
+            List of dicts with skill_id, error, timestamp
+        """
+        return self._cleanup_failures.copy()
+
+    def clear_cleanup_failures(self) -> None:
+        """Clear cleanup failure log."""
+        self._cleanup_failures.clear()
 
 
 def create_skill_plugin(skill_id: str, skill_name: str,

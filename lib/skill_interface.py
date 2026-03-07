@@ -83,17 +83,64 @@ class SkillInterface(ABC):
         """
         pass
 
-    def validate_context(self, context: Dict[str, Any]) -> bool:
+    def validate_context(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Validate that context has required fields.
 
         Args:
             context: Context dictionary
 
         Returns:
-            True if context is valid
+            Dict with:
+                - valid: bool (True if context is valid)
+                - error: str (error message if invalid, None if valid)
         """
         required = ["user_request"]
-        return all(k in context for k in required)
+        missing = [k for k in required if k not in context]
+        if missing:
+            return {
+                "valid": False,
+                "error": f"Missing required fields: {', '.join(missing)}"
+            }
+        return {"valid": True, "error": None}
+
+    def run(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute skill with automatic context validation.
+
+        This method wraps execute() with validation and error handling.
+        Subclasses should override execute(), not this method.
+
+        Args:
+            context: Execution context
+
+        Returns:
+            Result dictionary (success, validation error, or execution error)
+        """
+        # Validate context first
+        validation = self.validate_context(context)
+        if not validation.get("valid", True):
+            return SkillResult.error_result(
+                message=validation.get("error", "Invalid context"),
+                metadata={"error_type": "ValidationError"}
+            ).to_dict()
+
+        # Check if skill is enabled
+        if not self.enabled:
+            return SkillResult.error_result(
+                message=f"Skill '{self.skill_id}' is disabled",
+                metadata={"error_type": "SkillDisabledError"}
+            ).to_dict()
+
+        # Execute the skill with error handling
+        try:
+            return self.execute(context)
+        except Exception as e:
+            return SkillResult.error_result(
+                message=f"Skill execution failed: {str(e)}",
+                metadata={
+                    "error_type": "ExecutionError",
+                    "exception_type": type(e).__name__
+                }
+            ).to_dict()
 
     def get_help(self) -> str:
         """Get help text for this skill.

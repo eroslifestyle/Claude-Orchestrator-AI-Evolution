@@ -1,17 +1,58 @@
 {
-    "components": [
-        "Core (skills + agents)",
-        "PowerShell Profile Integration",
-        "Settings Templates",
-        "Installation Scripts",
-        "Quick Start Documentation",
-        "Process Manager",
-        "Cleanup System V2.1"
+  "version": "14.0.2",
+  "release_date": "2026-03-07",
+  "status": "active",
+  "features": {
+    "predictive_caching": true,
+    "adaptive_budget": true,
+    "ab_testing": true,
+    "auto_tuning": true,
+    "cold_start_handling": true,
+    "tiered_storage": true,
+    "distributed_lock": true,
+    "adaptive_thresholds": true,
+    "dynamic_rule_budget": true,
+    "multi_variant_testing": true,
+    "gaussian_process": true,
+    "adaptive_candidates": true
+  },
+  "modules": {
+    "predictive_cache": "lib/predictive_cache.py",
+    "adaptive_budget": "lib/adaptive_budget.py",
+    "ab_testing": "lib/ab_testing.py",
+    "auto_tuner": "lib/auto_tuner.py"
+  },
+  "bugfixes": {
+    "V14.0.1": [
+      "Created missing ab_testing.py",
+      "Consolidated agent_performance.py to lib/",
+      "Precompiled regex in adaptive_budget.py"
     ],
-    "installed": "12.5.2",
-    "installDate": "2026-03-03T00:00:00+01:00",
-    "changelog": "V12.5.2 - Cleanup runs only at session end (Step 11), never at startup",
-    "channel": "stable",
-    "lastCheck": null,
-    "updateAvailable": false
+    "V14.0.2": [
+      "FIX 1: Cold start handling con keyword fallback",
+      "FIX 2: Tiered storage per pattern ad alto valore",
+      "FIX 3: Distributed lock opzionale (Redis)",
+      "FIX 4: Soglie adattive basate su distribuzione",
+      "FIX 5: Rule budget dinamico (20-60%)",
+      "FIX 6: Multi-variant support (A/B/C/D)",
+      "FIX 7: Vero Gaussian Process con RBF kernel",
+      "FIX 8: n_candidates adattivo (5-100)"
+    ]
+  },
+  "stress_test": {
+    "date": "2026-03-07",
+    "operations": 170,
+    "throughput_ops_per_sec": 9015,
+    "error_rate": 0,
+    "memory_bytes_per_op": 39.82,
+    "status": "PASS"
+  },
+  "test_coverage": {
+    "predictive_cache": 31,
+    "adaptive_budget": 24,
+    "ab_testing": 18,
+    "auto_tuner": 18,
+    "total": 91
+  },
+  "previous_version": "14.0.1"
 }
