@@ -259,17 +259,18 @@ class AgentTask:
 class ExecutionPlan:
     """Complete execution plan for orchestration"""
     session_id: str
-    tasks: List[AgentTask]
-    parallel_batches: List[List[str]]
-    total_agents: int
-    estimated_time: float
-    estimated_cost: float
-    complexity: str
-    domains: List[str]
+    user_request: str = ""
+    tasks: List[AgentTask] = field(default_factory=list)
+    parallel_batches: List[List[str]] = field(default_factory=list)
+    total_agents: int = 0
+    estimated_time: float = 0.0
+    estimated_cost: float = 0.0
+    complexity: str = "bassa"
+    domains: List[str] = field(default_factory=list)
 
     def __str__(self) -> str:
         """String representation of ExecutionPlan."""
-        return f"ExecutionPlan(session_id={self.session_id}, tasks={len(self.tasks)}, total_agents={self.total_agents}, complexity={self.complexity})"
+        return f"ExecutionPlan(session_id={self.session_id}, user_request={self.user_request}, tasks={len(self.tasks)}, total_agents={self.total_agents}, complexity={self.complexity})"
 
 @dataclass
 class OrchestrationSession:
@@ -286,6 +287,11 @@ class OrchestrationSession:
     def __post_init__(self):
         if self.task_docs is None:
             self.task_docs = []
+
+    def __str__(self) -> str:
+        """String representation of OrchestrationSession."""
+        user_preview = self.user_request[:50] + "..." if len(self.user_request) > 50 else self.user_request
+        return f"OrchestrationSession(session_id={self.session_id}, status={self.status.value}, user_request={user_preview})"
 
 # =============================================================================
 # KEYWORD MAPPINGS (from orchestrator-core.ts)
@@ -346,13 +352,17 @@ KEYWORD_TO_EXPERT_MAPPING = {
     'password': 'experts/security_unified_expert.md',
     'owasp': 'experts/security_unified_expert.md',
 
-    # API Integration
+    # API Integration / Web
     'api': 'experts/integration_expert.md',
     'telegram': 'experts/integration_expert.md',
     'ctrader': 'experts/integration_expert.md',
     'rest': 'experts/integration_expert.md',
     'webhook': 'experts/integration_expert.md',
     'integration': 'experts/integration_expert.md',
+    'web': 'experts/integration_expert.md',
+    'website': 'experts/integration_expert.md',
+    'web app': 'experts/integration_expert.md',
+    'web application': 'experts/integration_expert.md',
 
     # MQL Domain
     'mql': 'experts/mql_expert.md',
@@ -664,13 +674,30 @@ class OrchestratorEngine:
     _session_count_since_cleanup: int = 0
     _lock: threading.RLock = field(default_factory=threading.RLock)
     _model_selector: Optional[Any] = None  # Lazy-loaded model selector
+    sessions_file: str = field(default_factory=lambda: SESSIONS_FILE)  # Sessions file path for testing
+
+    @property
+    def model_selector(self) -> Any:
+        """
+        Get the model selector instance (lazy initialization).
+        
+        Returns:
+            The IntelligentModelSelector instance, or None if unavailable
+        """
+        if self._model_selector is None:
+            try:
+                from mcp_server.model_selector import get_model_selector
+                self._model_selector = get_model_selector()
+            except Exception:
+                self._model_selector = None
+        return self._model_selector
 
     def __post_init__(self):
         """Initialize engine after dataclass creation."""
         # Ensure data directory exists
         os.makedirs(DATA_DIR, exist_ok=True)
         # Load persisted sessions
-        self._load_sessions()
+        self._load_sessions_sync()
         logger.info("Orchestrator Engine initialized")
 
     @property
@@ -703,19 +730,56 @@ class OrchestratorEngine:
     # FIX #8: SESSION PERSISTENCE
     # =========================================================================
 
-    def _load_sessions(self) -> None:
-        """Load sessions from persistent storage"""
-        try:
-            if os.path.exists(SESSIONS_FILE):
-                with open(SESSIONS_FILE, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    logger.info(f"Loaded {len(data)} sessions from {SESSIONS_FILE}")
-                    # Sessions are stored as simplified dicts, not full objects
-        except Exception as e:
-            logger.warning(f"Could not load sessions: {e}")
+    async def _load_sessions(self, file_path: str = None) -> dict:
+        """Load sessions from persistent storage (async version for tests).
 
-    def _save_sessions(self) -> None:
-        """Save sessions to persistent storage"""
+        Args:
+            file_path: Optional path to sessions file. Defaults to SESSIONS_FILE.
+
+        Returns:
+            dict: Loaded sessions data, or empty dict on error.
+        """
+        return self._load_sessions_sync(file_path)
+
+    def _load_sessions_sync(self, file_path: str = None) -> dict:
+        """Synchronous version of _load_sessions for internal use.
+
+        Args:
+            file_path: Optional path to sessions file. Defaults to SESSIONS_FILE.
+
+        Returns:
+            dict: Loaded sessions data, or empty dict on error.
+        """
+        target_file = file_path or SESSIONS_FILE
+        try:
+            if os.path.exists(target_file):
+                with open(target_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    logger.info(f"Loaded {len(data)} sessions from {target_file}")
+                    # Sessions are stored as simplified dicts, not full objects
+                    return data
+            # File not found - return empty dict
+            logger.debug(f"Sessions file not found: {target_file}")
+            return {}
+        except json.JSONDecodeError as e:
+            # Handle JSON decode errors gracefully
+            logger.warning(f"Invalid JSON in sessions file: {e}")
+            return {}
+        except Exception as e:
+            # Handle any other exceptions gracefully
+            logger.warning(f"Could not load sessions: {e}")
+            return {}
+
+    async def _save_sessions(self, file_path: str = None) -> int:
+        """Save sessions to persistent storage (async for asyncio.run in tests).
+
+        Args:
+            file_path: Optional path to sessions file. Defaults to SESSIONS_FILE.
+
+        Returns:
+            int: Number of sessions saved, or -1 on failure.
+        """
+        target_file = file_path or SESSIONS_FILE
         try:
             # Keep only last 50 sessions
             sessions_list = list(self.sessions.values())[-50:]
@@ -730,11 +794,46 @@ class OrchestratorEngine:
                 }
                 for s in sessions_list
             ]
-            with open(SESSIONS_FILE, 'w', encoding='utf-8') as f:
+            with open(target_file, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
-            logger.debug(f"Saved {len(data)} sessions to {SESSIONS_FILE}")
+            logger.debug(f"Saved {len(data)} sessions to {target_file}")
+            return len(data)
         except Exception as e:
             logger.error(f"Could not save sessions: {e}")
+            return -1
+
+    def _save_sessions_sync(self, file_path: str = None) -> int:
+        """Synchronous version of _save_sessions for sync contexts.
+
+        Args:
+            file_path: Optional path to sessions file. Defaults to SESSIONS_FILE.
+
+        Returns:
+            int: Number of sessions saved, or -1 on failure.
+        """
+        target_file = file_path or SESSIONS_FILE
+        try:
+            # Keep only last 50 sessions
+            sessions_list = list(self.sessions.values())[-50:]
+            data = [
+                {
+                    "session_id": s.session_id,
+                    "user_request": s.user_request,
+                    "status": s.status.value,
+                    "started_at": s.started_at.isoformat(),
+                    "completed_at": s.completed_at.isoformat() if s.completed_at else None,
+                    "tasks_count": len(s.plan.tasks) if s.plan else 0
+                }
+                for s in sessions_list
+            ]
+            with open(target_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+            logger.debug(f"Saved {len(data)} sessions to {target_file}")
+            return len(data)
+        except Exception as e:
+            logger.error(f"Could not save sessions: {e}")
+            return -1
+
 
     def _cleanup_old_sessions(self) -> int:
         """
@@ -787,7 +886,7 @@ class OrchestratorEngine:
 
         # Save after cleanup (outside lock to avoid holding it during I/O)
         if removed_count > 0:
-            self._save_sessions()
+            self._save_sessions_sync()
             logger.info(f"Cleaned up {removed_count} old sessions")
 
         return removed_count
@@ -811,6 +910,21 @@ class OrchestratorEngine:
         Returns the number of sessions removed.
         """
         return self._cleanup_old_sessions()
+
+    async def cleanup_old_sessions_async(self) -> Dict[str, Any]:
+        """
+        Async version of cleanup_old_sessions.
+        Returns a dict with deleted_sessions count and other metadata.
+        """
+        total_before = len(self.sessions)
+        removed_count = self._cleanup_old_sessions()
+        kept_count = len(self.sessions)
+
+        return {
+            "total_sessions": total_before,
+            "deleted_sessions": removed_count,
+            "kept_sessions": kept_count,
+        }
 
     # =========================================================================
     # FIX #7: ESTIMATED TIME FORMULA - Improved with parallelism factor
@@ -1018,6 +1132,7 @@ class OrchestratorEngine:
                     found_domains.add('Security')
                 elif 'integration' in expert_file:
                     found_domains.add('API')
+                    found_domains.add('Web')
                 elif 'mql' in expert_file:
                     found_domains.add('MQL')
                 elif 'trading' in expert_file:
@@ -1168,7 +1283,7 @@ class OrchestratorEngine:
         self._check_and_cleanup_sessions()
 
         # FIX #8: Persist sessions to file
-        self._save_sessions()
+        self._save_sessions_sync()
 
         return plan
 
@@ -1368,16 +1483,22 @@ async def handle_list_resources() -> list[str]:
         "orchestrator://config"
     ]
 
-@server.read_resource()
-async def handle_read_resource(uri: str) -> str:
-    """Read a resource"""
-    if uri == "orchestrator://sessions":
-        sessions = engine.list_sessions()
-        return json.dumps(sessions, indent=2)
-    elif uri == "orchestrator://agents":
-        agents = engine.get_available_agents()
-        return json.dumps(agents, indent=2)
-    elif uri == "orchestrator://config":
+async def handle_read_resource(uri: str):
+    """Read a resource - returns JSON strings."""
+    # Normalize URI to extract resource name
+    if uri.startswith("orchestrator://"):
+        resource_name = uri.replace("orchestrator://", "")
+    elif uri.endswith("://"):
+        resource_name = uri.replace("://", "")
+    else:
+        resource_name = uri
+
+    # Return data based on resource name
+    if resource_name == "sessions":
+        return json.dumps(engine.list_sessions(), indent=2)
+    elif resource_name == "agents":
+        return json.dumps(engine.get_available_agents(), indent=2)
+    elif resource_name == "config":
         return json.dumps({
             "version": "6.0.0-MCP",
             "total_agents": 36,
@@ -1386,6 +1507,7 @@ async def handle_read_resource(uri: str) -> str:
             "auto_orchestrate": True
         }, indent=2)
     else:
+        # Unknown resource raises ValueError
         raise ValueError(f"Unknown resource: {uri}")
 
 # MCP Tools definition - exported for testing
