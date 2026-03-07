@@ -1,0 +1,200 @@
+{
+  "version": "13.0.0",
+  "last_updated": "2026-03-07",
+  "skills": {
+    "orchestrator": {
+      "module": "skills.orchestrator.SKILL",
+      "class_name": "OrchestratorSkill",
+      "type": "core",
+      "enabled": true
+    },
+    "code-review": {
+      "module": "skills.code_review.SKILL",
+      "class_name": "CodeReviewSkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "testing-strategy": {
+      "module": "skills.testing_strategy.SKILL",
+      "class_name": "TestingStrategySkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "debugging": {
+      "module": "skills.debugging.SKILL",
+      "class_name": "DebuggingSkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "api-design": {
+      "module": "skills.api_design.SKILL",
+      "class_name": "APIDesignSkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "refactor-clean": {
+      "module": "skills.refactor_clean.SKILL",
+      "class_name": "RefactorCleanSkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "security-scan": {
+      "module": "skills.security_scan.SKILL",
+      "class_name": "SecurityScanSkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "fix": {
+      "module": "skills.fix.SKILL",
+      "class_name": "FixSkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "plan": {
+      "module": "skills.plan.SKILL",
+      "class_name": "PlanSkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "tdd-workflow": {
+      "module": "skills.tdd_workflow.SKILL",
+      "class_name": "TDDWorkflowSkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "verification-loop": {
+      "module": "skills.verification_loop.SKILL",
+      "class_name": "VerificationLoopSkill",
+      "type": "utility",
+      "enabled": true
+    },
+    "checkpoint": {
+      "module": "skills.checkpoint.SKILL",
+      "class_name": "CheckpointSkill",
+      "type": "utility",
+      "enabled": true
+    },
+    "cleanup": {
+      "module": "skills.cleanup.SKILL",
+      "class_name": "CleanupSkill",
+      "type": "utility",
+      "enabled": true
+    },
+    "status": {
+      "module": "skills.status.SKILL",
+      "class_name": "StatusSkill",
+      "type": "utility",
+      "enabled": true
+    },
+    "metrics": {
+      "module": "skills.metrics.SKILL",
+      "class_name": "MetricsSkill",
+      "type": "utility",
+      "enabled": true
+    },
+    "strategic-compact": {
+      "module": "skills.strategic_compact.SKILL",
+      "class_name": "StrategicCompactSkill",
+      "type": "utility",
+      "enabled": true
+    },
+    "sessions": {
+      "module": "skills.sessions.SKILL",
+      "class_name": "SessionsSkill",
+      "type": "utility",
+      "enabled": true
+    },
+    "prompt-engineering-patterns": {
+      "module": "skills.prompt_engineering_patterns.SKILL",
+      "class_name": "PromptEngineeringPatternsSkill",
+      "type": "utility",
+      "enabled": true
+    },
+    "multi-plan": {
+      "module": "skills.multi_plan.SKILL",
+      "class_name": "MultiPlanSkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "simplify": {
+      "module": "skills.simplify.SKILL",
+      "class_name": "SimplifySkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "build-fix": {
+      "module": "skills.build_fix.SKILL",
+      "class_name": "BuildFixSkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "git-workflow": {
+      "module": "skills.git_workflow.SKILL",
+      "class_name": "GitWorkflowSkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "python-patterns": {
+      "module": "skills.python_patterns.SKILL",
+      "class_name": "PythonPatternsSkill",
+      "type": "language",
+      "enabled": true
+    },
+    "python-performance-optimization": {
+      "module": "skills.python_performance_optimization.SKILL",
+      "class_name": "PythonPerformanceOptimizationSkill",
+      "type": "language",
+      "enabled": true
+    },
+    "typescript-patterns": {
+      "module": "skills.typescript_patterns.SKILL",
+      "class_name": "TypeScriptPatternsSkill",
+      "type": "language",
+      "enabled": true
+    },
+    "go-patterns": {
+      "module": "skills.go_patterns.SKILL",
+      "class_name": "GoPatternsSkill",
+      "type": "language",
+      "enabled": true
+    },
+    "remotion-best-practices": {
+      "module": "skills.remotion_best_practices.SKILL",
+      "class_name": "RemotionBestPracticesSkill",
+      "type": "workflow",
+      "enabled": true
+    },
+    "keybindings-help": {
+      "module": "skills.keybindings_help.SKILL",
+      "class_name": "KeybindingsHelpSkill",
+      "type": "utility",
+      "enabled": true
+    },
+    "learn": {
+      "module": "skills.learn.SKILL",
+      "class_name": "LearnSkill",
+      "type": "learning",
+      "enabled": true
+    },
+    "evolve": {
+      "module": "skills.evolve.SKILL",
+      "class_name": "EvolveSkill",
+      "type": "learning",
+      "enabled": true
+    },
+    "claude-api": {
+      "module": "skills.claude_api.SKILL",
+      "class_name": "ClaudeAPISkill",
+      "type": "workflow",
+      "enabled": true
+    }
+  },
+  "summary": {
+    "total_skills": 32,
+    "core": 1,
+    "workflow": 12,
+    "utility": 9,
+    "language": 4,
+    "learning": 2
+  }
+}

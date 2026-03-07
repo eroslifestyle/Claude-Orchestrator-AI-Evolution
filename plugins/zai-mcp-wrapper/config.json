@@ -1,0 +1,128 @@
+{
+  "version": "1.1.0",
+  "name": "zai-mcp-wrapper",
+  "description": "Z.AI MCP Wrapper - GLM-5 Chat, OCR, Web Search, Slides, Translation, and Video tools",
+
+  "api": {
+    "base_url": "https://api.z.ai/api/paas/v4",
+    "timeout_ms": 120000,
+    "authentication": "Bearer Token"
+  },
+
+  "tools": [
+    {
+      "name": "glm-5-chat",
+      "endpoint": "chat/completions",
+      "description": "Chat completions using GLM-5 model with streaming support",
+      "method": "POST",
+      "parameters": {
+        "stream": true,
+        "tool_stream": true
+      }
+    },
+    {
+      "name": "glm-ocr",
+      "endpoint": "ocr/parse",
+      "description": "Image OCR and layout parsing",
+      "method": "POST"
+    },
+    {
+      "name": "glm-web-search",
+      "endpoint": "chat/completions",
+      "description": "Chat with web search enabled",
+      "method": "POST",
+      "parameters": {
+        "web_search": true
+      }
+    },
+    {
+      "name": "create_slides",
+      "endpoint": "chat/completions",
+      "description": "Generate presentation slides (PDF output format)",
+      "method": "POST",
+      "fallback": "specialized_system_prompt"
+    },
+    {
+      "name": "translate_text",
+      "endpoint": "chat/completions",
+      "description": "Translate text with 6 strategies (General, Paraphrasing, Two-Step, Three-Stage, Reflective, COT)",
+      "method": "POST",
+      "fallback": "specialized_system_prompt"
+    },
+    {
+      "name": "create_video_from_template",
+      "endpoint": "chat/completions",
+      "description": "Generate video from image template (french_kiss, bodyshake, sexy_me)",
+      "method": "POST",
+      "fallback": "specialized_system_prompt"
+    }
+  ],
+
+  "models": {
+    "default": "glm-5",
+    "available": [
+      "glm-5",
+      "glm-4.7",
+      "glm-4.5-air"
+    ]
+  },
+
+  "slide_styles": {
+    "available": [
+      "professional",
+      "creative",
+      "minimal",
+      "academic"
+    ],
+    "default": "professional"
+  },
+
+  "translation_strategies": {
+    "available": [
+      "General",
+      "Paraphrasing",
+      "Two-Step",
+      "Three-Stage",
+      "Reflective",
+      "COT"
+    ],
+    "default": "General"
+  },
+
+  "video_templates": {
+    "available": [
+      "french_kiss",
+      "bodyshake",
+      "sexy_me"
+    ]
+  },
+
+  "environment_variables": {
+    "ZAI_API_KEY": {
+      "description": "Z.AI API key for authentication",
+      "required": true,
+      "type": "string"
+    },
+    "ZAI_BASE_URL": {
+      "description": "Z.AI API base URL (optional, uses default if not set)",
+      "required": false,
+      "type": "string",
+      "default": "https://api.z.ai/api/paas/v4"
+    },
+    "ZAI_TIMEOUT": {
+      "description": "Request timeout in milliseconds",
+      "required": false,
+      "type": "integer",
+      "default": 120000
+    }
+  },
+
+  "mcp_config": {
+    "transport": "stdio",
+    "python_version": ">=3.10",
+    "dependencies": [
+      "httpx>=0.27.0",
+      "mcp>=0.9.0"
+    ]
+  }
+}

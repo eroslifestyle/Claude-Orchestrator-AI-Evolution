@@ -1,0 +1,209 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "source": "agents/core/orchestrator.md - KEYWORD → EXPERT FILE MAPPING V5.1",
+    "generated_date": "2026-01-30",
+    "total_mappings": 16,
+    "priority_levels": ["CRITICA", "ALTA", "MEDIA"]
+  },
+  "domain_mappings": {
+    "gui": {
+      "primary_agent": "gui-super-expert",
+      "keywords": ["gui", "pyqt5", "qt designer", "tabwidget", "qtab", "widget", "dialog", "layout", "pulsante", "ui design", "ux", "interface grafica"],
+      "priority": "ALTA",
+      "model": "sonnet",
+      "notes": "Problem solving layout e signals"
+    },
+    "testing": {
+      "primary_agent": "tester_expert",
+      "keywords": ["test", "debug", "bug", "qa", "quality", "performance", "memory", "profiling", "benchmark"],
+      "priority": "ALTA",
+      "model": "sonnet",
+      "notes": "Analisi debug e performance optimization"
+    },
+    "database": {
+      "primary_agent": "database_expert",
+      "keywords": ["database", "sql", "sqlite", "postgresql", "query", "schema", "migration", "optimization"],
+      "priority": "ALTA",
+      "model": "sonnet",
+      "notes": "Query optimization e schema management"
+    },
+    "security": {
+      "primary_agent": "security_unified_expert",
+      "keywords": ["security", "auth", "authentication", "encryption", "jwt", "owasp", "mfa", "hash", "password", "authorization"],
+      "priority": "CRITICA",
+      "model": "sonnet",
+      "notes": "Security analysis e OWASP compliance"
+    },
+    "mql": {
+      "primary_agent": "mql_expert",
+      "keywords": ["mql", "mql5", "mql4", "ea", "expert", "advisor", "metatrader", "ontimer", "ontick", "forex"],
+      "priority": "ALTA",
+      "model": "sonnet",
+      "notes": "Expert Advisor development con CPU optimization"
+    },
+    "trading": {
+      "primary_agent": "trading_strategy_expert",
+      "keywords": ["trading", "risk", "management", "position", "sizing", "tp", "sl", "drawdown", "strategy"],
+      "priority": "ALTA",
+      "model": "sonnet",
+      "notes": "Strategie trading e risk management"
+    },
+    "architecture": {
+      "primary_agent": "architect_expert",
+      "keywords": ["architecture", "architettura", "design", "pattern", "microservizi", "scaling", "refactor", "system"],
+      "priority": "ALTA",
+      "model": "opus",
+      "notes": "Pensiero laterale e creatività per design"
+    },
+    "integration": {
+      "primary_agent": "integration_expert",
+      "keywords": ["api", "telegram", "ctrader", "rest", "webhook", "integration", "client", "server"],
+      "priority": "ALTA",
+      "model": "sonnet",
+      "notes": "API integration e client/server communication"
+    },
+    "devops": {
+      "primary_agent": "devops_expert",
+      "keywords": ["devops", "deploy", "cicd", "docker", "build", "git", "npm", "automation", "kubernetes"],
+      "priority": "MEDIA",
+      "model": "haiku",
+      "notes": "Task meccanici di deployment e automation"
+    },
+    "languages": {
+      "primary_agent": "languages_expert",
+      "keywords": ["python", "javascript", "csharp", "coding", "linguaggio", "refactoring", "syntax"],
+      "priority": "MEDIA",
+      "model": "sonnet",
+      "notes": "Coding generale multi-linguaggio"
+    },
+    "ai": {
+      "primary_agent": "ai_integration_expert",
+      "keywords": ["ai", "llm", "gpt", "openai", "model", "selection", "fine-tuning", "embedding", "rag"],
+      "priority": "ALTA",
+      "model": "sonnet",
+      "notes": "AI strategy e model integration"
+    },
+    "claude": {
+      "primary_agent": "claude_systems_expert",
+      "keywords": ["claude", "haiku", "sonnet", "opus", "anthropic", "cost", "optimization"],
+      "priority": "ALTA",
+      "model": "sonnet",
+      "notes": "Claude ecosystem optimization"
+    },
+    "mobile": {
+      "primary_agent": "mobile_expert",
+      "keywords": ["mobile", "ios", "android", "swift", "kotlin", "flutter", "react", "native"],
+      "priority": "ALTA",
+      "model": "sonnet",
+      "notes": "Mobile development native e cross-platform"
+    },
+    "automation": {
+      "primary_agent": "n8n_expert",
+      "keywords": ["n8n", "automation", "workflow", "zapier", "make", "process", "trigger"],
+      "priority": "ALTA",
+      "model": "sonnet",
+      "notes": "Workflow automation e process integration"
+    },
+    "social_auth": {
+      "primary_agent": "social_identity_expert",
+      "keywords": ["oauth", "oauth2", "oidc", "social", "login", "google", "facebook", "apple", "signin"],
+      "priority": "ALTA",
+      "model": "sonnet",
+      "notes": "Social authentication e identity providers"
+    }
+  },
+  "core_functions": {
+    "system_management": {
+      "primary_agent": "system_coordinator",
+      "keywords": ["token", "resource", "spawn", "agent", "management", "metriche", "budget"],
+      "priority": "MEDIA",
+      "model": "haiku",
+      "notes": "Resource management e agent monitoring"
+    },
+    "exploration": {
+      "primary_agent": "analyzer",
+      "keywords": ["cerca", "trova", "esplora", "keyword", "struttura", "codebase", "analyze"],
+      "priority": "ALTA",
+      "model": "haiku",
+      "notes": "Solo lettura e esplorazione codebase"
+    },
+    "implementation": {
+      "primary_agent": "coder",
+      "keywords": ["implementa", "feature", "fix", "bug", "codifica", "sviluppa", "create", "build"],
+      "priority": "MEDIA",
+      "model": "sonnet",
+      "notes": "PROBLEM SOLVING - implementazione generale"
+    },
+    "review": {
+      "primary_agent": "reviewer",
+      "keywords": ["review", "valida", "code", "quality", "check", "best", "practices"],
+      "priority": "MEDIA",
+      "model": "sonnet",
+      "notes": "Analisi critica e quality assurance"
+    },
+    "documentation": {
+      "primary_agent": "documenter",
+      "keywords": ["documenta", "docs", "readme", "commenti", "technical", "writing"],
+      "priority": "CRITICA",
+      "model": "haiku",
+      "notes": "⭐ SEMPRE ULTIMO (REGOLA #5)"
+    }
+  },
+  "special_patterns": {
+    "ralph_loop": {
+      "trigger_keywords": ["ralph", "loop", "iterativo", "tdd", "test-driven", "ciclo", "ripetuto"],
+      "action": "use_ralph_loop_command",
+      "command": "/ralph-loop",
+      "priority": "ALTA",
+      "notes": "Metodologia iterativa per task con criteri chiari"
+    },
+    "multi_domain": {
+      "detection_strategy": "keyword_overlap",
+      "min_domains": 2,
+      "parallel_execution": true,
+      "auto_dependency_detection": true
+    }
+  },
+  "routing_rules": {
+    "keyword_matching": {
+      "algorithm": "fuzzy_match_with_confidence",
+      "min_confidence_threshold": 0.7,
+      "exact_match_bonus": 0.3,
+      "domain_match_bonus": 0.2
+    },
+    "fallback_strategy": {
+      "primary_fallback": "coder",
+      "secondary_fallback": "analyzer",
+      "fallback_model": "haiku"
+    },
+    "escalation_rules": {
+      "enabled": true,
+      "pattern": ["haiku", "sonnet", "opus"],
+      "failure_threshold": 2,
+      "complexity_trigger": "high"
+    },
+    "mandatory_final_step": {
+      "agent": "documenter",
+      "rule": "REGOLA_5",
+      "description": "Documentazione obbligatoria come ultimo step",
+      "exceptions": []
+    }
+  },
+  "model_selection": {
+    "haiku_patterns": ["simple", "mechanical", "exploration", "documentation"],
+    "sonnet_patterns": ["problem_solving", "analysis", "implementation", "integration"],
+    "opus_patterns": ["architecture", "creative_thinking", "complex_design", "lateral_thinking"],
+    "auto_escalation": {
+      "haiku_to_sonnet": ["complex_logic", "problem_solving_required"],
+      "sonnet_to_opus": ["architectural_thinking", "creative_solution", "lateral_thinking"]
+    }
+  },
+  "confidence_scoring": {
+    "exact_keyword_match": 1.0,
+    "fuzzy_keyword_match": 0.8,
+    "domain_inference": 0.6,
+    "context_clues": 0.4,
+    "default_fallback": 0.1
+  }
+}

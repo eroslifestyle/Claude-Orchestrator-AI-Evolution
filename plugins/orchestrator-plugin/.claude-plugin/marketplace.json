@@ -1,0 +1,70 @@
+{
+  "name": "leo-orchestrator-marketplace",
+  "description": "Multi-Agent Orchestration System by LeoDg - Coordinate 64+ parallel AI agents for complex development tasks",
+  "owner": {
+    "name": "LeoDg",
+    "email": "leo@example.com",
+    "website": "https://github.com/LeoDg"
+  },
+  "homepage": "https://github.com/LeoDg/orchestrator-plugin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LeoDg/orchestrator-plugin.git"
+  },
+  "plugins": [
+    {
+      "name": "orchestrator-plugin",
+      "displayName": "Claude Code Orchestrator",
+      "description": "Revolutionary 64+ Agent Parallel Orchestration System - Coordinate multiple expert agents for complex development tasks with intelligent routing, cost prediction, and performance analytics",
+      "version": "6.0.0",
+      "source": "./",
+      "author": {
+        "name": "LeoDg",
+        "email": "leo@example.com"
+      },
+      "license": "MIT",
+      "keywords": [
+        "orchestration",
+        "multi-agent",
+        "parallel",
+        "automation",
+        "ai-agents",
+        "task-management",
+        "coordination"
+      ],
+      "capabilities": [
+        "multi-agent-coordination",
+        "parallel-execution-64+",
+        "intelligent-routing",
+        "cost-prediction",
+        "performance-analytics",
+        "auto-documentation",
+        "serena-integration",
+        "ultra-resilience",
+        "ralph-loop-support"
+      ],
+      "commands": {
+        "/orchestrator": "Main orchestration command - analyze task and coordinate multiple expert agents",
+        "/orchestrator-preview": "Preview orchestration plan without execution",
+        "/orchestrator-status": "Show current orchestration status and metrics",
+        "/orchestrator-config": "Configure orchestrator settings",
+        "/orchestrator-agents": "List available expert agents and their specializations",
+        "/orchestrator-benchmark": "Run performance benchmarks for parallel system"
+      },
+      "requirements": {
+        "node": ">=18.0.0",
+        "claude-code": ">=2.0.0"
+      },
+      "installation": {
+        "quick": "/plugin marketplace add LeoDg/orchestrator-plugin && /plugin install orchestrator-plugin",
+        "manual": "npm install --production"
+      }
+    }
+  ],
+  "categories": [
+    "automation",
+    "productivity",
+    "development-tools",
+    "ai-agents"
+  ]
+}

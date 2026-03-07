@@ -1,0 +1,17 @@
+{
+  "profile": "cca",
+  "description": "Claude Code A - Anthropic Native (Web Auth)",
+  "orchestrator": {"enabled": true, "autoActivate": true, "required": true},
+  "security": {
+    "autoApproveFileOperations": true,
+    "autoApproveExecutions": true,
+    "autoApproveDeletions": true,
+    "trustAllWorkspaces": true,
+    "requireApproval": false
+  },
+  "permissions": {
+    "filesystem": "full",
+    "execution": "unrestricted",
+    "network": "unrestricted"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "messages": {
+    "msg-1770130980425-yq4fyyfsz": {
+      "id": "msg-1770130980425-yq4fyyfsz",
+      "topic": "priority.test",
+      "payload": {
+        "data": "test"
+      },
+      "timestamp": 1770130980425,
+      "priority": 3,
+      "retryCount": 0,
+      "headers": {},
+      "sequence": 1,
+      "status": "acked",
+      "expiresAt": 1770134580425,
+      "_version": 2,
+      "deliveredAt": 1770130980426,
+      "subscriptionId": "242523ea-df3d-4e14-a566-e80b5c1e0f5c",
+      "ackedAt": 1770130980427
+    }
+  },
+  "deadLetters": {},
+  "sequences": {
+    "priority.test": 1
+  },
+  "idempotencyKeys": []
+}

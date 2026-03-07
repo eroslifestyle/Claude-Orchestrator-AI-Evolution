@@ -1,0 +1,27 @@
+{
+  "messages": {
+    "msg-1770125936131-ip268i7kg": {
+      "id": "msg-1770125936131-ip268i7kg",
+      "topic": "test.retry",
+      "payload": {
+        "data": "test"
+      },
+      "timestamp": 1770125936131,
+      "priority": 2,
+      "retryCount": 1,
+      "headers": {},
+      "sequence": 1,
+      "status": "retrying",
+      "expiresAt": 1770129536131,
+      "_version": 2,
+      "deliveredAt": 1770125936138,
+      "subscriptionId": "3f259664-095c-4205-af44-f13462275a9a",
+      "nextRetryAt": 1770125938269.4836
+    }
+  },
+  "deadLetters": {},
+  "sequences": {
+    "test.retry": 1
+  },
+  "idempotencyKeys": []
+}

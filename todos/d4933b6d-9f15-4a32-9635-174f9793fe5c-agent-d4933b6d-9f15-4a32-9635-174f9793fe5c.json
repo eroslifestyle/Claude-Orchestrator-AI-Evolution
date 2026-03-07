@@ -1,0 +1,37 @@
+[
+  {
+    "content": "Fix CRITICAL: Agent count discrepancy in SKILL.md",
+    "status": "in_progress",
+    "activeForm": "Fixing agent count in SKILL.md"
+  },
+  {
+    "content": "Fix CRITICAL: MCP prefix inconsistency web-reader/web_reader",
+    "status": "pending",
+    "activeForm": "Standardizing MCP prefix"
+  },
+  {
+    "content": "Fix HIGH: L2 model declarations (15 files) sonnet->inherit",
+    "status": "pending",
+    "activeForm": "Fixing L2 model declarations"
+  },
+  {
+    "content": "Fix HIGH: Update docs/ version headers to V12.0 (11 files)",
+    "status": "pending",
+    "activeForm": "Updating docs version headers"
+  },
+  {
+    "content": "Fix HIGH: Multi-keyword matching algorithm clarification",
+    "status": "pending",
+    "activeForm": "Adding multi-keyword matching algorithm"
+  },
+  {
+    "content": "Fix HIGH: Disambiguate 'automation' keyword in routing",
+    "status": "pending",
+    "activeForm": "Disambiguating automation keyword"
+  },
+  {
+    "content": "Generate detailed markdown report with all 99 issues",
+    "status": "pending",
+    "activeForm": "Generating detailed audit report"
+  }
+]

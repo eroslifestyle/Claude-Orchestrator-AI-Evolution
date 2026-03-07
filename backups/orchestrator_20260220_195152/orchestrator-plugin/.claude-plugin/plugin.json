@@ -1,0 +1,52 @@
+{
+  "name": "@eroslifestyle/claude-orchestrator-plugin",
+  "description": "ORCHESTRATOR SUPREMO v6.0 - MCP AUTO-ORCHESTRATION. Server MCP che si attiva automaticamente come Serena, fornendo strumenti di orchestrazione sempre disponibili.",
+  "author": {
+    "name": "ErosLifestyle",
+    "email": "info@eroslifestyle.com",
+    "url": "https://github.com/eroslifestyle"
+  },
+  "version": "6.0.0",
+  "homepage": "https://github.com/eroslifestyle/Claude-Orchestrator-Plugin",
+  "repository": "https://github.com/eroslifestyle/Claude-Orchestrator-Plugin.git",
+  "capabilities": [
+    "mcp-server",
+    "auto-orchestration",
+    "unlimited-parallelism",
+    "progressive-output",
+    "knowledge-base",
+    "auto-documentation",
+    "serena-style-activation"
+  ],
+  "mcp": {
+    "enabled": true,
+    "serverName": "orchestrator",
+    "alwaysOn": true,
+    "tools": [
+      "orchestrator_analyze",
+      "orchestrator_execute",
+      "orchestrator_status",
+      "orchestrator_agents",
+      "orchestrator_list",
+      "orchestrator_preview",
+      "orchestrator_cancel"
+    ],
+    "resources": [
+      "orchestrator://sessions",
+      "orchestrator://agents",
+      "orchestrator://config"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": "hooks/auto-orchestrate.md"
+  },
+  "agents": {
+    "orchestrator-supremo": "agents/orchestrator-supremo.md"
+  },
+  "settings": {
+    "autoActivate": true,
+    "showProgress": true,
+    "parallelMode": "unlimited",
+    "mcpIntegration": true
+  }
+}

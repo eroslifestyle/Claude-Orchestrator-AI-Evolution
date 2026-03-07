@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "Agent MCP tool permissions configuration",
+    "last_updated": "2026-03-06"
+  },
+  "agent_permissions": {
+    "gui-super-expert": "write",
+    "database_expert": "write",
+    "tester_expert": "write",
+    "integration_expert": "full",
+    "devops_expert": "write",
+    "languages_expert": "write",
+    "ai_integration_expert": "full",
+    "claude_systems_expert": "read",
+    "mobile_expert": "write",
+    "n8n_expert": "write",
+    "social_identity_expert": "write",
+    "mql_expert": "write",
+    "trading_strategy_expert": "read",
+    "security_unified_expert": "read",
+    "architect_expert": "read",
+    "notification_expert": "write",
+    "browser_automation_expert": "write",
+    "mcp_integration_expert": "full",
+    "payment_integration_expert": "write",
+    "offensive_security_expert": "read",
+    "reverse_engineering_expert": "read",
+    "analyzer": "read",
+    "coder": "write",
+    "reviewer": "read",
+    "documenter": "read",
+    "system_coordinator": "full"
+  },
+  "tool_permissions": {
+    "integration_expert": [
+      "mcp__web_reader__webReader",
+      "ReadMcpResourceTool",
+      "ListMcpResourcesTool"
+    ],
+    "ai_integration_expert": [
+      "mcp__web_reader__webReader",
+      "ReadMcpResourceTool",
+      "ListMcpResourcesTool",
+      "mcp__orchestrator__orchestrator_execute"
+    ]
+  },
+  "permission_levels": {
+    "none": "No MCP tool access",
+    "read": "Read-only MCP tools (web-reader, image analysis, list resources)",
+    "write": "Read + Write MCP tools (all above plus read resources)",
+    "full": "All MCP tools (same as orchestrator)"
+  },
+  "notes": {
+    "security_rationale": "Security and offensive security agents have READ only to prevent unauthorized modifications",
+    "integration_rationale": "Integration and AI agents need FULL to interact with external APIs and services",
+    "core_rationale": "Core agents have limited permissions to prevent accidental system changes"
+  }
+}

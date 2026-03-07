@@ -1,0 +1,27 @@
+{
+  "messages": {
+    "msg-1770123855742": {
+      "id": "msg-1770123855742",
+      "topic": "test.retry",
+      "payload": {
+        "data": "test"
+      },
+      "timestamp": 1770123855742,
+      "priority": 2,
+      "retryCount": 1,
+      "headers": {},
+      "sequence": 1,
+      "status": "retrying",
+      "expiresAt": 1770127455742,
+      "_version": 2,
+      "deliveredAt": 1770123855743,
+      "subscriptionId": "3aae7543-68ec-437e-ac8b-e72b1765c5bc",
+      "nextRetryAt": 1770123858088.7764
+    }
+  },
+  "deadLetters": {},
+  "sequences": {
+    "test.retry": 1
+  },
+  "idempotencyKeys": []
+}

@@ -1,0 +1,179 @@
+{
+  "version": "1.0.0",
+  "description": "Tool availability configuration for Claude Code profiles (cca/ccg)",
+  "last_updated": "2026-03-07",
+  "profiles": {
+    "cca": {
+      "name": "Anthropic Claude Opus 4.6",
+      "backend": "Anthropic Native",
+      "description": "Full MCP integration + all native tools available",
+      "models": {
+        "default": "opus",
+        "available": ["opus", "sonnet", "haiku"]
+      },
+      "tools": {
+        "available": [
+          "mcp__claude_ai_Canva__generate-design",
+          "mcp__claude_ai_Canva__create-design-from-candidate",
+          "mcp__claude_ai_Canva__get-design",
+          "mcp__claude_ai_Canva__export-design",
+          "mcp__claude_ai_Canva__start-editing-transaction",
+          "mcp__claude_ai_Canva__perform-editing-operations",
+          "mcp__claude_ai_Canva__commit-editing-transaction",
+          "mcp__claude_ai_Canva__cancel-editing-transaction",
+          "mcp__claude_ai_Canva__search-designs",
+          "mcp__claude_ai_Canva__list-folder-items",
+          "mcp__claude_ai_Canva__get-design-pages",
+          "mcp__claude_ai_Canva__get-design-content",
+          "mcp__claude_ai_Canva__get-design-thumbnail",
+          "mcp__claude_ai_Canva__resize-design",
+          "mcp__claude_ai_Canva__merge-designs",
+          "mcp__claude_ai_Canva__request-outline-review",
+          "mcp__claude_ai_Canva__generate-design-structured",
+          "mcp__claude_ai_Canva__list-brand-kits",
+          "mcp__claude_ai_Canva__comment-on-design",
+          "mcp__claude_ai_Canva__list-comments",
+          "mcp__claude_ai_Canva__reply-to-comment",
+          "mcp__claude_ai_Canva__list-replies",
+          "mcp__claude_ai_Canva__resolve-shortlink",
+          "mcp__claude_ai_Canva__import-design-from-url",
+          "mcp__claude_ai_Canva__move-item-to-folder",
+          "mcp__claude_ai_Canva__create-folder",
+          "mcp__claude_ai_Canva__get-export-formats",
+          "mcp__claude_ai_Canva__get-presenter-notes",
+          "mcp__claude_ai_Canva__get-assets",
+          "mcp__claude_ai_Canva__upload-asset-from-url",
+          "mcp__web_reader__webReader",
+          "mcp__web-search-prime__search",
+          "mcp__4_5v_mcp__analyze_image",
+          "mcp__orchestrator__orchestrator_agents",
+          "mcp__orchestrator__orchestrator_analyze",
+          "mcp__orchestrator__orchestrator_execute",
+          "mcp__orchestrator__orchestrator_cancel",
+          "mcp__orchestrator__orchestrator_list",
+          "mcp__orchestrator__orchestrator_preview",
+          "mcp__orchestrator__orchestrator_status"
+        ],
+        "restricted": []
+      },
+      "capabilities": {
+        "canva_full": true,
+        "web_automation": true,
+        "image_analysis": true,
+        "mcp_servers": true
+      }
+    },
+    "ccg": {
+      "name": "GLM-5 via Z.AI",
+      "backend": "Z.AI API Proxy",
+      "description": "MCP tools available, Z.AI tools (11 total) exclusive to ccg",
+      "models": {
+        "default": "glm-5",
+        "available": ["glm-5", "glm-4.7", "glm-4.5-air"]
+      },
+      "tools": {
+        "available": [
+          "mcp__claude_ai_Canva__generate-design",
+          "mcp__claude_ai_Canva__create-design-from-candidate",
+          "mcp__claude_ai_Canva__get-design",
+          "mcp__claude_ai_Canva__export-design",
+          "mcp__claude_ai_Canva__start-editing-transaction",
+          "mcp__claude_ai_Canva__perform-editing-operations",
+          "mcp__claude_ai_Canva__commit-editing-transaction",
+          "mcp__claude_ai_Canva__cancel-editing-transaction",
+          "mcp__claude_ai_Canva__search-designs",
+          "mcp__claude_ai_Canva__list-folder-items",
+          "mcp__claude_ai_Canva__get-design-pages",
+          "mcp__claude_ai_Canva__get-design-content",
+          "mcp__claude_ai_Canva__get-design-thumbnail",
+          "mcp__claude_ai_Canva__resize-design",
+          "mcp__claude_ai_Canva__merge-designs",
+          "mcp__claude_ai_Canva__request-outline-review",
+          "mcp__claude_ai_Canva__generate-design-structured",
+          "mcp__claude_ai_Canva__list-brand-kits",
+          "mcp__claude_ai_Canva__comment-on-design",
+          "mcp__claude_ai_Canva__list-comments",
+          "mcp__claude_ai_Canva__reply-to-comment",
+          "mcp__claude_ai_Canva__list-replies",
+          "mcp__claude_ai_Canva__resolve-shortlink",
+          "mcp__claude_ai_Canva__import-design-from-url",
+          "mcp__claude_ai_Canva__move-item-to-folder",
+          "mcp__claude_ai_Canva__create-folder",
+          "mcp__claude_ai_Canva__get-export-formats",
+          "mcp__claude_ai_Canva__get-presenter-notes",
+          "mcp__claude_ai_Canva__get-assets",
+          "mcp__claude_ai_Canva__upload-asset-from-url",
+          "mcp__web_reader__webReader",
+          "mcp__web-search-prime__search",
+          "mcp__4_5v_mcp__analyze_image",
+          "mcp__zai-mcp-server__glm-5-chat",
+          "mcp__zai-mcp-server__glm-5-chat-stream",
+          "mcp__zai-mcp-server__glm-ocr",
+          "mcp__zai-mcp-server__glm-web-search",
+          "mcp__zai-mcp-server__create_slides",
+          "mcp__zai-mcp-server__translate_text",
+          "mcp__zai-mcp-server__create_video_from_template",
+          "mcp__orchestrator__orchestrator_agents",
+          "mcp__orchestrator__orchestrator_analyze",
+          "mcp__orchestrator__orchestrator_execute",
+          "mcp__orchestrator__orchestrator_cancel",
+          "mcp__orchestrator__orchestrator_list",
+          "mcp__orchestrator__orchestrator_preview",
+          "mcp__orchestrator__orchestrator_status"
+        ],
+        "restricted": []
+      },
+      "capabilities": {
+        "canva_full": true,
+        "web_automation": true,
+        "image_analysis": true,
+        "mcp_servers": true,
+        "glm_models": true,
+        "zai_tools": true
+      }
+    }
+  },
+  "tool_categories": {
+    "canva": {
+      "description": "Canva design integration tools",
+      "prefix": "mcp__claude_ai_Canva__",
+      "count": 33
+    },
+    "web": {
+      "description": "Web content extraction and search",
+      "tools": ["mcp__web_reader__webReader", "mcp__web-search-prime__search"]
+    },
+    "image": {
+      "description": "Image and video analysis",
+      "tools": ["mcp__4_5v_mcp__analyze_image"]
+    },
+    "orchestrator": {
+      "description": "Orchestrator MCP server tools",
+      "prefix": "mcp__orchestrator__",
+      "count": 7
+    },
+    "zai": {
+      "description": "Z.AI tools (exclusive to ccg profile)",
+      "prefix": "mcp__zai-mcp-server__",
+      "count": 7,
+      "tools": [
+        "glm-5-chat",
+        "glm-5-chat-stream",
+        "glm-ocr",
+        "glm-web-search",
+        "create_slides",
+        "translate_text",
+        "create_video_from_template"
+      ]
+    }
+  },
+  "notes": [
+    "Native tools use mcp__ prefix but are NOT actual MCP servers",
+    "Z.AI integration uses API proxy, NOT MCP protocol",
+    "Canva tools are available in BOTH profiles (cca and ccg)",
+    "Z.AI tools (7 total) are EXCLUSIVE to ccg profile only",
+    "Profile detection via .current-provider file or settings.json",
+    "Tool filtering enforced by profile_detector.py",
+    "V12.7.1: Added 4 new Z.AI tools (glm-5-chat-stream, create_slides, translate_text, create_video_from_template)"
+  ]
+}

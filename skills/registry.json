@@ -1,0 +1,417 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2026-03-03",
+  "total_skills": 29,
+  "categories": {
+    "Core": 8,
+    "Utility": 6,
+    "Workflow": 9,
+    "Language": 4,
+    "Learning": 2
+  },
+  "skills": {
+    "api-design": {
+      "description": "REST/GraphQL API design patterns and best practices",
+      "keywords": ["api", "rest", "graphql", "endpoint", "design"],
+      "agent": "Integration Expert",
+      "user_invokable": true,
+      "allowed_tools": ["Read", "grep", "glob", "write", "bash"],
+      "category": "Core",
+      "slash_command": "/api-design"
+    },
+    "build-fix": {
+      "description": "Build system error diagnosis and resolution",
+      "keywords": ["build", "fix", "compile", "error"],
+      "agent": "DevOps Expert",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob", "bash"],
+      "category": "Workflow",
+      "slash_command": "/build-fix"
+    },
+    "checkpoint": {
+      "description": "Session state persistence and restoration",
+      "keywords": ["checkpoint", "save", "session", "state"],
+      "agent": "System Coordinator",
+      "user_invokable": true,
+      "allowed_tools": ["read", "write", "bash"],
+      "category": "Utility",
+      "slash_command": "/checkpoint"
+    },
+    "cleanup": {
+      "description": "Temporary file cleanup and maintenance",
+      "keywords": ["cleanup", "temp", "files", "maintenance", "nul"],
+      "agent": "System Coordinator",
+      "user_invokable": true,
+      "allowed_tools": ["glob", "bash"],
+      "category": "Workflow",
+      "slash_command": "/cleanup"
+    },
+    "code-review": {
+      "description": "Code quality review and best practices validation",
+      "keywords": ["review", "quality", "lint", "best-practices"],
+      "agent": "Reviewer",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob"],
+      "category": "Core",
+      "slash_command": "/review"
+    },
+    "debugging": {
+      "description": "Debug investigation and error tracing",
+      "keywords": ["debug", "trace", "error", "fix"],
+      "agent": "Tester Expert",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob", "bash"],
+      "category": "Core",
+      "slash_command": "/debug"
+    },
+    "evolve": {
+      "description": "Pattern promotion from instincts to skills",
+      "keywords": ["evolve", "promote", "skill", "learning"],
+      "agent": "Coder",
+      "user_invokable": true,
+      "allowed_tools": ["read", "write", "glob"],
+      "category": "Learning",
+      "slash_command": "/evolve"
+    },
+    "fix": {
+      "description": "Bug fixing and patching",
+      "keywords": ["fix", "bug", "repair", "patch"],
+      "agent": "Coder",
+      "user_invokable": true,
+      "allowed_tools": ["read", "edit", "write", "grep", "glob", "bash"],
+      "category": "Workflow",
+      "slash_command": "/fix"
+    },
+    "git-workflow": {
+      "description": "Git operations, commits, branches, PRs",
+      "keywords": ["git", "commit", "branch", "merge", "PR", "workflow"],
+      "agent": "DevOps Expert",
+      "user_invokable": true,
+      "allowed_tools": ["bash", "read", "grep", "glob"],
+      "category": "Core",
+      "slash_command": null
+    },
+    "go-patterns": {
+      "description": "Go language patterns and idioms",
+      "keywords": ["go", "golang", "patterns", "idioms"],
+      "agent": "Languages Expert",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob", "edit", "write"],
+      "category": "Language",
+      "slash_command": null,
+      "auto_activated": [".go"]
+    },
+    "keybindings-help": {
+      "description": "Keyboard shortcuts, key rebinding, keybindings.json configuration",
+      "keywords": ["keyboard", "shortcuts", "rebind", "keybindings.json", "hotkey"],
+      "agent": "System Coordinator",
+      "user_invokable": true,
+      "allowed_tools": ["read", "write", "glob", "bash"],
+      "category": "Core",
+      "slash_command": "/keybindings"
+    },
+    "learn": {
+      "description": "Pattern capture and instinct learning",
+      "keywords": ["learn", "pattern", "instinct", "capture"],
+      "agent": "Documenter",
+      "user_invokable": true,
+      "allowed_tools": ["read", "write", "glob"],
+      "category": "Learning",
+      "slash_command": "/learn"
+    },
+    "metrics": {
+      "description": "Session metrics and statistics dashboard",
+      "keywords": ["metrics", "statistics", "performance", "dashboard"],
+      "agent": "Documenter",
+      "user_invokable": true,
+      "allowed_tools": ["read", "glob"],
+      "category": "Utility",
+      "slash_command": "/metrics"
+    },
+    "multi-plan": {
+      "description": "Multiple approach comparison planning",
+      "keywords": ["multi-plan", "parallel", "comparison", "approaches"],
+      "agent": "Architect Expert",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob", "write"],
+      "category": "Workflow",
+      "slash_command": "/multi-plan"
+    },
+    "orchestrator": {
+      "description": "Multi-agent coordination and task delegation",
+      "keywords": ["orchestration", "multi-agent", "coordination", "delegation"],
+      "agent": "Orchestrator",
+      "user_invokable": true,
+      "allowed_tools": ["Task", "read", "glob", "grep", "bash", "askUserQuestion"],
+      "category": "Core",
+      "slash_command": "/orchestrator"
+    },
+    "plan": {
+      "description": "Implementation planning and architecture design",
+      "keywords": ["plan", "design", "architecture", "implementation"],
+      "agent": "Architect Expert",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob", "write"],
+      "category": "Workflow",
+      "slash_command": "/plan"
+    },
+    "python-patterns": {
+      "description": "Python language patterns and PEP8 best practices",
+      "keywords": ["python", "patterns", "pep8", "best-practices"],
+      "agent": "Languages Expert",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob", "edit", "write"],
+      "category": "Language",
+      "slash_command": null,
+      "auto_activated": [".py"]
+    },
+    "python-performance-optimization": {
+      "description": "Profile and optimize Python code using cProfile, memory profilers, and best practices",
+      "keywords": ["profile", "optimization", "performance", "benchmarking", "cProfile", "memory", "python-perf"],
+      "agent": "Languages Expert",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob", "edit", "write", "bash"],
+      "category": "Language",
+      "slash_command": "/python-perf"
+    },
+    "refactor-clean": {
+      "description": "Code refactoring and clean code improvements",
+      "keywords": ["refactor", "clean", "code", "improve"],
+      "agent": "Languages Refactor Specialist L2",
+      "user_invokable": true,
+      "allowed_tools": ["read", "edit", "write", "grep", "glob"],
+      "category": "Workflow",
+      "slash_command": "/refactor"
+    },
+    "remotion-best-practices": {
+      "description": "Remotion video/React animation best practices",
+      "keywords": ["remotion", "video", "react", "animation"],
+      "agent": "AI Integration Expert",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob", "edit", "write"],
+      "category": "Core",
+      "slash_command": null
+    },
+    "security-scan": {
+      "description": "Security audit and vulnerability scanning",
+      "keywords": ["security", "scan", "audit", "vulnerability"],
+      "agent": "Security Unified Expert",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob", "bash"],
+      "category": "Workflow",
+      "slash_command": "/security-scan"
+    },
+    "sessions": {
+      "description": "Session history and restoration management",
+      "keywords": ["session", "history", "restore", "checkpoint"],
+      "agent": "System Coordinator",
+      "user_invokable": true,
+      "allowed_tools": ["read", "glob", "bash"],
+      "category": "Utility",
+      "slash_command": null
+    },
+    "simplify": {
+      "description": "Review code for reuse, quality, and efficiency improvements",
+      "keywords": ["simplify", "reuse", "efficiency", "review", "optimize"],
+      "agent": "Reviewer",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob", "edit", "write"],
+      "category": "Workflow",
+      "slash_command": "/simplify"
+    },
+    "status": {
+      "description": "System health and status dashboard",
+      "keywords": ["status", "health", "metrics", "dashboard"],
+      "agent": "Analyzer",
+      "user_invokable": true,
+      "allowed_tools": ["read", "glob", "bash"],
+      "category": "Utility",
+      "slash_command": "/status"
+    },
+    "strategic-compact": {
+      "description": "Context compression and memory optimization",
+      "keywords": ["compact", "context", "checkpoint", "memory"],
+      "agent": "System Coordinator",
+      "user_invokable": true,
+      "allowed_tools": ["read", "write", "bash"],
+      "category": "Utility",
+      "slash_command": "/compact"
+    },
+    "tdd-workflow": {
+      "description": "Test-driven development workflow",
+      "keywords": ["tdd", "test-driven", "development", "workflow"],
+      "agent": "Tester Expert",
+      "user_invokable": true,
+      "allowed_tools": ["read", "write", "edit", "grep", "glob", "bash"],
+      "category": "Workflow",
+      "slash_command": "/tdd"
+    },
+    "testing-strategy": {
+      "description": "Testing QA and coverage strategy",
+      "keywords": ["test", "testing", "qa", "coverage"],
+      "agent": "Tester Expert",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob", "bash"],
+      "category": "Core",
+      "slash_command": "/test"
+    },
+    "typescript-patterns": {
+      "description": "TypeScript patterns and strict mode best practices",
+      "keywords": ["typescript", "patterns", "strict", "best-practices"],
+      "agent": "Languages Expert",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob", "edit", "write"],
+      "category": "Language",
+      "slash_command": null,
+      "auto_activated": [".ts", ".tsx"]
+    },
+    "verification-loop": {
+      "description": "Output verification and quality validation",
+      "keywords": ["verify", "validation", "check", "quality"],
+      "agent": "Reviewer",
+      "user_invokable": true,
+      "allowed_tools": ["read", "grep", "glob"],
+      "category": "Utility",
+      "slash_command": null
+    }
+  },
+  "routing": {
+    "api": "api-design",
+    "rest": "api-design"
+    "graphql": "api-design"
+    "endpoint": "api-design"
+    "build": "build-fix"
+    "compile": "build-fix"
+    "checkpoint": "checkpoint"
+    "save": "checkpoint"
+    "cleanup": "cleanup"
+    "temp": "cleanup"
+    "nul": "cleanup"
+    "maintenance": "cleanup"
+    "review": "code-review"
+    "quality": "code-review"
+    "lint": "code-review"
+    "best-practices": "code-review"
+    "debug": "debugging"
+    "trace": "debugging"
+    "error": "debugging"
+    "evolve": "evolve"
+    "promote": "evolve"
+    "learning": "evolve"
+    "fix": "fix",
+    "bug": "fix",
+    "repair": "fix",
+    "patch": "fix",
+    "git": "git-workflow",
+    "commit": "git-workflow"
+    "branch": "git-workflow",
+    "merge": "git-workflow",
+    "pr": "git-workflow",
+    "workflow": "git-workflow"
+    "go": "go-patterns"
+    "golang": "go-patterns"
+    "idioms": "go-patterns"
+    "keyboard": "keybindings-help"
+    "shortcuts": "keybindings-help"
+    "rebind": "keybindings-help"
+    "keybindings.json": "keybindings-help",
+    "hotkey": "keybindings-help"
+    "learn": "learn"
+    "pattern": "learn"
+    "instinct": "learn"
+    "capture": "learn"
+    "metrics": "metrics"
+    "statistics": "metrics"
+    "performance": "metrics"
+    "dashboard": "metrics"
+    "multi-plan": "multi-plan"
+    "parallel": "multi-plan"
+    "comparison": "multi-plan"
+    "approaches": "multi-plan",
+    "orchestration": "orchestrator",
+    "multi-agent": "orchestrator",
+    "coordination": "orchestrator",
+    "delegation": "orchestrator",
+    "plan": "plan",
+    "design": "plan",
+    "architecture": "plan",
+    "implementation": "plan",
+    "python": "python-patterns",
+    "pep8": "python-patterns",
+    "profile": "python-performance-optimization",
+    "optimization": "python-performance-optimization",
+    "python-perf": "python-performance-optimization",
+    "cprofile": "python-performance-optimization",
+    "memory": "python-performance-optimization",
+    "benchmarking": "python-performance-optimization",
+    "refactor": "refactor-clean",
+    "clean": "refactor-clean",
+    "code": "refactor-clean",
+    "improve": "refactor-clean",
+    "remotion": "remotion-best-practices",
+    "video": "remotion-best-practices",
+    "react": "remotion-best-practices",
+    "animation": "remotion-best-practices",
+    "security": "security-scan",
+    "scan": "security-scan",
+    "audit": "security-scan",
+    "vulnerability": "security-scan",
+    "session": "sessions",
+    "history": "sessions",
+    "restore": "sessions",
+    "simplify": "simplify",
+    "reuse": "simplify",
+    "efficiency": "simplify",
+    "optimize": "simplify",
+    "status": "status",
+    "health": "status",
+    "compact": "strategic-compact",
+    "context": "strategic-compact",
+    "memory": "strategic-compact",
+    "tdd": "tdd-workflow",
+    "test-driven": "tdd-workflow",
+    "development": "tdd-workflow",
+    "test": "testing-strategy",
+    "testing": "testing-strategy",
+    "qa": "testing-strategy",
+    "coverage": "testing-strategy",
+    "typescript": "typescript-patterns",
+    "strict": "typescript-patterns",
+    "verify": "verification-loop",
+    "validation": "verification-loop",
+    "check": "verification-loop"
+  },
+  "metadata": {
+    "orchestrator_version": "13.0",
+    "auto_activation_rules": {
+      ".go": "go-patterns",
+      ".py": "python-patterns",
+      ".ts": "typescript-patterns",
+      ".tsx": "typescript-patterns"
+    },
+    "slash_commands": {
+      "/api-design": "api-design",
+      "/build-fix": "build-fix",
+      "/checkpoint": "checkpoint",
+      "/cleanup": "cleanup",
+      "/review": "code-review",
+      "/debug": "debugging",
+      "/evolve": "evolve",
+      "/fix": "fix",
+      "/keybindings": "keybindings-help",
+      "/learn": "learn",
+      "/metrics": "metrics",
+      "/multi-plan": "multi-plan",
+      "/orchestrator": "orchestrator",
+      "/plan": "plan",
+      "/python-perf": "python-performance-optimization",
+      "/refactor": "refactor-clean",
+      "/security-scan": "security-scan",
+      "/simplify": "simplify",
+      "/status": "status",
+      "/compact": "strategic-compact",
+      "/tdd": "tdd-workflow",
+      "/test": "testing-strategy"
+    }
+  }
+}

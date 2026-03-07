@@ -1,0 +1,42 @@
+{
+  "version": "12.5.2",
+  "codename": "Session End Cleanup",
+  "last_audit": "2026-03-03",
+  "agents": {
+    "total": 43,
+    "core": 6,
+    "l1_experts": 22,
+    "l2_specialists": 15
+  },
+  "skills": {
+    "total": 31,
+    "core": 8,
+    "utility": 7,
+    "workflow": 9,
+    "language": 4,
+    "learning": 2,
+    "new": ["prompt-engineering-patterns"]
+  },
+  "rules_files": 10,
+  "mcp_servers": {
+    "configured": 3,
+    "active": 1,
+    "inactive": 2
+  },
+  "docs_files": 16,
+  "components": {
+    "orchestrator": "V12.5.2",
+    "rules_engine": "V1.0",
+    "continuous_learning": "V1.0",
+    "agent_teams": "V1.0",
+    "process_manager": "V1.0",
+    "cleanup_system": "V2.1"
+  },
+  "changelog": {
+    "v12.5.2": "Cleanup runs ONLY at session end (Step 11), never at startup. Removed STEP 0.6.",
+    "v12.5.1": "Extended temp patterns: *.*.tmp.*, *.md.tmp.*, CLAUDE.md.tmp.*, *.py.tmp.*",
+    "v12.5": "Robust cleanup: STEP 11.5 emergency, signal handlers",
+    "v12.4": "Request pre-processing with prompt-engineering-patterns skill",
+    "v12.3": "Skill integration with 31 skills catalog"
+  }
+}
