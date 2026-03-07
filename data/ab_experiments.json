@@ -1,0 +1,66 @@
+{
+  "version": "1.0",
+  "updated_at": 1772884662.444661,
+  "experiments": {
+    "thread_test": {
+      "name": "thread_test",
+      "control": {
+        "name": "c",
+        "params": {}
+      },
+      "treatment": {
+        "name": "t",
+        "params": {}
+      },
+      "samples_control": 494,
+      "samples_treatment": 506,
+      "successes_control": 494,
+      "successes_treatment": 506,
+      "created_at": 1772884333.2728376,
+      "active": true
+    },
+    "ztest_strong": {
+      "name": "ztest_strong",
+      "control": {
+        "name": "control",
+        "params": {
+          "mode": "haiku"
+        }
+      },
+      "treatment": {
+        "name": "treatment",
+        "params": {
+          "mode": "opus"
+        }
+      },
+      "samples_control": 50,
+      "samples_treatment": 50,
+      "successes_control": 30,
+      "successes_treatment": 45,
+      "created_at": 1772884349.7071896,
+      "active": true
+    },
+    "integration_test": {
+      "name": "integration_test",
+      "control": {
+        "name": "default",
+        "params": {
+          "mode": "haiku"
+        }
+      },
+      "treatment": {
+        "name": "cached",
+        "params": {
+          "mode": "haiku",
+          "cache": true
+        }
+      },
+      "samples_control": 508,
+      "samples_treatment": 492,
+      "successes_control": 256,
+      "successes_treatment": 244,
+      "created_at": 1772884651.3127034,
+      "active": true
+    }
+  }
+}
