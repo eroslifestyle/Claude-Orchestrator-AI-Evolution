@@ -1,7 +1,6 @@
-# Bimodal Routing System V12.7
+# Bimodal Routing System V14.0.2
 
-> **Ultimo Aggiornamento:** 2026-03-07
-> **Versione:** 1.0.0
+> **Version:** 14.0.2 AI-Native | **Last Updated:** 2026-03-07
 > **Autore:** Orchestrator Team
 
 ---
@@ -363,6 +362,7 @@ def filter_tools(tools, profile):
 
 ---
 
-**Version:** 1.0.0
+**Version:** 2.0.0
 **Last Updated:** 2026-03-07
 **Maintainer:** Orchestrator Team
+**Compatible with:** Orchestrator V13.0 DYNAMIC ARCHITECTURE

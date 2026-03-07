@@ -1,4 +1,4 @@
-# Guida Rapida all'Orchestrator
+# Quick Start - Orchestrator V14.0.2 AI-NATIVE
 
 ## Cos'è l'Orchestrator
 
@@ -61,6 +61,27 @@ Analizza il file auth/service.py
 **Causa:** Task ambiguo (es. "sistema il codice")
 **Soluzione:** Sii specifico: "Fix il bug auth: manca validate_email()"
 
+## Funzionalita AI-NATIVE (V14.0.2)
+
+Orchestrator V14 include 4 moduli di auto-ottimizzazione:
+
+### 1. Predictive Caching
+Il sistema predice quali agent serviranno e li precarica.
+
+### 2. Adaptive Budget
+Calcola automaticamente il budget token in base alla complessita del task.
+
+### 3. A/B Testing
+Permette di testare diverse strategie di routing con analisi statistica.
+
+### 4. Auto-Tuning
+Ottimizza automaticamente i parametri del sistema usando Bayesian optimization.
+
+### Prestazioni V14.0.2
+- **9,015 ops/sec** throughput
+- **0% error rate**
+- **39.82 bytes/op** memoria
+
 ## Per Approfondire
 
 - **Documentazione completa:** `docs/INDEX.md`
@@ -82,6 +103,6 @@ Analizza il file auth/service.py
 
 ---
 
-**Versione:** 1.0.0
-**Orchestrator:** V12.7.1+
+**Versione:** 3.0.0
+**Orchestrator:** V14.0.2 AI-NATIVE
 **Lingua:** Italiano

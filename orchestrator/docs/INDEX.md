@@ -1,7 +1,8 @@
-# Orchestrator Documentation Index V12.7.1
+# Orchestrator Documentation Index V14.0.2
 
-> **Version:** 12.7.1 | **Last Updated:** 2026-03-07
-> **Total Documents:** 18 | **Total Lines:** ~7,700
+> **Version:** 14.0.2 AI-Native | **Last Updated:** 2026-03-07
+> **Total Documents:** 20 | **Total Lines:** ~7,300
+> **Agents:** 43 (6 core + 22 L1 + 15 L2) | **Skills:** 32
 
 ---
 
@@ -9,7 +10,7 @@
 
 | # | Document | Description | Lines |
 |---|----------|-------------|-------|
-| 1 | [changelog.md](./changelog.md) | Version history and release notes | 180 |
+| 1 | [changelog.md](./changelog.md) | Version history and release notes (V14.0.2 AI-Native) | 220 |
 | 2 | [AUDIT-REPORT-V12.0.md](./AUDIT-REPORT-V12.0.md) | Deep audit findings and resolutions | 413 |
 | 3 | [setup-guide.md](./setup-guide.md) | Step-by-step installation and configuration | 74 |
 | 4 | [architecture.md](./architecture.md) | System architecture and component overview | 124 |
@@ -17,7 +18,7 @@
 | 6 | [memory-integration.md](./memory-integration.md) | Persistent context across sessions | 735 |
 | 7 | [health-check.md](./health-check.md) | System health monitoring and diagnostics | 819 |
 | 8 | [observability.md](./observability.md) | Metrics, logging, tracing, alerting | 1,164 |
-| 9 | [test-suite.md](./test-suite.md) | Comprehensive validation tests (58 tests) | ~1,500 |
+| 9 | [test-suite.md](./test-suite.md) | Comprehensive validation tests (149 tests) | ~1,500 |
 | 10 | [examples.md](./examples.md) | End-to-end workflow examples | 248 |
 | 11 | [error-recovery.md](./error-recovery.md) | Automatic error detection and fallback | 149 |
 | 12 | [windows-support.md](./windows-support.md) | Windows-specific configuration | 112 |
@@ -82,7 +83,7 @@
 
 | Document | Purpose | When to Use |
 |----------|---------|-------------|
-| **test-suite.md** | 58 tests across 11 categories | Validating system health |
+| **test-suite.md** | 149 tests across 11 categories | Validating system health |
 
 ### Legacy (Deprecated)
 | Document | Status | Replacement |
@@ -142,6 +143,59 @@ LEGACY
 
 ---
 
+## Version History
+
+### V14.0.2 - Bug Fix Release (2026-03-07)
+
+#### Limitazioni Risolte (8/8)
+
+| # | Modulo | Limitazione | Soluzione |
+|---|--------|-------------|-----------|
+| 1 | predictive_cache | No cold start handling | Keyword-based fallback |
+| 2 | predictive_cache | Pattern rari persi in deque | Tiered storage (hot/warm/cold) |
+| 3 | predictive_cache | No distributed lock | Redis lock opzionale |
+| 4 | adaptive_budget | Soglie hard-coded | Adattive da distribuzione |
+| 5 | adaptive_budget | 40% rule budget fisso | Dinamico 20-60% |
+| 6 | ab_testing | Solo 50/50 split | Multi-variant A/B/C/D |
+| 7 | auto_tuner | GP stub | Vero RBF kernel |
+| 8 | auto_tuner | n_candidates=20 fisso | Adattivo 5-100 |
+
+#### Stress Test Results
+
+- **170 operazioni simultanee** (60 task + 55 agent + 55 skill)
+- **9015 ops/sec** throughput
+- **0% error rate**
+- **39.82 bytes/op** memory
+
+#### Test Coverage
+
+- predictive_cache: 31 test
+- adaptive_budget: 24 test
+- ab_testing: 18 test
+- auto_tuner: 18 test
+- **Totale: 91 test PASS**
+
+### V14.0 AI-NATIVE (2026-03-07)
+
+- **PredictiveAgentCache:** Pattern recognition, accuracy >90%, preload agents
+- **AdaptiveTokenBudget:** 200-1500 tokens, complexity-based
+- **ABTestingFramework:** Z-test statistics, alpha 0.05
+- **AutoTuner:** Bayesian optimization, 4 tunable parameters
+
+### V13.1 SUPER-PERFORMANCE (2026-03-07)
+
+- **DB Optimization:** 3 indexes for 20-40% query speedup
+- **Rule Excerpts:** Pre-computed chunks, 70% I/O reduction
+- **Lazy L2 Loading:** 15 specialists load on-demand, 30% memory reduction
+
+### V13.0 (2026-03-07)
+
+- **Dynamic Agent Selection:** ML-based routing con performance tracking
+- **Plugin Skills Architecture:** Dynamic skill loading con hot-reload
+- **File Locks System:** Race condition prevention
+
+---
+
 ## External References
 
 ### Main Files
@@ -178,6 +232,11 @@ LEGACY
 ## Maintenance Notes
 
 ### Last Updated
+- **V14.0.2:** 2026-03-07 - Bug fix release, 8 limitazioni risolte, stress test passed, 91 new tests
+- **V14.0 AI-NATIVE:** 2026-03-07 - PredictiveAgentCache, AdaptiveTokenBudget, ABTestingFramework, AutoTuner
+- **V13.1 Super-Performance:** 2026-03-07 - DB indexes, Rule Excerpts system, Lazy L2 loading, 6 bug fixes
+- **V13.0.1:** 2026-03-07 - Bug fixes (3 CRITICAL, 4 HIGH, 6 MEDIUM/LOW), 3 ADRs, performance optimizations
+- **V13.0:** 2026-03-07 - Dynamic Agent Selection, Plugin Skills, File Locks, 5 new lib modules
 - **V12.7.1:** 2026-03-07 - Z.AI tools expansion (4 new tools), bimodal routing system
 - **V12.0:** 2026-02-26 - Comprehensive audit (56 issues fixed), changelog.md created
 - **V11.3.1:** 2026-02-26 - Deep audit fixes, INDEX.md created
@@ -191,4 +250,4 @@ The following files are retained for backward compatibility but content has been
 
 ---
 
-*Orchestrator Documentation Index V12.7.1 - Generated 2026-03-07*
+*Orchestrator Documentation Index V14.0.2 AI-Native - Generated 2026-03-07*

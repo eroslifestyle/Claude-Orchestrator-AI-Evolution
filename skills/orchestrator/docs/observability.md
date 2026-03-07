@@ -1,11 +1,11 @@
-> Updated for V12.0 DEEP AUDIT: Metrics now include learning patterns captured and rules loaded per session.
+> Updated for V14.0.2: Added AI-NATIVE Metrics for Predictive Cache, Adaptive Budget, A/B Testing, and Auto-Tuner.
 
-# Observability Module V12.0
+# Observability Module V14.0.2
 
-> **Version:** 12.0 | **Last Updated:** 2026-02-27
+> **Version:** 14.0.2 | **Last Updated:** 2026-03-07
 > **Component:** Orchestrator Observability Layer
 > **Purpose:** Complete monitoring, logging, tracing, and alerting infrastructure
-> **Compatible with:** Orchestrator V12.0 DEEP AUDIT
+> **Compatible with:** Orchestrator V14.0 AI-NATIVE ARCHITECTURE
 
 ---
 
@@ -84,6 +84,100 @@ orchestrator_task_duration_seconds_count{agent="Coder"} 1450
 | `orchestrator_health_status` | Gauge | Health check status (1=healthy) | `component` |
 | `orchestrator_mcp_tools_available` | Gauge | Available MCP tools | `plugin` |
 | `orchestrator_file_operations_total` | Counter | File read/write operations | `operation`, `status` |
+
+### 1.5 AI-NATIVE Metrics (V14.0.2)
+
+#### Predictive Cache Metrics
+
+| Metric Name | Type | Description | Labels |
+|-------------|------|-------------|--------|
+| `orchestrator_predictive_cache_predictions_total` | Counter | Total predictions made | - |
+| `orchestrator_predictive_cache_hits_total` | Counter | Cache hits from predictions | - |
+| `orchestrator_predictive_cache_accuracy` | Gauge | Prediction accuracy (0-1) | - |
+| `orchestrator_predictive_cache_cold_starts_total` | Counter | Cold start events | - |
+| `orchestrator_predictive_cache_tier_distribution` | Gauge | Agents per tier | `tier` (hot/warm/cold) |
+
+**Python API:**
+```python
+cache = get_predictive_cache()
+stats = cache.get_stats()
+# Returns:
+# {
+#   "predictions_made": 1234,
+#   "cache_hits": 1100,
+#   "accuracy": 0.89,
+#   "cold_starts": 12,
+#   "tier_distribution": {"hot": 180, "warm": 750, "cold": 420}
+# }
+```
+
+#### Adaptive Budget Metrics
+
+| Metric Name | Type | Description | Labels |
+|-------------|------|-------------|--------|
+| `orchestrator_adaptive_budget_calculated_total` | Counter | Budget calculations performed | - |
+| `orchestrator_adaptive_budget_avg_tokens` | Gauge | Average token budget | - |
+| `orchestrator_adaptive_budget_tier_distribution` | Gauge | Tasks per complexity tier | `tier` (simple/medium/complex/very_complex) |
+| `orchestrator_adaptive_budget_threshold` | Gauge | Adaptive threshold per tier | `tier` |
+
+**Python API:**
+```python
+budget_calc = get_budget_calculator()
+stats = budget_calc.get_stats()
+# Returns:
+# {
+#   "budgets_calculated": 567,
+#   "avg_budget": 823,
+#   "tier_distribution": {"simple": 120, "medium": 280, "complex": 145, "very_complex": 22},
+#   "adaptive_thresholds": {"simple": 0.28, "medium": 0.58, "complex": 0.79}
+# }
+```
+
+#### A/B Testing Metrics
+
+| Metric Name | Type | Description | Labels |
+|-------------|------|-------------|--------|
+| `orchestrator_ab_experiments_total` | Gauge | Total experiments configured | - |
+| `orchestrator_ab_experiments_active` | Gauge | Currently active experiments | - |
+| `orchestrator_ab_samples_total` | Counter | Total samples collected | `experiment_id` |
+| `orchestrator_ab_significant_results_total` | Counter | Statistically significant results | `experiment_id` |
+
+**Python API:**
+```python
+ab = ABTestingFramework()
+stats = ab.get_all_stats()
+# Returns:
+# {
+#   "experiments": 5,
+#   "active": 3,
+#   "total_samples": 450,
+#   "significant_results": 2
+# }
+```
+
+#### Auto-Tuner Metrics
+
+| Metric Name | Type | Description | Labels |
+|-------------|------|-------------|--------|
+| `orchestrator_autotuner_suggestions_total` | Counter | Tuning suggestions generated | - |
+| `orchestrator_autotuner_observations_total` | Counter | Observations recorded | - |
+| `orchestrator_autotuner_improvement_avg` | Gauge | Average score improvement | - |
+| `orchestrator_autotuner_kappa_current` | Gauge | Current exploration rate (kappa) | - |
+| `orchestrator_autotuner_gp_fitted` | Gauge | Gaussian Process fit status (1=fitted) | - |
+
+**Python API:**
+```python
+tuner = AutoTuner()
+stats = tuner.get_stats()
+# Returns:
+# {
+#   "suggestions_made": 89,
+#   "observations_recorded": 89,
+#   "avg_score_improvement": 0.057,
+#   "kappa_current": 0.35,
+#   "gp_fitted": true
+# }
+```
 
 ---
 
@@ -1153,6 +1247,8 @@ orchestrator config validate observability.yaml
 
 | Version | Date | Changes |
 |---------|------|---------|
+| V14.0.2 | 2026-03-07 | AI-NATIVE Metrics: Predictive Cache, Adaptive Budget, A/B Testing, Auto-Tuner |
+| V13.0 | 2026-03-07 | Dynamic Agent Selection metrics, Plugin Skills monitoring, File Locks statistics |
 | V12.0 | 2026-02-26 | Deep audit complete, aligned with orchestrator V12.0 DEEP AUDIT |
 | 10.2.0 | 2026-02-21 | Updated to V10.2 with enhanced metrics and alerting |
 | 10.0.0 | 2026-02-21 | Initial V10.0 release with full observability stack |
@@ -1161,4 +1257,4 @@ orchestrator config validate observability.yaml
 
 ---
 
-**End of Observability Module V12.0**
+**End of Observability Module V14.0.2**

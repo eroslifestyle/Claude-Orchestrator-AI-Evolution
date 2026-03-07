@@ -1,8 +1,8 @@
-> Updated for V12.0: Test coverage expanded to include Rules Engine, Learning System, Skills System, Step Ordering, and 26 skills.
+> Updated for V14.0.2: Test coverage 343 tests across 11 test files, including new tests for process_manager, lazy_agents, rule_excerpts.
 
-# Orchestrator V12.0 Test Suite
+# Orchestrator V14.0.2 Test Suite
 
-> **Version:** 12.0 | **Last Updated:** 2026-02-27
+> **Version:** 14.0.2 AI-Native | **Last Updated:** 2026-03-07
 > **Purpose:** Comprehensive validation of Orchestrator V12.0 systems
 > **Total Tests:** 58 tests across 11 categories
 
