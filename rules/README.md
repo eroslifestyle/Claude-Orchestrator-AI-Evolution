@@ -1,6 +1,8 @@
 # Contextual Rules Engine
 
-> Part of Orchestrator V11.0 - Rules are injected into subagent prompts based on context.
+> Part of Orchestrator V15.1.0 - Rules are injected into subagent prompts based on context.
+>
+> **Version**: V15.1.0 | **Last Updated**: 2026-03-08 | **Rule Files**: 11
 
 ---
 
@@ -33,6 +35,7 @@ Instead, rules are loaded on-demand based on what the task actually requires.
 ```
 rules/
   README.md              <- You are here
+  format-standard.md     <- Standard format for all rules files
   common/                <- Universal rules (always loaded for code tasks)
     coding-style.md      <- Naming, structure, immutability, control flow
     security.md          <- 100 security rules (loaded for code that handles I/O, auth, data)
@@ -40,6 +43,8 @@ rules/
     git-workflow.md      <- Commit, branch, PR rules (loaded for git operations)
     database.md          <- 50 database rules (loaded for SQL, ORM, schema work)
     api-design.md        <- 50 API design rules (loaded for REST, GraphQL, endpoints)
+    process-management.md <- 100 process lifecycle rules (subprocess, cleanup, orphans)
+    language-response.md <- Language detection and response rules
   python/                <- Python-specific (loaded when .py files detected)
     patterns.md          <- PEP 8, type hints, async, project structure
   typescript/            <- TypeScript-specific (loaded when .ts/.tsx detected)
@@ -67,6 +72,8 @@ rules/
 | Task involves git/PR/commit | `common/git-workflow.md` |
 | Task involves database/SQL/ORM | `common/database.md` |
 | Task involves API/REST/GraphQL | `common/api-design.md` |
+| Task involves spawning processes | `common/process-management.md` |
+| Task involves user interaction | `common/language-response.md` |
 | Multi-language project | All relevant language rules loaded |
 
 ### Selective Loading
@@ -121,10 +128,31 @@ Rules are injected into prompts, so size matters:
 | security.md | 146 lines | 250 max | Loaded selectively, comprehensive is OK |
 | testing.md | 181 lines | 200 max | Loaded selectively |
 | git-workflow.md | 171 lines | 180 max | Loaded selectively |
+| process-management.md | 100 rules | 150 max | Process spawning, cleanup |
+| database.md | 77 lines | 150 max | Database work |
+| api-design.md | 77 lines | 140 max | API work |
 | python/patterns.md | 119 lines | 150 max | Loaded per-language |
 | typescript/patterns.md | 142 lines | 150 max | Loaded per-language |
 | go/patterns.md | 124 lines | 150 max | Loaded per-language |
-| database.md | 77 lines | 150 max | Database work |
-| api-design.md | 77 lines | 140 max | API work |
 
 Total injection per task: aim for 200-400 lines of rules (actual files are well within budget).
+
+---
+
+## Metrics Summary (V15.1.0)
+
+| Category | Count |
+|----------|-------|
+| Rule Files | 11 |
+| Common Rules | 8 |
+| Language Patterns | 3 |
+| Total Rules | 500+ |
+
+---
+
+## Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| V15.1.0 | 2026-03-08 | Added process-management.md, language-response.md, format-standard.md |
+| V11.0 | 2026-02-15 | Initial contextual rules engine |

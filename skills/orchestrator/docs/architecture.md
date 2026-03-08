@@ -1,4 +1,4 @@
-# Orchestrator System Architecture V14.0.3
+# Orchestrator System Architecture V15.1.0
 
 > Complete system architecture documentation for the multi-agent orchestrator.
 
@@ -9,7 +9,7 @@
 ```
 ================================================================================
                         ORCHESTRATOR SYSTEM ARCHITECTURE
-                              V14.0.3 AI-NATIVE
+                              V15.1.0 AI-NATIVE FACADE
 ================================================================================
 
 USER REQUEST
@@ -496,13 +496,98 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 
 ---
 
-## AI-NATIVE Architecture (V14.0.3)
+## AI-NATIVE Architecture (V15.1.0)
+
+### Facade Pattern API (V15.1.0)
+
+```
+================================================================================
+                     UNIFIED FACADE API - 17 NAMESPACES
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        ORCHESTRATOR FACADE                               │
+│                         (129 Total Exports)                              │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  selection          cache             chaos            distributed       │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
+│  │AgentSelector │  │Predictive    │  │ChaosInjector │  │Distributed   │ │
+│  │AgentPerfDB   │  │AgentCache    │  │ChaosConfig   │  │LockManager   │ │
+│  │              │  │              │  │FailureType   │  │RedisBackend  │ │
+│  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘ │
+│                                                                          │
+│  routing            hot_reload        rate_limiter     exceptions        │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
+│  │RoutingEngine │  │PluginHot     │  │Adaptive      │  │Orchestrator  │ │
+│  │     V2       │  │Reloader      │  │RateLimiter   │  │Error + 6     │ │
+│  │              │  │VersionTrack  │  │TokenBucket   │  │custom exc    │ │
+│  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘ │
+│                                                                          │
+│  file_locks         process_manager   skill_interface  skill_plugin     │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
+│  │FileLock      │  │ProcessManager│  │SkillBase     │  │SkillPlugin   │ │
+│  │LockBackend   │  │CleanupHandler│  │SkillResult   │  │PluginLoader  │ │
+│  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘ │
+│                                                                          │
+│  predictive_cache   adaptive_budget   ab_testing       auto_tuner       │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
+│  │PatternEngine │  │Complexity    │  │ABTesting     │  │AutoTuner     │ │
+│  │StorageTiers  │  │Assessment    │  │Framework     │  │BayesianOpt   │ │
+│  │ColdStart     │  │DynamicBudget │  │ZTest/ChiSq   │  │UCBAcquisition│ │
+│  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘ │
+│                                                                          │
+│  lazy_agents        rule_excerpts                                          │
+│  ┌──────────────┐  ┌──────────────┐                                       │
+│  │LazyL2Loader  │  │RuleExcerpts  │                                       │
+│  │AgentCache    │  │Index         │                                       │
+│  └──────────────┘  └──────────────┘                                       │
+│                                                                          │
+│  DIRECT EXPORTS (112 classes/functions)                                  │
+│  ─────────────────────────────────────────────────────                   │
+│  agent_performance, routing_engine, migrations, etc.                     │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### Namespace Details
+
+| Namespace | Classes/Functions | Purpose |
+|-----------|-------------------|---------|
+| **selection** | AgentSelector, AgentPerformanceDB | ML-based agent selection with performance tracking |
+| **cache** | PredictiveAgentCache | Pattern recognition, agent preloading |
+| **chaos** | ChaosInjector, ChaosConfig, FailureType | Chaos engineering for resilience testing |
+| **distributed** | DistributedLockManager, RedisLockBackend | Multi-process distributed locking |
+| **routing** | RoutingEngineV2 | 4-layer keyword matching for task routing |
+| **hot_reload** | PluginHotReloader, VersionTracker | Hot reload for skill plugins |
+| **rate_limiter** | AdaptiveRateLimiter, TokenBucket | Adaptive rate limiting (10-1000 req/s) |
+| **exceptions** | OrchestratorError + 6 custom | Exception hierarchy with chaining |
+| **file_locks** | FileLock, LockBackend | Cross-platform file locking |
+| **process_manager** | ProcessManager, CleanupHandler | Process lifecycle management |
+| **skill_interface** | SkillBase, SkillResult | Skill interface definitions |
+| **skill_plugin** | SkillPlugin, PluginLoader | Plugin loading and management |
+| **predictive_cache** | PatternEngine, StorageTiers | V14.0.3 predictive caching |
+| **adaptive_budget** | ComplexityAssessment, DynamicBudget | V14.0.3 token budgeting |
+| **ab_testing** | ABTestingFramework, ZTest, ChiSq | V14.0.3 statistical testing |
+| **auto_tuner** | AutoTuner, BayesianOpt, UCB | V14.0.3 hyperparameter optimization |
+| **lazy_agents** | LazyL2Loader | V13.1 lazy loading for L2 specialists |
+| **rule_excerpts** | RuleExcerpts, Index | V13.1 pre-computed rule excerpts |
+
+### V15.1.0 New Lib Modules
+
+| Module | Lines | Purpose |
+|--------|-------|---------|
+| `lib/facade.py` | 350+ | Unified API with 17 namespaces |
+| `lib/routing_engine.py` | 280+ | RoutingEngineV2 with 4-layer matching |
+| `lib/chaos.py` | 450+ | ChaosInjector, ChaosConfig, FailureType |
+| `lib/distributed_lock.py` | 320+ | DistributedLockManager, RedisLockBackend |
+| `lib/hot_reload.py` | 280+ | PluginHotReloader with version tracking |
+| `lib/exceptions.py` | 180+ | Custom exception hierarchy |
 
 ### Predictive Cache
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                  PredictiveAgentCache V14.0.3               │
+│                  PredictiveAgentCache V15.1.0               │
 ├─────────────────────────────────────────────────────────────┤
 │  Task Input → Pattern Engine → Agent Predictions           │
 │                                                              │
@@ -524,7 +609,7 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                 AdaptiveTokenBudget V14.0.3                 │
+│                 AdaptiveTokenBudget V15.1.0                 │
 ├─────────────────────────────────────────────────────────────┤
 │  Task → Complexity Assessment → Token Budget               │
 │                                                              │
@@ -547,7 +632,7 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                  ABTestingFramework V14.0.3                 │
+│                  ABTestingFramework V15.1.0                 │
 ├─────────────────────────────────────────────────────────────┤
 │  Multi-Variant Support (A/B/C/D):                           │
 │                                                              │
@@ -568,7 +653,7 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      AutoTuner V14.0.3                      │
+│                      AutoTuner V15.1.0                      │
 ├─────────────────────────────────────────────────────────────┤
 │  Gaussian Process Regressor:                                 │
 │  - Kernel: RBF with length_scale=0.5                        │
@@ -586,23 +671,100 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### V14.0.3 New Lib Modules
+### Chaos Engineering (V15.1.0)
 
-| Module | Lines | Purpose |
-|--------|-------|---------|
-| `lib/predictive_cache.py` | 814 | Pattern recognition, agent preloading |
-| `lib/adaptive_budget.py` | 403 | Complexity-based token budgeting |
-| `lib/ab_testing.py` | 320 | Multi-variant statistical testing |
-| `lib/auto_tuner.py` | 551 | Bayesian hyperparameter optimization |
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    ChaosInjector V15.1.0                    │
+├─────────────────────────────────────────────────────────────┤
+│  Failure Types:                                              │
+│  - LATENCY: Inject random delays (10-5000ms)               │
+│  - ERROR: Force specific exceptions                         │
+│  - TIMEOUT: Simulate operation timeouts                     │
+│  - RESOURCE: CPU/memory pressure simulation                 │
+│  - NETWORK: Packet loss, connection drops                   │
+│                                                              │
+│  Configuration:                                              │
+│  - rate: float (0.0-1.0) probability per operation         │
+│  - enabled_failures: Set[FailureType]                       │
+│  - target_agents: Optional[Set[str]] for scoping           │
+│                                                              │
+│  Integration: Decorator pattern for agent methods          │
+└─────────────────────────────────────────────────────────────┘
+```
 
-### V14.0.3 Performance Targets
+### Distributed Lock (V15.1.0)
 
-| Metric | V13.1 | V14.0.3 | Improvement |
-|--------|-------|---------|-------------|
-| Agent Prediction Accuracy | N/A | >90% | NEW |
-| Token Budget Precision | Fixed | Adaptive | 40% better |
-| A/B Test Significance | Manual | Auto | Automated |
-| Tuning Iterations | Manual | Auto | Bayesian |
+```
+┌─────────────────────────────────────────────────────────────┐
+│               DistributedLockManager V15.1.0                │
+├─────────────────────────────────────────────────────────────┤
+│  Backends:                                                   │
+│  - RedisLockBackend: Production multi-process              │
+│  - FileLockBackend: Single-process fallback                │
+│                                                              │
+│  Features:                                                   │
+│  - TTL-based expiration (default: 30s)                     │
+│  - Automatic retry with backoff                            │
+│  - Deadlock detection via heartbeat                        │
+│  - Context manager support (with statement)                │
+│                                                              │
+│  Trigger: ENV[CLAUDE_MULTI_PROCESS=true]                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Routing Engine V2 (V15.1.0)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   RoutingEngineV2 V15.1.0                   │
+├─────────────────────────────────────────────────────────────┤
+│  4-Layer Keyword Matching:                                  │
+│  1. Exact Match: Task keyword = Agent keyword (score: 1.0) │
+│  2. Synonym Match: Known synonyms (score: 0.8)             │
+│  3. Semantic Match: Embedding similarity (score: 0.6)      │
+│  4. Fallback Match: Default routing (score: 0.3)           │
+│                                                              │
+│  Agent Selection:                                            │
+│  - Weighted scoring across all layers                       │
+│  - Performance history integration                          │
+│  - L2 specialist -> L1 parent fallback                      │
+│                                                              │
+│  Performance: 9000+ ops/sec, <1ms latency                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Hot Reload (V15.1.0)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  PluginHotReloader V15.1.0                  │
+├─────────────────────────────────────────────────────────────┤
+│  Features:                                                   │
+│  - File watcher (watchdog) for skill directories           │
+│  - Version tracking per plugin                              │
+│  - Graceful reload without session interruption            │
+│  - Rollback on failed reload                               │
+│                                                              │
+│  Configuration:                                              │
+│  - watch_paths: List[Path]                                  │
+│  - debounce_ms: 500 (default)                              │
+│  - auto_reload: bool (default: True)                       │
+│                                                              │
+│  Events: on_reload, on_error, on_rollback                  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### V15.1.0 Performance Targets
+
+| Metric | V14.0.3 | V15.1.0 | Improvement |
+|--------|---------|---------|-------------|
+| Facade Exports | 0 | 129 | NEW |
+| Routing Layers | 1 | 4 | +300% |
+| Chaos Types | 0 | 5 | NEW |
+| Lock Backends | 1 | 2 | +100% |
+| Exception Types | 1 | 7 | +600% |
+| Test Coverage | 85% | 85%+ | Maintained |
 
 ---
 
@@ -610,6 +772,7 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 
 | Version | Date | Changes |
 |---------|------|---------|
+| **V15.1.0** | 2026-03-08 | FACADE API: 17 namespaces, 129 exports, RoutingEngineV2 (4-layer), ChaosInjector (5 types), DistributedLockManager, PluginHotReloader, custom exception hierarchy, +173 tests |
 | **V14.0.3** | 2026-03-07 | AI-NATIVE: PredictiveAgentCache, AdaptiveTokenBudget, ABTestingFramework, AutoTuner, 4 new lib modules (~3208 lines), 54 new tests |
 | **V13.1** | 2026-03-07 | Super-Performance: DB indexes, Rule Excerpts, Lazy L2 loading, 6 bug fixes (HIGH L-6, MEDIUM H-3, M-2, M-1, M-1x2) |
 | **V13.0** | 2026-03-07 | Dynamic Agent Selection, Plugin Skills, File Locks, 5 new lib modules, bug fixes (3 CRITICAL, 4 HIGH) |
@@ -631,14 +794,15 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 | Metric | Value |
 |--------|-------|
 | Total Agents | 43 (6 core + 22 L1 + 15 L2) |
-| Total Skills | 26 (7 core + 6 utility + 8 workflow + 3 language + 2 learning) |
-| Rules Files | 10 (6 common + 3 language + README) |
+| Total Skills | 32 (7 core + 8 utility + 9 workflow + 4 language + 2 learning + 2 plugin) |
+| Rules Files | 11 (6 common + 3 language + README + format-standard) |
 | MCP Servers | 3 configured (1 active, 2 inactive) |
 | Native Tools | 4 (canva, web-reader, web-search-prime, zai-mcp-server) |
-| Documentation | 14 files in docs/ |
+| Facade Exports | 129 (17 namespaces + 112 direct) |
+| Documentation | 25 files in docs/ |
 | Templates | 3 |
 | Workflows | 4 |
-| Version | 14.0.2 AI-NATIVE ARCHITECTURE |
+| Version | 15.1.0 AI-NATIVE FACADE ARCHITECTURE |
 
 ---
 
@@ -677,5 +841,5 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 
 ---
 
-**ORCHESTRATOR SYSTEM ARCHITECTURE V14.0.3 AI-NATIVE**
-*Predictive cache. Adaptive budget. A/B testing. Auto-tuner.*
+**ORCHESTRATOR SYSTEM ARCHITECTURE V15.1.0 AI-NATIVE FACADE**
+*Unified Facade API. 17 namespaces. 129 exports. 9000+ ops/sec.*

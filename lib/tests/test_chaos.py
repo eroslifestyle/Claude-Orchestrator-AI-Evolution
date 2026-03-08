@@ -732,5 +732,837 @@ def chaos_disabled():
 # RUN TESTS
 # =============================================================================
 
+# =============================================================================
+# ADDITIONAL TESTS FOR 100% COVERAGE
+# =============================================================================
+
+
+class TestChaosEventDataclass:
+    """Tests for ChaosEvent dataclass."""
+
+    def test_chaos_event_creation(self):
+        """Test ChaosEvent creation with all fields."""
+        from lib.chaos import ChaosEvent
+
+        event = ChaosEvent(
+            timestamp=datetime.now(),
+            failure_type=FailureType.NETWORK,
+            probability=0.5,
+            target="test_target",
+            duration_ms=100.0,
+            details={"key": "value"},
+        )
+
+        assert event.failure_type == FailureType.NETWORK
+        assert event.probability == 0.5
+        assert event.target == "test_target"
+        assert event.duration_ms == 100.0
+        assert event.details == {"key": "value"}
+
+    def test_chaos_event_defaults(self):
+        """Test ChaosEvent with default values."""
+        from lib.chaos import ChaosEvent
+
+        event = ChaosEvent(
+            timestamp=datetime.now(),
+            failure_type=FailureType.LATENCY,
+            probability=0.1,
+            target="test",
+        )
+
+        assert event.duration_ms is None
+        assert event.details == {}
+
+
+class TestFailureTypeEnum:
+    """Tests for FailureType enum coverage."""
+
+    def test_all_failure_types_exist(self):
+        """Test all FailureType enum values."""
+        assert FailureType.NETWORK.value == "network"
+        assert FailureType.LATENCY.value == "latency"
+        assert FailureType.TIMEOUT.value == "timeout"
+        assert FailureType.MEMORY.value == "memory"
+        assert FailureType.CRASH.value == "crash"
+        assert FailureType.AGENT.value == "agent"
+        assert FailureType.DATABASE.value == "database"
+        assert FailureType.CACHE.value == "cache"
+
+
+class TestConfigProperty:
+    """Tests for config property."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_config_property_returns_copy(self):
+        """Test that config property returns a copy."""
+        chaos = get_chaos_injector()
+        chaos.configure(enabled=True, probability=0.5)
+
+        config1 = chaos.config
+        config2 = chaos.config
+
+        # Should be equal but different objects
+        assert config1.enabled == config2.enabled
+        assert config1.probability == config2.probability
+
+        # Modifying returned config should not affect injector
+        config1.enabled = False
+        assert chaos.enabled is True  # Still True
+
+    def test_config_safe_environments_copy(self):
+        """Test that safe_environments is copied."""
+        chaos = get_chaos_injector()
+        chaos.configure(safe_environments={"dev", "test"})
+
+        config = chaos.config
+        config.safe_environments.add("new_env")
+
+        # Original should not be affected
+        assert "new_env" not in chaos._config.safe_environments
+
+
+class TestConfigureEdgeCases:
+    """Tests for configure method edge cases."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_configure_max_latency_ms(self):
+        """Test configuring max_latency_ms."""
+        chaos = get_chaos_injector()
+        chaos.configure(max_latency_ms=2000)
+
+        assert chaos._config.max_latency_ms == 2000
+
+    def test_configure_negative_max_latency(self):
+        """Test that negative max_latency is clamped to 0."""
+        chaos = get_chaos_injector()
+        chaos.configure(max_latency_ms=-100)
+
+        assert chaos._config.max_latency_ms == 0
+
+    def test_configure_safe_environments(self):
+        """Test configuring safe_environments."""
+        chaos = get_chaos_injector()
+        chaos.configure(safe_environments={"custom_env"})
+
+        assert chaos.is_safe_environment("custom_env") is True
+        assert chaos.is_safe_environment("production") is False
+
+    def test_configure_seed_updates_rng(self):
+        """Test that configuring seed updates RNG."""
+        chaos = get_chaos_injector()
+        chaos.configure(enabled=True, probability=0.5, seed=999)
+
+        # Generate some values
+        values1 = [chaos._rng.random() for _ in range(5)]
+
+        # Reset with same seed
+        chaos.configure(seed=999)
+        values2 = [chaos._rng.random() for _ in range(5)]
+
+        assert values1 == values2
+
+
+class TestLoadConfigFromEnvEdgeCases:
+    """Tests for _load_config_from_env edge cases."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_chaos_seed_from_env(self):
+        """Test CHAOS_SEED environment variable."""
+        with patch.dict(os.environ, {"CHAOS_SEED": "12345"}):
+            chaos = ChaosInjector()
+            chaos._config = chaos._load_config_from_env()
+
+            assert chaos._config.seed == 12345
+
+    def test_chaos_crash_simulation_from_env(self):
+        """Test CHAOS_CRASH_SIMULATION environment variable."""
+        with patch.dict(os.environ, {"CHAOS_CRASH_SIMULATION": "true"}):
+            chaos = ChaosInjector()
+            chaos._config = chaos._load_config_from_env()
+
+            assert chaos._config.crash_simulation is True
+
+    def test_chaos_enabled_failures_from_env(self):
+        """Test CHAOS_ENABLED_FAILURES environment variable."""
+        with patch.dict(
+            os.environ,
+            {"CHAOS_ENABLED_FAILURES": "network,database,cache"}
+        ):
+            chaos = ChaosInjector()
+            chaos._config = chaos._load_config_from_env()
+
+            assert FailureType.NETWORK in chaos._config.enabled_failures
+            assert FailureType.DATABASE in chaos._config.enabled_failures
+            assert FailureType.CACHE in chaos._config.enabled_failures
+            assert FailureType.LATENCY not in chaos._config.enabled_failures
+
+    def test_chaos_enabled_failures_invalid_type(self):
+        """Test that invalid failure types are skipped."""
+        with patch.dict(
+            os.environ,
+            {"CHAOS_ENABLED_FAILURES": "network,invalid_type,cache"}
+        ):
+            chaos = ChaosInjector()
+            chaos._config = chaos._load_config_from_env()
+
+            # Invalid type should be skipped
+            assert FailureType.NETWORK in chaos._config.enabled_failures
+            assert FailureType.CACHE in chaos._config.enabled_failures
+
+    def test_chaos_mode_yes_value(self):
+        """Test CHAOS_MODE with 'yes' value."""
+        with patch.dict(os.environ, {"CHAOS_MODE": "yes"}):
+            chaos = ChaosInjector()
+            chaos._config = chaos._load_config_from_env()
+
+            assert chaos.enabled is True
+
+    def test_chaos_mode_1_value(self):
+        """Test CHAOS_MODE with '1' value."""
+        with patch.dict(os.environ, {"CHAOS_MODE": "1"}):
+            chaos = ChaosInjector()
+            chaos._config = chaos._load_config_from_env()
+
+            assert chaos.enabled is True
+
+    def test_chaos_probability_clamped_high(self):
+        """Test that probability is clamped when > 1.0."""
+        with patch.dict(os.environ, {"CHAOS_PROBABILITY": "5.0"}):
+            chaos = ChaosInjector()
+            chaos._config = chaos._load_config_from_env()
+
+            assert chaos._config.probability == 1.0
+
+    def test_chaos_probability_clamped_negative(self):
+        """Test that probability is clamped when < 0.0."""
+        with patch.dict(os.environ, {"CHAOS_PROBABILITY": "-0.5"}):
+            chaos = ChaosInjector()
+            chaos._config = chaos._load_config_from_env()
+
+            assert chaos._config.probability == 0.0
+
+
+class TestIsSafeEnvironmentEdgeCases:
+    """Tests for is_safe_environment edge cases."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_is_safe_environment_with_chaos_env(self):
+        """Test is_safe_environment uses CHAOS_ENV."""
+        with patch.dict(os.environ, {"CHAOS_ENV": "custom_env"}, clear=False):
+            chaos = get_chaos_injector()
+            chaos.configure(safe_environments={"custom_env"})
+
+            assert chaos.is_safe_environment() is True
+
+    def test_is_safe_environment_with_env(self):
+        """Test is_safe_environment falls back to ENV."""
+        with patch.dict(
+            os.environ,
+            {"ENV": "my_env", "CHAOS_ENV": ""},
+            clear=False
+        ):
+            chaos = get_chaos_injector()
+            chaos.configure(safe_environments={"my_env"})
+
+            assert chaos.is_safe_environment() is True
+
+    def test_is_safe_environment_case_insensitive(self):
+        """Test is_safe_environment is case insensitive."""
+        chaos = get_chaos_injector()
+        chaos.configure(safe_environments={"Development"})
+
+        assert chaos.is_safe_environment("development") is True
+        assert chaos.is_safe_environment("DEVELOPMENT") is True
+
+
+class TestRecordInjectionEdgeCases:
+    """Tests for _record_injection edge cases."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_event_history_limit(self):
+        """Test that event history is limited when exceeding 1000 events."""
+        chaos = get_chaos_injector()
+        chaos.configure(enabled=True, probability=1.0)
+
+        # Trigger 1001 injections to trigger the trim (len > 1000)
+        for _ in range(1001):
+            chaos._record_injection(FailureType.NETWORK)
+
+        # Should be trimmed to 500 after 1001 elements
+        assert len(chaos._event_history) == 500
+
+    def test_event_history_trims_correctly(self):
+        """Test that event history trimming keeps last 500 events."""
+        chaos = get_chaos_injector()
+        chaos.configure(enabled=True, probability=1.0)
+
+        # Add exactly 1000 events (no trim yet)
+        for i in range(1000):
+            chaos._record_injection(FailureType.NETWORK)
+
+        # History should be at 1000
+        assert len(chaos._event_history) == 1000
+
+        # Add one more to trigger trim
+        chaos._record_injection(FailureType.NETWORK)
+
+        # Now should be trimmed to 500
+        assert len(chaos._event_history) == 500
+
+
+class TestInjectTimeoutReturnsException:
+    """Tests for inject_timeout returning exception."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        chaos.configure(enabled=True, probability=1.0, seed=42)
+        yield
+        chaos.reset()
+
+    def test_inject_timeout_returns_exception(self):
+        """Test that inject_timeout can return exception instead of raising."""
+        chaos = get_chaos_injector()
+
+        error = chaos.inject_timeout(
+            timeout_seconds=0.01,
+            raise_exception=False
+        )
+
+        assert isinstance(error, TimeoutError)
+        assert "Chaos injection" in str(error)
+
+
+class TestInjectAgentFailureReturnsException:
+    """Tests for inject_agent_failure returning exception."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            seed=42,
+            enabled_failures={FailureType.AGENT}
+        )
+        yield
+        chaos.reset()
+
+    def test_inject_agent_failure_returns_exception(self):
+        """Test that inject_agent_failure can return exception."""
+        chaos = get_chaos_injector()
+
+        error = chaos.inject_agent_failure(
+            "test_agent",
+            raise_exception=False
+        )
+
+        from lib.exceptions import AgentExecutionError
+        assert isinstance(error, AgentExecutionError)
+
+
+class TestInjectDatabaseFailureReturnsException:
+    """Tests for inject_database_failure returning exception."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            seed=42,
+            enabled_failures={FailureType.DATABASE}
+        )
+        yield
+        chaos.reset()
+
+    def test_inject_database_failure_returns_exception(self):
+        """Test that inject_database_failure can return exception."""
+        chaos = get_chaos_injector()
+
+        error = chaos.inject_database_failure(
+            operation="insert",
+            raise_exception=False
+        )
+
+        from lib.exceptions import DatabaseConnectionError
+        assert isinstance(error, DatabaseConnectionError)
+
+
+class TestInjectCacheFailureReturnsException:
+    """Tests for inject_cache_failure returning exception."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            seed=42,
+            enabled_failures={FailureType.CACHE}
+        )
+        yield
+        chaos.reset()
+
+    def test_inject_cache_failure_returns_exception(self):
+        """Test that inject_cache_failure can return exception."""
+        chaos = get_chaos_injector()
+
+        error = chaos.inject_cache_failure(
+            cache_name="my_cache",
+            raise_exception=False
+        )
+
+        from lib.exceptions import CacheError
+        assert isinstance(error, CacheError)
+
+
+class TestSimulateCrashEdgeCases:
+    """Tests for simulate_crash edge cases."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_simulate_crash_exit_type(self):
+        """Test crash simulation with exit type."""
+        chaos = get_chaos_injector()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            crash_simulation=True,
+            enabled_failures={FailureType.CRASH}
+        )
+
+        with pytest.raises(SystemExit):
+            chaos.simulate_crash("exit")
+
+    def test_simulate_crash_not_injected(self):
+        """Test crash simulation when should_inject returns False."""
+        chaos = get_chaos_injector()
+        chaos.configure(
+            enabled=True,
+            probability=0.0,  # Never inject
+            crash_simulation=True,
+            enabled_failures={FailureType.CRASH}
+        )
+
+        # Should not raise
+        chaos.simulate_crash("exception")
+
+
+class TestDecoratorEdgeCases:
+    """Tests for decorator edge cases."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_decorator_timeout_failure(self):
+        """Test decorator with timeout failure."""
+        chaos = get_chaos_injector()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            enabled_failures={FailureType.TIMEOUT}
+        )
+
+        @chaos.decorator(FailureType.TIMEOUT, probability=1.0)
+        def slow_function():
+            return "result"
+
+        with pytest.raises(TimeoutError, match="Chaos injection"):
+            slow_function()
+
+    def test_decorator_latency_failure(self):
+        """Test decorator with latency injection."""
+        chaos = get_chaos_injector()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            max_latency_ms=10,
+            enabled_failures={FailureType.LATENCY}
+        )
+
+        @chaos.decorator(FailureType.LATENCY, probability=1.0)
+        def fast_function():
+            return "result"
+
+        start = time.time()
+        result = fast_function()
+        elapsed = time.time() - start
+
+        assert result == "result"
+        # Latency should have been injected
+
+    def test_decorator_database_failure(self):
+        """Test decorator with database failure."""
+        chaos = get_chaos_injector()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            enabled_failures={FailureType.DATABASE}
+        )
+
+        @chaos.decorator(FailureType.DATABASE, probability=1.0)
+        def db_function():
+            return "result"
+
+        from lib.exceptions import DatabaseConnectionError
+        with pytest.raises(DatabaseConnectionError, match="Chaos injection"):
+            db_function()
+
+    def test_decorator_cache_failure(self):
+        """Test decorator with cache failure."""
+        chaos = get_chaos_injector()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            enabled_failures={FailureType.CACHE}
+        )
+
+        @chaos.decorator(FailureType.CACHE, probability=1.0)
+        def cache_function():
+            return "result"
+
+        from lib.exceptions import CacheError
+        with pytest.raises(CacheError, match="Chaos injection"):
+            cache_function()
+
+    def test_decorator_agent_failure(self):
+        """Test decorator with agent failure."""
+        chaos = get_chaos_injector()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            enabled_failures={FailureType.AGENT}
+        )
+
+        @chaos.decorator(FailureType.AGENT, probability=1.0)
+        def agent_function():
+            return "result"
+
+        from lib.exceptions import AgentExecutionError
+        with pytest.raises(AgentExecutionError, match="Chaos injection"):
+            agent_function()
+
+
+class TestInjectMemoryPressureOOM:
+    """Tests for memory pressure OOM handling."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_inject_memory_pressure_oom(self):
+        """Test memory pressure raises MemoryError on OOM."""
+        chaos = get_chaos_injector()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            enabled_failures={FailureType.MEMORY}
+        )
+
+        # Try to allocate an impossibly large amount
+        with pytest.raises(MemoryError):
+            chaos.inject_memory_pressure(mb=10_000_000, duration_seconds=0.01)
+
+
+class TestChaosContextEdgeCases:
+    """Tests for chaos context manager edge cases."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_chaos_context_with_specific_failure_types(self):
+        """Test chaos context with specific failure types list."""
+        chaos = get_chaos_injector()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            enabled_failures={FailureType.NETWORK, FailureType.TIMEOUT}
+        )
+
+        with chaos.chaos_context(
+            "test",
+            failure_types=[FailureType.NETWORK]
+        ) as ctx:
+            # Only NETWORK should be checked
+            assert ctx.network_failure is True
+
+    def test_chaos_context_with_override_probability(self):
+        """Test chaos context with override probability."""
+        chaos = get_chaos_injector()
+        chaos.configure(
+            enabled=True,
+            probability=0.0,  # Disabled at config level
+            max_latency_ms=10,
+            enabled_failures={FailureType.NETWORK, FailureType.LATENCY}
+        )
+
+        # Use override probability of 1.0
+        with chaos.chaos_context(
+            "test",
+            probability=1.0
+        ) as ctx:
+            # Should inject with override probability
+            assert ctx.network_failure is True
+
+
+class TestGetStatisticsEdgeCases:
+    """Tests for get_statistics edge cases."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_get_statistics_recent_events(self):
+        """Test that get_statistics includes recent events."""
+        chaos = get_chaos_injector()
+        chaos.configure(enabled=True, probability=1.0)
+
+        # Trigger some injections
+        chaos.should_inject(FailureType.NETWORK)
+        chaos.inject_latency(min_ms=1, max_ms=2)
+
+        stats = chaos.get_statistics()
+
+        assert "recent_events" in stats
+        assert len(stats["recent_events"]) > 0
+
+    def test_get_statistics_empty_history(self):
+        """Test get_statistics with empty history."""
+        chaos = get_chaos_injector()
+        chaos.reset_statistics()
+
+        stats = chaos.get_statistics()
+
+        assert stats["recent_events"] == []
+
+
+class TestInjectNetworkFailureNoInjection:
+    """Tests for network failure when should_inject returns False."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_no_network_failure_when_probability_0(self):
+        """Test no network failure when probability is 0."""
+        chaos = get_chaos_injector()
+        chaos.configure(enabled=True, probability=0.0)
+
+        result = chaos.inject_network_failure(raise_exception=False)
+
+        assert result is None
+
+
+class TestInjectTimeoutNoInjection:
+    """Tests for timeout when should_inject returns False."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_no_timeout_when_probability_0(self):
+        """Test no timeout when probability is 0."""
+        chaos = get_chaos_injector()
+        chaos.configure(enabled=True, probability=0.0)
+
+        result = chaos.inject_timeout(timeout_seconds=0.01, raise_exception=False)
+
+        assert result is None
+
+
+class TestInjectAgentFailureNoInjection:
+    """Tests for agent failure when should_inject returns False."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_no_agent_failure_when_not_enabled(self):
+        """Test no agent failure when type not enabled."""
+        chaos = get_chaos_injector()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            enabled_failures={FailureType.NETWORK}  # AGENT not enabled
+        )
+
+        result = chaos.inject_agent_failure("test", raise_exception=False)
+
+        assert result is None
+
+
+class TestInjectDatabaseFailureNoInjection:
+    """Tests for database failure when should_inject returns False."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_no_database_failure_when_not_enabled(self):
+        """Test no database failure when type not enabled."""
+        chaos = get_chaos_injector()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            enabled_failures={FailureType.NETWORK}
+        )
+
+        result = chaos.inject_database_failure(raise_exception=False)
+
+        assert result is None
+
+
+class TestInjectCacheFailureNoInjection:
+    """Tests for cache failure when should_inject returns False."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_no_cache_failure_when_not_enabled(self):
+        """Test no cache failure when type not enabled."""
+        chaos = get_chaos_injector()
+        chaos.configure(
+            enabled=True,
+            probability=1.0,
+            enabled_failures={FailureType.NETWORK}
+        )
+
+        result = chaos.inject_cache_failure(raise_exception=False)
+
+        assert result is None
+
+
+class TestInjectLatencyCustomMax:
+    """Tests for latency with custom max_ms."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_inject_latency_with_custom_max(self):
+        """Test inject_latency with custom max_ms."""
+        chaos = get_chaos_injector()
+        chaos.configure(enabled=True, max_latency_ms=1000, seed=42)
+
+        latency = chaos.inject_latency(min_ms=50, max_ms=100)
+
+        assert 50 <= latency <= 100
+
+
+class TestShouldInjectOverrideProbability:
+    """Tests for should_inject with override probability."""
+
+    @pytest.fixture(autouse=True)
+    def reset_chaos(self):
+        """Reset chaos injector before each test."""
+        chaos = get_chaos_injector()
+        chaos.reset()
+        yield
+        chaos.reset()
+
+    def test_should_inject_with_override_probability(self):
+        """Test should_inject with override probability."""
+        chaos = get_chaos_injector()
+        chaos.configure(enabled=True, probability=0.0)
+
+        # Override to 1.0 should always inject
+        result = chaos.should_inject(FailureType.NETWORK, probability=1.0)
+
+        assert result is True
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])

@@ -157,7 +157,7 @@
         "installPath": "C:\\Users\\LeoDg\\.claude\\plugins\\cache\\claude-plugins-official\\superpowers\\4.3.1",
         "version": "4.3.1",
         "installedAt": "2026-01-29T21:20:46.852Z",
-        "lastUpdated": "2026-02-22T06:41:06.475Z",
+        "lastUpdated": "2026-03-08T16:28:42.450Z",
         "gitCommitSha": "469a6d81ebb8b827e284d4afb090c6c622d97747"
       }
     ],
@@ -277,7 +277,7 @@
         "installPath": "C:\\Users\\LeoDg\\.claude\\plugins\\cache\\claude-plugins-official\\huggingface-skills\\1.0.0",
         "version": "1.0.0",
         "installedAt": "2026-02-15T10:24:13.471Z",
-        "lastUpdated": "2026-02-22T06:41:06.715Z",
+        "lastUpdated": "2026-03-08T16:28:42.589Z",
         "gitCommitSha": "3f4f55d6264b7baddec94031eeda70780d7e9189"
       }
     ]

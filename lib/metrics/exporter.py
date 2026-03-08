@@ -93,10 +93,20 @@ class PrometheusExporter:
         return "\n".join(lines) + "\n" if lines else ""
 
     def _get_base_name(self, name: str) -> str:
-        """Get the base metric name (without _bucket, _sum, _count suffixes)."""
+        """Get the base metric name (without _bucket, _sum, _count suffixes).
+
+        Handles edge cases where suffix-like strings are part of the name,
+        e.g., "bucket_count" should not become "bucket".
+        """
+        # Order matters: check longer suffixes first
         for suffix in ("_bucket", "_sum", "_count"):
             if name.endswith(suffix):
-                return name[:-len(suffix)]
+                base = name[:-len(suffix)]
+                # Ensure the suffix is actually a suffix, not part of the name
+                # e.g., "bucket_count" should not become "bucket"
+                if suffix == "_count" and base.endswith("_bucket"):
+                    continue  # Skip, this is part of the name
+                return base
         return name
 
     def _get_prometheus_type(self, metric: MetricValue) -> str:

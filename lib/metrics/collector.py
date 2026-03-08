@@ -600,6 +600,8 @@ class MetricsCollector:
                         description=f"{desc} (count)",
                     ))
 
+        # Sort metrics alphabetically by name for consistent ordering
+        metrics.sort(key=lambda m: m.name)
         return metrics
 
     def _parse_label_key(self, label_key: str) -> Dict[str, str]:
@@ -675,22 +677,21 @@ class MetricsCollector:
             self._label_keys.clear()
 
     def cleanup_expired(self) -> int:
-        """Remove expired histogram samples.
+        """Remove samples exceeding max_samples limit.
 
         Returns:
             Number of samples removed
         """
-        cutoff = time.time() - self._retention
         removed = 0
         with self._lock:
-            for name in self._histograms:
+            for name in list(self._histograms.keys()):
                 for label_key in list(self._histograms[name].keys()):
-                    # Keep recent samples, remove old ones
-                    # For simplicity, we just trim to max_samples
                     samples = self._histograms[name][label_key]
                     if len(samples) > self._max_samples:
-                        removed += len(samples) - self._max_samples
+                        # Keep only the most recent samples
+                        excess = len(samples) - self._max_samples
                         self._histograms[name][label_key] = samples[-self._max_samples:]
+                        removed += excess
         return removed
 
 

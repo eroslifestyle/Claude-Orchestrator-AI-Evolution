@@ -1,8 +1,8 @@
-# Orchestrator Documentation Index V14.0.3
+# Orchestrator Documentation Index V15.1.0
 
-> **Version:** 14.0.2 AI-Native | **Last Updated:** 2026-03-07
-> **Total Documents:** 20 | **Total Lines:** ~7,300
-> **Agents:** 43 (6 core + 22 L1 + 15 L2) | **Skills:** 32
+> **Version:** 15.1.0 Facade API Unified | **Last Updated:** 2026-03-08
+> **Total Documents:** 25 | **Total Lines:** ~9,500
+> **Agents:** 43 (6 core + 22 L1 + 15 L2) | **Skills:** 32 | **Facade Exports:** 129
 
 ---
 
@@ -10,7 +10,7 @@
 
 | # | Document | Description | Lines |
 |---|----------|-------------|-------|
-| 1 | [changelog.md](./changelog.md) | Version history and release notes (V14.0.3 AI-Native) | 220 |
+| 1 | [changelog.md](./changelog.md) | Version history and release notes (V15.1.0 Facade API) | 280 |
 | 2 | [AUDIT-REPORT-V12.0.md](./AUDIT-REPORT-V12.0.md) | Deep audit findings and resolutions | 413 |
 | 3 | [setup-guide.md](./setup-guide.md) | Step-by-step installation and configuration | 74 |
 | 4 | [architecture.md](./architecture.md) | System architecture and component overview | 124 |
@@ -27,6 +27,11 @@
 | 15 | [team-patterns.md](./team-patterns.md) | Agent team patterns (DEPRECATED) | 35 |
 | 16 | [mcp-integration.md](./mcp-integration.md) | MCP server management and routing | 171 |
 | 17 | [bimodal-routing.md](./bimodal-routing.md) | Bimodal profile system (cca/ccg) | 265 |
+| 18 | [facade-api.md](./facade-api.md) | Unified Facade API (17 namespaces) | 320 |
+| 19 | [chaos-engineering.md](./chaos-engineering.md) | ChaosInjector usage and patterns | 185 |
+| 20 | [distributed-locking.md](./distributed-locking.md) | Redis-based distributed locks | 145 |
+| 21 | [routing-engine-v2.md](./routing-engine-v2.md) | 4-layer keyword routing system | 210 |
+| 22 | [hot-reload.md](./hot-reload.md) | Plugin hot-reload mechanism | 165 |
 
 ---
 
@@ -47,6 +52,14 @@
 - [Observability](./observability.md) - Monitoring and alerting
 - [Memory Integration](./memory-integration.md) - Context persistence
 - [Test Suite](./test-suite.md) - Validation tests
+- [Facade API](./facade-api.md) - Unified API (17 namespaces)
+
+### V15.1 Features
+- [Facade API](./facade-api.md) - Unified Facade with 129 exports
+- [Chaos Engineering](./chaos-engineering.md) - ChaosInjector patterns
+- [Distributed Locking](./distributed-locking.md) - Redis-based locks
+- [Routing Engine V2](./routing-engine-v2.md) - 4-layer keyword matching
+- [Hot Reload](./hot-reload.md) - Plugin hot-reload mechanism
 
 ---
 
@@ -78,6 +91,16 @@
 | **windows-support.md** | Windows-specific commands and issues | On Windows platforms |
 | **mcp-integration.md** | MCP servers, native tools, marketplace | Configuring external tools |
 | **skills-reference.md** | Claude Code skills system | Creating or using skills |
+
+### V15.1 New Features
+
+| Document | Purpose | When to Use |
+|----------|---------|-------------|
+| **facade-api.md** | Unified Facade API (17 namespaces) | Using the facade for imports |
+| **chaos-engineering.md** | ChaosInjector usage and patterns | Testing system resilience |
+| **distributed-locking.md** | Redis-based distributed locks | Multi-instance coordination |
+| **routing-engine-v2.md** | 4-layer keyword routing system | Understanding agent selection |
+| **hot-reload.md** | Plugin hot-reload mechanism | Development workflow |
 
 ### Testing & Quality
 
@@ -127,6 +150,13 @@ PLATFORM
 QUALITY
   test-suite.md
 
+V15.1 FEATURES
+  facade-api.md
+  chaos-engineering.md
+  distributed-locking.md
+  routing-engine-v2.md
+  hot-reload.md
+
 LEGACY
   routing-table.md (deprecated)
   team-patterns.md (deprecated)
@@ -136,14 +166,54 @@ LEGACY
 
 | Priority | Documents |
 |----------|-----------|
-| **CRITICAL** | setup-guide.md, architecture.md, troubleshooting.md |
-| **HIGH** | memory-integration.md, health-check.md, observability.md, error-recovery.md |
-| **MEDIUM** | mcp-integration.md, skills-reference.md, test-suite.md, examples.md |
+| **CRITICAL** | setup-guide.md, architecture.md, troubleshooting.md, facade-api.md |
+| **HIGH** | memory-integration.md, health-check.md, observability.md, error-recovery.md, routing-engine-v2.md |
+| **MEDIUM** | mcp-integration.md, skills-reference.md, test-suite.md, examples.md, chaos-engineering.md, distributed-locking.md, hot-reload.md |
 | **LOW** | windows-support.md, routing-table.md, team-patterns.md |
 
 ---
 
 ## Version History
+
+### V15.1.0 - Facade API Unified (2026-03-08)
+
+#### New Features (5)
+
+| # | Feature | Description | Lines |
+|---|---------|-------------|-------|
+| 1 | **Facade API** | Unified API with 17 namespaces, 129 exports | 320 |
+| 2 | **Chaos Engineering** | ChaosInjector with 6 failure types | 185 |
+| 3 | **Distributed Locking** | Redis-based distributed lock manager | 145 |
+| 4 | **Routing Engine V2** | 4-layer keyword matching for agent selection | 210 |
+| 5 | **Hot Reload** | Plugin hot-reload with version tracking | 165 |
+
+#### Facade Namespaces (17)
+
+| Namespace | Exports | Purpose |
+|-----------|---------|---------|
+| `agents` | 8 | Agent definitions and selection |
+| `skills` | 6 | Skill loading and management |
+| `routing` | 12 | RoutingEngineV2 and routing logic |
+| `chaos` | 9 | ChaosInjector and failure injection |
+| `distributed_lock` | 7 | DistributedLockManager and backends |
+| `hot_reload` | 6 | PluginHotReloader |
+| `predictive_cache` | 11 | PredictiveAgentCache |
+| `adaptive_budget` | 10 | AdaptiveTokenBudget |
+| `ab_testing` | 8 | ABTestingFramework |
+| `auto_tuner` | 7 | AutoTuner |
+| `file_locks` | 9 | FileLockManager |
+| `exceptions` | 12 | Custom exception hierarchy |
+| `metrics` | 8 | Metrics collection |
+| `process` | 6 | Process management |
+| `memory` | 5 | Memory integration |
+| `utils` | 6 | Utility functions |
+| `types` | 5 | Type definitions |
+
+#### Metrics
+
+- **Total Exports:** 129 (17 namespaces + 112 direct)
+- **Test Coverage:** 350+ tests (98.8% pass rate)
+- **Facade Modules:** 21 core modules
 
 ### V14.0.3 - Bug Fix Release (2026-03-07)
 
@@ -220,18 +290,20 @@ LEGACY
 
 | Metric | Value |
 |--------|-------|
-| Total Documents | 18 |
-| Active Documents | 16 |
+| Total Documents | 22 |
+| Active Documents | 20 |
 | Deprecated Documents | 2 |
-| Total Lines | ~7,300 |
+| Total Lines | ~9,500 |
 | Largest Document | test-suite.md (~1,500 lines) |
 | Smallest Document | routing-table.md (18 lines) |
+| V15.1 New Documents | 5 (facade-api, chaos, distributed-lock, routing-v2, hot-reload) |
 
 ---
 
 ## Maintenance Notes
 
 ### Last Updated
+- **V15.1.0:** 2026-03-08 - Facade API unified (17 namespaces, 129 exports), 5 new docs
 - **V14.0.3:** 2026-03-07 - Bug fix release, 8 limitazioni risolte, stress test passed, 91 new tests
 - **V14.0 AI-NATIVE:** 2026-03-07 - PredictiveAgentCache, AdaptiveTokenBudget, ABTestingFramework, AutoTuner
 - **V13.1 Super-Performance:** 2026-03-07 - DB indexes, Rule Excerpts system, Lazy L2 loading, 6 bug fixes
@@ -250,4 +322,4 @@ The following files are retained for backward compatibility but content has been
 
 ---
 
-*Orchestrator Documentation Index V14.0.3 AI-Native - Generated 2026-03-07*
+*Orchestrator Documentation Index V15.1.0 Facade API Unified - Generated 2026-03-08*
