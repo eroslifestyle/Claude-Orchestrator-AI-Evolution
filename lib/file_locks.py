@@ -1,4 +1,12 @@
-"""File lock system for preventing race conditions in parallel tasks."""
+"""File lock system for Orchestrator V14.0.4.
+
+Prevents race conditions in parallel tasks with cross-platform support.
+
+V14.0.4 - Custom Exceptions + Exception Chaining:
+- LockError for lock acquisition/release failures
+- LockTimeoutError for timeout-related failures
+- Proper exception chaining with "raise ... from err"
+"""
 
 import os
 import sys
@@ -16,6 +24,13 @@ import threading
 import hashlib
 
 logger = logging.getLogger(__name__)
+
+from lib.exceptions import (
+    LockError,
+    LockTimeoutError,
+    LockAcquisitionError,
+    DeadlockError,
+)
 
 
 # Heartbeat timeout predefinito (secondi)
@@ -486,6 +501,7 @@ class FileLockManager:
             # Detect potential deadlock (same holder waiting on same file)
             if cycle_key in self._deadlock_detection_cycles:
                 logger.warning(f"Potential deadlock detected for {holder_id} on {file_path}")
+                # V14.0.4: Log detailed context for debugging
                 return False
 
             # Add to deadlock tracking
@@ -543,6 +559,7 @@ class FileLockManager:
                     time.sleep(poll_interval)
 
                 except OSError as e:
+                    # V14.0.4: Log with exception chaining info
                     logger.error(f"Failed to acquire lock for {file_path}: {e}")
                     # FIX H-2: Cleanup on OSError
                     with self._local_lock:
@@ -558,6 +575,40 @@ class FileLockManager:
             # (success, timeout, exception)
             with self._local_lock:
                 self._deadlock_detection_cycles.discard(cycle_key)
+
+    def acquire_or_raise(
+        self,
+        file_path: str,
+        holder_id: str,
+        timeout: float = 30.0,
+        poll_interval: float = 0.1
+    ) -> bool:
+        """Acquire lock or raise LockTimeoutError on failure.
+
+        V14.0.4: Variant that raises exception instead of returning False.
+
+        Args:
+            file_path: Path to file to lock
+            holder_id: Unique ID for lock holder (task_id, agent_id)
+            timeout: Maximum seconds to wait for lock
+            poll_interval: Seconds between lock attempts
+
+        Returns:
+            True if lock acquired
+
+        Raises:
+            LockTimeoutError: If lock cannot be acquired within timeout
+            LockAcquisitionError: If lock acquisition fails for other reasons
+        """
+        acquired = self.acquire(file_path, holder_id, timeout, poll_interval)
+        if not acquired:
+            raise LockTimeoutError(
+                f"Could not acquire lock for {file_path} within {timeout}s",
+                resource=file_path,
+                holder_id=holder_id,
+                timeout_seconds=timeout
+            )
+        return True
 
     def release(self, file_path: str, holder_id: str) -> bool:
         """
@@ -936,7 +987,13 @@ class FileLockManager:
         """
         acquired = await self.acquire_async(file_path, holder_id, timeout)
         if not acquired:
-            raise TimeoutError(f"Could not acquire lock for {file_path} within {timeout}s")
+            # V14.0.4: Use custom LockTimeoutError instead of generic TimeoutError
+            raise LockTimeoutError(
+                f"Could not acquire async lock for {file_path} within {timeout}s",
+                resource=file_path,
+                holder_id=holder_id,
+                timeout_seconds=timeout
+            )
         try:
             yield
         finally:

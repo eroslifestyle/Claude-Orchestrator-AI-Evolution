@@ -1,16 +1,15 @@
-"""Auto-tuning Parameters for Orchestrator V14.0 AI-Native.
+"""Auto-tuning Parameters for Orchestrator V14.0.3.
 
 Bayesian optimization per parametri di sistema con apprendimento continuo.
 
-V15.0.0 - Features:
-- Enhanced Gaussian Process with RBF kernel (improved accuracy)
+Features:
+- Gaussian Process con RBF kernel
 - N_candidates adattivo basato su dimensionalita (5-100 range)
 - Latin Hypercube Sampling per generazione candidati
 - Parametri tunable: cache_ttl, batch_size, pool_size, preload_threshold
 - Persistenza history su JSON
 - Thread-safe with RLock
 - Exploration/exploitation bilanciato with decay
-- Enhanced parameter optimization with better convergence
 
 Usage:
     tuner = AutoTuner()

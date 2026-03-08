@@ -1,4 +1,4 @@
-"""Lazy Agent Loading System V13.2.
+"""Lazy Agent Loading System for Orchestrator V14.0.3.
 
 Loads L2 specialists on-demand to reduce memory footprint and startup time.
 
@@ -19,8 +19,10 @@ L2 Agents (15 total):
 - AI Model Specialist L2
 - Social OAuth Specialist L2
 
-V13.2.0: Integrazione PredictiveAgentCache per preload intelligente.
-V13.1.0: Initial implementation with thread-safe lazy loading.
+Features:
+- PredictiveAgentCache integration per preload intelligente
+- Thread-safe lazy loading
+- TTL-based cache invalidation
 """
 
 import json

@@ -1,4 +1,4 @@
-"""Skill Interface for Orchestrator V13.0 Plugin System.
+"""Skill Interface for Orchestrator V14.0.3 Plugin System.
 
 Abstract base class for all skills.
 """

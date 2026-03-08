@@ -1,4 +1,4 @@
-"""Skill Plugin System for Orchestrator V13.0.
+"""Skill Plugin System for Orchestrator V14.0.3.
 
 Dynamic skill loading with hot-reload capability.
 """

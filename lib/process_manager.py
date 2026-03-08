@@ -1,5 +1,5 @@
-"""
-ProcessManager - Windows Process Lifecycle Manager
+"""ProcessManager - Windows Process Lifecycle Manager for Orchestrator V14.0.3.
+
 Guarantees NO orphan processes through Windows Job Objects and signal handlers.
 
 Usage:

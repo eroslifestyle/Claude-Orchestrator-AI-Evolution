@@ -1,12 +1,12 @@
-"""
-Rule Excerpts System V14.0
-Pre-computed rule excerpts for token-efficient loading.
+"""Rule Excerpts System for Orchestrator V14.0.3.
 
+Pre-computed rule excerpts for token-efficient loading.
 Each excerpt is ~500 tokens, categorized by task type.
 Reduces I/O by 70% compared to loading full rule files.
 
-V14.0 - Budget-aware loading con priorizzazione e troncamento
-V13.1.1 - Added TTL-based cache invalidation (RE-1 fix)
+Features:
+- Budget-aware loading con priorizzazione e troncamento
+- TTL-based cache invalidation
 """
 import json
 import threading

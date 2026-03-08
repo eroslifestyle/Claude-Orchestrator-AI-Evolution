@@ -1,4 +1,4 @@
-"""A/B Testing Framework for Orchestrator V14.0 AI-Native.
+"""A/B Testing Framework for Orchestrator V14.0.3.
 
 Features:
 - Esperimenti con varianti A/B

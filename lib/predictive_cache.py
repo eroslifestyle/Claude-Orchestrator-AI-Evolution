@@ -1,4 +1,4 @@
-"""Predictive Agent Cache for Orchestrator V14.0 AI-Native.
+"""Predictive Agent Cache for Orchestrator V14.0.3.
 
 Predice agent necessari basandosi su task embedding e pattern recognition.
 
@@ -6,15 +6,11 @@ Features:
 - Task embedding basato su keyword
 - Pattern recognition per sequenze di agent
 - Preload intelligente con confidence threshold
-- Integrazione con AgentUsageTracker V13.2
+- Cold start handling con keyword fallback
+- Tiered storage per pattern rari
+- Distributed lock opzionale per multi-process
+- Integrazione con AgentUsageTracker
 - Accuracy target: >90%
-- Cold start handling con keyword fallback (V14.1)
-- Tiered storage per pattern rari (V14.1)
-- Distributed lock opzionale per multi-process (V14.1)
-
-V15.0.0: Enhanced with cold start handling, tiered storage, distributed lock.
-V14.1.0: Initial implementation for AI-Native orchestrator.
-V15.0.0: Major evolution - Enhanced predictive capabilities, improved cold start performance, multi-tier storage optimization.
 """
 
 from __future__ import annotations
@@ -439,6 +435,7 @@ class PatternRecognitionEngine:
     """
 
     # Keyword per dominio
+    # V14.0.4: Aggiunte keyword comuni per cold start (analyze, code, fix, review, etc.)
     DOMAIN_KEYWORDS: Dict[str, List[str]] = {
         "database": ["sql", "query", "schema", "table", "index", "orm", "migration"],
         "api": ["api", "rest", "endpoint", "http", "route", "crud", "request"],
@@ -450,6 +447,10 @@ class PatternRecognitionEngine:
         "mobile": ["mobile", "flutter", "react native", "ios", "android", "gesture"],
         "trading": ["trading", "strategy", "ea", "mql", "backtest", "indicator"],
         "refactor": ["refactor", "clean", "debt", "extract", "rename", "simplify"],
+        # V14.0.4: Core task keywords per warm start
+        "core": ["analyze", "analizza", "code", "implement", "fix", "create", "develop",
+                 "write", "review", "validate", "check", "verify", "audit", "examine",
+                 "plan", "architect", "design", "coordinate", "lead"],
     }
 
     # Agent L1 -> L2 mapping per dominio
@@ -692,6 +693,8 @@ class PatternRecognitionEngine:
     def warmup_from_keywords(self, task: str) -> List[Prediction]:
         """FIX 1: Fallback prediction basata su keyword quando AgentUsageTracker non disponibile.
 
+        V14.0.4: Migliorato con mapping esteso da _COMMON_AGENTS per primo task.
+
         Usa il pattern recognition engine per estrarre keyword e mappare ad agent.
         Questo metodo e usato come cold start fallback.
 
@@ -704,7 +707,20 @@ class PatternRecognitionEngine:
         task_lower = task.lower()
         predictions: Dict[str, Prediction] = {}
 
-        # Cerca keyword nel task e mappa ad agent
+        # V14.0.4: Prima controlla _COMMON_AGENTS per warm start immediato
+        for agent_id, config in self._COMMON_AGENTS.items():
+            for keyword in config.get("keywords", []):
+                if keyword in task_lower:
+                    if agent_id not in predictions:
+                        predictions[agent_id] = Prediction(
+                            agent_id=agent_id,
+                            confidence=config["confidence"],
+                            reason=f"Warm start keyword: {keyword}",
+                            source="warm_start_fallback"
+                        )
+                    break  # Un match per agent basta
+
+        # Poi usa KEYWORD_AGENT_MAP classica
         for keyword, agents in self.KEYWORD_AGENT_MAP.items():
             if keyword in task_lower:
                 for i, agent_id in enumerate(agents):
@@ -717,6 +733,22 @@ class PatternRecognitionEngine:
                             reason=f"Keyword match: {keyword}",
                             source="cold_start_fallback"
                         )
+
+        # V14.0.4: Aggiungi sempre i core agents come fallback finale
+        # Se non abbiamo predizioni, usa Analyzer come default
+        if not predictions:
+            predictions["Analyzer"] = Prediction(
+                agent_id="Analyzer",
+                confidence=0.70,
+                reason="Default fallback for first task",
+                source="default_core"
+            )
+            predictions["Coder"] = Prediction(
+                agent_id="Coder",
+                confidence=0.65,
+                reason="Default fallback for first task",
+                source="default_core"
+            )
 
         # Ordina per confidence e limita
         result = sorted(
@@ -843,6 +875,9 @@ class PredictiveAgentCache:
         # Carica pattern history da disco
         self._load_patterns_from_disk()
 
+        # V14.0.4: Pre-popola cache con agent piu' usati (warm start)
+        self._prepopulate_common_agents()
+
         # Contatore per gc.collect() periodico (ogni 100 chiamate)
         self._call_counter = 0
         self._gc_interval = 100
@@ -850,6 +885,52 @@ class PredictiveAgentCache:
         logger.info(
             "PredictiveAgentCache initialized (threshold=%.2f, tiered=%s, distributed=%s)",
             confidence_threshold, use_tiered_storage, self._use_distributed_lock
+        )
+
+    # V14.0.4: Agent comuni per warm start
+    _COMMON_AGENTS = {
+        # Core agents (usati molto frequentemente)
+        "Analyzer": {"confidence": 0.85, "keywords": ["analyze", "analizza", "review", "check", "examine"]},
+        "Coder": {"confidence": 0.80, "keywords": ["code", "implement", "fix", "create", "develop", "write"]},
+        "Reviewer": {"confidence": 0.75, "keywords": ["review", "validate", "check", "verify", "audit"]},
+        "Tech Lead": {"confidence": 0.70, "keywords": ["plan", "architect", "design", "coordinate", "lead"]},
+        # Specialists comuni
+        "Database Expert": {"confidence": 0.65, "keywords": ["database", "sql", "query", "db", "table"]},
+        "Security Unified Expert": {"confidence": 0.65, "keywords": ["security", "auth", "vulnerability", "secure"]},
+        "Integration Expert": {"confidence": 0.60, "keywords": ["api", "integration", "connect", "webhook"]},
+        "GUI Super Expert": {"confidence": 0.60, "keywords": ["ui", "gui", "frontend", "component", "react"]},
+        "DevOps Infra": {"confidence": 0.55, "keywords": ["deploy", "infra", "docker", "kubernetes", "ci"]},
+        # Linguaggi
+        "Python Expert": {"confidence": 0.50, "keywords": ["python", "py", "django", "flask"]},
+        "TypeScript Expert": {"confidence": 0.50, "keywords": ["typescript", "ts", "javascript", "node"]},
+        "Go Expert": {"confidence": 0.50, "keywords": ["golang", "go"]},
+    }
+
+    def _prepopulate_common_agents(self) -> None:
+        """V14.0.4: Pre-popola pattern engine con agent comuni.
+
+        Questo riduce il cold start da 3+ task a 1-2 task
+        fornendo dati iniziali per gli agent piu' usati.
+        """
+        prepopulated = 0
+        for agent_id, config in self._COMMON_AGENTS.items():
+            # Registra pattern per ogni keyword
+            for keyword in config["keywords"]:
+                pattern_key = f"warmstart_{keyword}_{agent_id}"
+                self._pattern_engine.record_sequence(
+                    pattern_key,
+                    [agent_id]
+                )
+                # Imposta frequenza artificiale per boosting
+                if pattern_key in self._pattern_engine._pattern_history:
+                    self._pattern_engine._pattern_history[pattern_key].frequency = int(
+                        config["confidence"] * 10
+                    )
+            prepopulated += 1
+
+        logger.info(
+            "Warm start: pre-populated %d common agents into pattern engine",
+            prepopulated
         )
 
     def predict_next_agents(
@@ -946,6 +1027,9 @@ class PredictiveAgentCache:
     def _predict_from_keywords(self, keywords: Set[str]) -> Dict[str, Prediction]:
         """Predice agent basandosi su keyword dirette.
 
+        V14.0.5: Include warm start defaults per agent comuni quando
+        non ci sono match L2 (cold start fallback).
+
         Args:
             keywords: Set di keyword estratte
 
@@ -954,6 +1038,7 @@ class PredictiveAgentCache:
         """
         predictions: Dict[str, Prediction] = {}
 
+        # 1. Controlla L2 agents
         for agent_name, info in L2_AGENTS.items():
             # Conta keyword matching
             matches = sum(
@@ -969,6 +1054,30 @@ class PredictiveAgentCache:
                     reason=f"Keyword match: {matches} keywords",
                     source="keyword_direct"
                 )
+
+        # 2. V14.0.5: Warm start fallback - controlla common agents
+        # Se non ci sono match L2 o per keywords che matchano common agents
+        keywords_lower = {k.lower() for k in keywords}
+        for agent_id, config in self._COMMON_AGENTS.items():
+            # Controlla se qualche keyword matcha
+            agent_keywords_lower = {k.lower() for k in config["keywords"]}
+            if keywords_lower & agent_keywords_lower:
+                if agent_id not in predictions:
+                    # Usa confidence dal config
+                    predictions[agent_id] = Prediction(
+                        agent_id=agent_id,
+                        confidence=config["confidence"],
+                        reason=f"Warm start keyword match",
+                        source="warmstart_default"
+                    )
+                elif predictions[agent_id].confidence < config["confidence"]:
+                    # Aggiorna se warm start ha confidence piu' alta
+                    predictions[agent_id] = Prediction(
+                        agent_id=agent_id,
+                        confidence=config["confidence"],
+                        reason=f"Warm start keyword match (boosted)",
+                        source="warmstart_default"
+                    )
 
         return predictions
 

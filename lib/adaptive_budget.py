@@ -1,14 +1,13 @@
-"""
-Adaptive Token Budget System V14.2.0
-Calcola budget token dinamico basato su complessità del task.
+"""Adaptive Token Budget System for Orchestrator V14.0.3.
 
+Calcola budget token dinamico basato su complessità del task.
 Integrato con RuleExcerptManager per ottimizzazione automatica.
 
-V14.2.0 - BudgetCache con TTL 5min e LRU eviction per performance optimization
-V15.0.0 - Enhanced adaptive thresholds and improved rule budget calculation,           better integration with complexity tiers, enhanced rule budget percentage
-V14.1 - Soglie configurabili e adattive + Rule budget dinamico
-V14.0 - AI-Native Orchestrator support
-V15.0.0 - Major evolution - Enhanced adaptive thresholds, improved budget calculation accuracy, better complexity tier handling.
+Features:
+- Soglie configurabili e adattive
+- Rule budget dinamico (20-60%)
+- BudgetCache con TTL 5min e LRU eviction
+- AI-Native Orchestrator support
 """
 from collections import OrderedDict
 from dataclasses import dataclass, field

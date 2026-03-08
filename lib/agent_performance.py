@@ -1,6 +1,16 @@
-"""Agent Performance Tracking for Orchestrator V13.0.
+"""Agent Performance Tracking for Orchestrator V14.0.4.
 
 Tracks agent metrics for ML-based routing decisions.
+
+V14.0.4 - Custom Exceptions + Exception Chaining:
+- Custom DatabaseError for database operations
+- Proper exception chaining with "raise ... from err"
+- Replaced generic RuntimeError with custom exceptions
+
+V14.0.4 - High Concurrency Optimization:
+- PRAGMA busy_timeout=5000 for lock contention handling
+- pool_size increased from 5 to 10 for high concurrency
+- Connection health check with automatic stale connection replacement
 
 V13.0.3 - Fixed:
 - ADR-001: Queue-based ConnectionPool for thread-safety
@@ -29,6 +39,14 @@ import queue
 import logging
 import sys
 
+from lib.exceptions import (
+    DatabaseError,
+    DatabaseConnectionError,
+    DatabaseQueryError,
+    AgentError,
+    ConfigurationError,
+)
+
 
 # ============================================================================
 # Connection Pool - ADR-001: Queue-based Implementation
@@ -47,12 +65,12 @@ class ConnectionPool:
     _instance: Optional['ConnectionPool'] = None
     _lock = threading.Lock()
 
-    def __init__(self, db_path: str, pool_size: int = 5):
+    def __init__(self, db_path: str, pool_size: int = 10):
         """Initialize connection pool with queue.
 
         Args:
             db_path: Path to SQLite database
-            pool_size: Number of connections to pre-create
+            pool_size: Number of connections to pre-create (default: 10 for high concurrency)
         """
         self._db_path = db_path
         self._pool_size = pool_size
@@ -64,18 +82,19 @@ class ConnectionPool:
             conn = sqlite3.connect(db_path, check_same_thread=False)
             conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("PRAGMA synchronous=NORMAL")
+            conn.execute("PRAGMA busy_timeout=5000")  # 5s wait on lock contention
             conn.execute("PRAGMA cache_size=-64000")  # 64MB cache
             self._pool.put(conn, block=False)
 
         self._initialized = True
 
     @classmethod
-    def initialize(cls, db_path: str, pool_size: int = 5) -> None:
+    def initialize(cls, db_path: str, pool_size: int = 10) -> None:
         """Initialize singleton connection pool.
 
         Args:
             db_path: Path to SQLite database
-            pool_size: Number of connections to create
+            pool_size: Number of connections to create (default: 10 for high concurrency)
         """
         with cls._lock:
             if cls._instance is not None:
@@ -88,11 +107,32 @@ class ConnectionPool:
         return cls._instance is not None and cls._instance._initialized
 
     @classmethod
+    def _validate_connection(cls, conn: sqlite3.Connection) -> bool:
+        """Validate connection health before use.
+
+        Performs lightweight check to detect stale/closed connections.
+
+        Args:
+            conn: Connection to validate
+
+        Returns:
+            True if connection is healthy, False otherwise
+        """
+        try:
+            # Lightweight query to verify connection is alive
+            conn.execute("SELECT 1").fetchone()
+            return True
+        except (sqlite3.Error, sqlite3.Warning):
+            return False
+
+    @classmethod
     @contextmanager
     def get_connection(cls, timeout: float = 30.0):
-        """Get connection from pool with timeout.
+        """Get connection from pool with timeout and health check.
 
         BUG C-2 FIX: Rollback on exception to prevent inconsistent state.
+        HIGH CONCURRENCY FIX: Connection health check before use.
+        V14.0.4: Custom DatabaseConnectionError instead of RuntimeError.
 
         Args:
             timeout: Max seconds to wait for available connection
@@ -101,13 +141,29 @@ class ConnectionPool:
             sqlite3.Connection: Database connection
 
         Raises:
-            RuntimeError: If pool not initialized
+            DatabaseConnectionError: If pool not initialized or connection fails
             queue.Empty: If timeout waiting for connection
         """
         if cls._instance is None:
-            raise RuntimeError("ConnectionPool not initialized")
+            raise DatabaseConnectionError(
+                "ConnectionPool not initialized. Call ConnectionPool.initialize() first."
+            )
 
         conn = cls._instance._pool.get(timeout=timeout)
+
+        # Health check: validate connection before use
+        if not cls._validate_connection(conn):
+            # Connection is stale, create a new one
+            try:
+                conn.close()
+            except Exception:
+                pass
+            conn = sqlite3.connect(cls._instance._db_path, check_same_thread=False)
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA synchronous=NORMAL")
+            conn.execute("PRAGMA busy_timeout=5000")
+            conn.execute("PRAGMA cache_size=-64000")
+
         try:
             yield conn
         except Exception:
@@ -515,6 +571,7 @@ class AgentPerformanceDB:
 
         BUG M-3 FIX: Validates agent_id before processing.
         BUG H-1 FIX: Writes to DB before updating memory for consistency.
+        V14.0.4: Custom AgentError instead of ValueError.
 
         Updates in-memory metrics after DB write succeeds.
 
@@ -525,11 +582,14 @@ class AgentPerformanceDB:
             tokens: Tokens consumed
 
         Raises:
-            ValueError: If agent_id is invalid
+            AgentError: If agent_id is invalid
         """
         # BUG M-3 FIX: Validate agent_id
         if not agent_id or not isinstance(agent_id, str) or not agent_id.strip():
-            raise ValueError("agent_id must be a non-empty string")
+            raise AgentError(
+                "agent_id must be a non-empty string",
+                agent_id=agent_id
+            )
 
         # Clamp duration to minimum 1ms to prevent EMA distortion
         duration_ms = max(duration_ms, 1.0)

@@ -1,12 +1,16 @@
-"""ML-based Agent Selection for Orchestrator V13.0.
+"""ML-based Agent Selection for Orchestrator V14.0.4.
 
 Selects agents dynamically based on task context and performance history.
-V13.0.2: Thread safety fixes (H-3, M-1) + ADR-002 inverted index.
-V13.1.0: Lazy L2 agent loading integration.
-V13.1.1: AS-1 fix - Hardcoded keywords use pre-built set for O(1) lookup.
-V13.1.2: Full KeywordInvertedIndex for O(1) keyword matching with compound support.
-V14.0: AdaptiveTokenBudget integration for context-aware budget calculation.
-V14.2: BudgetCache integration for -2-3ms per selection on cache hit.
+
+Features:
+- KeywordInvertedIndex per O(1) keyword matching con compound support
+- AdaptiveTokenBudget integration per context-aware budget calculation
+- BudgetCache per performance optimization
+- Hybrid scoring con transfer learning L2->L1
+- Lazy L2 agent loading integration
+- Thread-safe con RLock
+- V15.0: RoutingEngineV2 integration as optional backend with 4-layer matching
+- V14.0.4: Custom exceptions with exception chaining
 """
 
 import re
@@ -19,6 +23,14 @@ import threading
 import json
 
 logger = logging.getLogger(__name__)
+
+from lib.exceptions import (
+    AgentError,
+    AgentNotFoundError,
+    ConfigurationError,
+    RoutingError,
+    NoAgentFoundError,
+)
 
 from .agent_performance import AgentPerformanceDB
 from .lazy_agents import get_lazy_agent_loader, is_l2_agent, L2_AGENTS
@@ -136,6 +148,7 @@ class AgentSelector:
     V13.1.1: AS-1 fix - Hardcoded keywords use pre-built set for O(1) lookup.
     V13.1.2: Full KeywordInvertedIndex integration for O(1) keyword matching.
     V14.0: AdaptiveTokenBudget integration for context-aware budget calculation.
+    V14.0.4: Cold Start Solution - Hybrid scoring, Transfer learning L2->L1, Threshold 1.
 
     Attributes:
         performance_db: Database for tracking agent performance
@@ -147,6 +160,8 @@ class AgentSelector:
         _inverted_index: Full inverted index for O(1) keyword matching (V13.1.2)
         _hardcoded_keywords: Pre-built set for O(1) hardcoded lookup (AS-1)
         _budget_calculator: Adaptive budget calculator (V14.0)
+        _cold_start_threshold: Min tasks before ML selection (V14.0.4: reduced to 1)
+        _hybrid_weight_base: Base weight for ML in hybrid scoring (V14.0.4)
     """
 
     # Class-level cache shared across instances
@@ -158,6 +173,33 @@ class AgentSelector:
 
     # AS-1: Hardcoded keywords index for O(1) lookup
     _hardcoded_keywords: Set[str] = set()
+
+    # V14.0.4: Warm start - Default scores per agent comuni
+    # Questi scores vengono usati quando non c'e' ancora dati storici
+    _DEFAULT_WARM_SCORES: Dict[str, float] = {
+        # Core agents (alta priorita)
+        "Analyzer": 850.0,
+        "Coder": 800.0,
+        "Reviewer": 750.0,
+        "Tech Lead": 700.0,
+        # L1 Specialists
+        "Database Expert": 650.0,
+        "Security Unified Expert": 650.0,
+        "Integration Expert": 600.0,
+        "GUI Super Expert": 600.0,
+        "DevOps Infra": 550.0,
+        # Linguaggi
+        "Languages Expert": 500.0,
+        "Architect Expert": 500.0,
+        # L2 Specialists (ereditano da parent ma con boost per specificita)
+        "Python Expert": 480.0,
+        "TypeScript Expert": 480.0,
+        "Go Expert": 480.0,
+        "React Expert": 450.0,
+        "API Designer": 450.0,
+        "Tester": 400.0,
+        "Documenter": 350.0,
+    }
 
     def __init__(self, performance_db: Optional[AgentPerformanceDB] = None,
                  routing_table_path: Optional[str] = None):
@@ -173,6 +215,13 @@ class AgentSelector:
         self._inverted_index = KeywordInvertedIndex()
         # V14.0: Calcolatore budget adattivo
         self._budget_calculator = get_budget_calculator()
+        # V14.0.4: Cold start threshold ridotto da 3 a 1
+        self._cold_start_threshold = 1
+        # V14.0.4: Hybrid weight base (cresce con numero task)
+        self._hybrid_weight_base = 0.3  # 30% ML, 70% keyword at start
+        # V15.0: RoutingEngineV2 backend option
+        self._use_routing_engine_v2 = False  # Set via method
+        self._routing_engine_v2 = None  # Lazy init
         self._load_routing_table(routing_table_path)
         self._build_hardcoded_keywords()  # AS-1
 
@@ -287,9 +336,19 @@ class AgentSelector:
 
         Args:
             skill_md_path: Path to SKILL.md
+
+        Raises:
+            ConfigurationError: If file cannot be read or parsed
         """
-        with open(skill_md_path, encoding="utf-8") as f:
-            content = f.read()
+        try:
+            with open(skill_md_path, encoding="utf-8") as f:
+                content = f.read()
+        except IOError as err:
+            raise ConfigurationError(
+                f"Failed to read routing table from {skill_md_path}",
+                config_file=str(skill_md_path),
+                cause=err
+            ) from err
 
         # Extract AGENT ROUTING TABLE section
         table_match = re.search(
@@ -359,6 +418,7 @@ class AgentSelector:
 
         V14.0: Calcola budget adattivo all'inizio della selezione.
         V14.0.3 (AS-E1): Validazione candidates + cold start fallback con validazione.
+        V14.0.4: Custom exceptions with proper chaining.
 
         Args:
             task: Task description
@@ -369,11 +429,11 @@ class AgentSelector:
             Selected agent ID
 
         Raises:
-            ValueError: Se candidates e' vuoto (AS-E1 fix)
+            AgentError: Se candidates e' vuoto (V14.0.4: replaced ValueError)
         """
         # AS-E1: CRITICAL - Validate candidates first
         if candidates is not None and len(candidates) == 0:
-            raise ValueError(
+            raise AgentError(
                 "Cannot select agent from empty candidates list. "
                 "Provide at least one candidate agent name."
             )
@@ -424,6 +484,22 @@ class AgentSelector:
             routed_agents = routed_agents.intersection(set(candidates))
             if not routed_agents:
                 # No match, use ML-based selection
+                # V14.0.4: PRIMA controlla warm start defaults per selezione immediata
+                best_default = None
+                best_default_score = -1
+                for agent in candidates:
+                    default = self._DEFAULT_WARM_SCORES.get(agent, 0)
+                    if default > best_default_score:
+                        best_default_score = default
+                        best_default = agent
+
+                # Se abbiamo un default score alto (>=700), usalo subito per warm start
+                if best_default and best_default_score >= 700:
+                    logger.debug(
+                        f"Warm start: using default score for '{best_default}' ({best_default_score})"
+                    )
+                    return best_default
+
                 if self.performance_db:
                     # AS-E1: Check for cold start before ML selection
                     if self._is_cold_start(candidates):
@@ -466,6 +542,8 @@ class AgentSelector:
                            context: Optional[Dict]) -> Optional[str]:
         """ML-based agent selection using performance history.
 
+        V14.0.4: Usa hybrid scoring invece di puro ML.
+
         Args:
             task: Task description
             candidates: List of candidate agents
@@ -477,19 +555,33 @@ class AgentSelector:
         if not self.performance_db:
             return None
 
-        # Get ranking based on performance
-        ranking = self.get_ranking(candidates)
+        # V14.0.4: Usa hybrid scoring per tutti i candidates
+        scored_candidates = []
+        for agent in candidates:
+            score = self._calculate_hybrid_score(agent, task)
+            scored_candidates.append((agent, score))
 
-        if ranking:
-            # Return best performing agent
-            return ranking[0][0]
+        if scored_candidates:
+            # Ordina per score decrescente
+            scored_candidates.sort(key=lambda x: x[1], reverse=True)
+            best_agent = scored_candidates[0][0]
+            best_score = scored_candidates[0][1]
+
+            # Log warning per low confidence
+            if best_score < 0.5:
+                logger.warning(
+                    f"Low confidence ML selection: '{best_agent}' "
+                    f"(score={best_score:.2f})"
+                )
+
+            return best_agent
 
         return None
 
     def _is_cold_start(self, candidates: List[str]) -> bool:
         """Check if we're in cold start (insufficient performance data).
 
-        AS-E1: V14.0.3 - Cold start detection for safe fallback.
+        V14.0.4: Threshold ridotto a 1 task con confidence adjustment.
 
         Args:
             candidates: List of candidate agents to check
@@ -497,7 +589,7 @@ class AgentSelector:
         Returns:
             True if all candidates lack sufficient data
         """
-        min_samples = getattr(self, '_cold_start_threshold', 3)
+        min_samples = getattr(self, '_cold_start_threshold', 1)
         for agent in candidates:
             if self._has_sufficient_data(agent, min_samples):
                 return False
@@ -506,55 +598,236 @@ class AgentSelector:
     def _has_sufficient_data(self, agent: str, min_samples: int) -> bool:
         """Check if agent has sufficient performance data.
 
-        AS-E1: V14.0.3 - Data sufficiency check.
+        V14.0.4: Supporto per transfer learning da L1 parent.
 
         Args:
             agent: Agent ID to check
             min_samples: Minimum number of tasks required
 
         Returns:
-            True if agent has sufficient data
+            True if agent has sufficient data (propria o ereditata)
         """
         if not self.performance_db:
             return False
         try:
             m = self.performance_db.get_metrics(agent)
-            return m is not None and m.total_tasks >= min_samples
+            if m is not None and m.total_tasks >= min_samples:
+                return True
+
+            # V14.0.4: Transfer learning - L2 eredita da L1 parent
+            if is_l2_agent(agent):
+                lazy_loader = get_lazy_agent_loader()
+                parent = lazy_loader.get_parent_agent(agent)
+                if parent:
+                    parent_m = self.performance_db.get_metrics(parent)
+                    if parent_m is not None and parent_m.total_tasks >= min_samples:
+                        logger.debug(
+                            f"L2 agent '{agent}' inheriting data from parent '{parent}'"
+                        )
+                        return True
+            return False
         except Exception:
             return False
 
     def _cold_start_select(self, task: str, candidates: List[str]) -> str:
-        """Select agent during cold start using keyword-based fallback.
+        """Select agent during cold start using hybrid scoring.
 
-        AS-E1: V14.0.3 - Keyword-based selection when no performance data exists.
+        V14.0.4: Hybrid scoring con keyword boost + transfer learning.
+        V14.0.5: Warm start defaults per agent comuni.
 
         Args:
             task: Task description
             candidates: List of candidate agents
 
         Returns:
-            Selected agent from candidates (may not be in list, caller must validate)
+            Selected agent from candidates
         """
-        # Try keyword-based selection from routing table
+        # Calcola hybrid score per ogni candidate
+        scored_candidates = []
+
+        for agent in candidates:
+            # V14.0.5: Usa warm start default se disponibile
+            if agent in self._DEFAULT_WARM_SCORES:
+                # Combina warm score con keyword score
+                warm_score = self._DEFAULT_WARM_SCORES[agent] / 1000.0  # Normalizza a 0-1
+                keyword_score = self._get_keyword_score(agent, task)
+                # Hybrid: 60% warm score + 40% keyword score
+                score = (warm_score * 0.6) + (keyword_score * 0.4)
+                logger.debug(
+                    f"Warm start score for '{agent}': {score:.2f} "
+                    f"(warm={warm_score:.2f}, keyword={keyword_score:.2f})"
+                )
+            else:
+                score = self._calculate_hybrid_score(agent, task)
+            scored_candidates.append((agent, score))
+
+        # Ordina per score decrescente
+        scored_candidates.sort(key=lambda x: x[1], reverse=True)
+
+        best_agent = scored_candidates[0][0]
+        best_score = scored_candidates[0][1]
+
+        # Log warning per low confidence selections
+        if best_score < 0.5:
+            logger.warning(
+                f"Low confidence cold start selection: '{best_agent}' "
+                f"(score={best_score:.2f}). Consider reviewing agent performance."
+            )
+        else:
+            logger.info(
+                f"Cold start selected '{best_agent}' via hybrid scoring "
+                f"(score={best_score:.2f})"
+            )
+
+        return best_agent
+
+    def _calculate_hybrid_score(self, agent: str, task: str) -> float:
+        """Calcola hybrid score combinando ML e keyword matching.
+
+        V14.0.4: Formula adattiva basata su numero task + warm start defaults.
+
+        Score = ML_score * weight + Keyword_score * (1 - weight)
+        Weight cresce con numero task: da 0.3 a 0.8
+        Se no ML data, usa _DEFAULT_WARM_SCORES per warm start
+
+        Args:
+            agent: Agent ID
+            task: Task description
+
+        Returns:
+            Hybrid score tra 0.0 e 1.0
+        """
+        # V14.0.4: Warm start - controlla default scores se ML non ha dati
+        default_score = self._DEFAULT_WARM_SCORES.get(agent)
+
+        # Calcola ML score
+        ml_score = self._get_ml_score(agent)
+
+        # Se ML score e neutro (0.5 = no data) e abbiamo default, usa warm start
+        if ml_score == 0.5 and default_score is not None:
+            keyword_score = self._get_keyword_score(agent, task)
+            default_normalized = default_score / 1000.0
+            # Warm start: 70% default + 30% keyword
+            return default_normalized * 0.7 + keyword_score * 0.3
+
+        # Calcola keyword score
+        keyword_score = self._get_keyword_score(agent, task)
+
+        # Calcola weight adattivo basato su numero task
+        task_count = self._get_task_count(agent)
+        # Weight cresce da 0.3 (0 task) a 0.8 (10+ task)
+        weight = min(0.8, self._hybrid_weight_base + (task_count * 0.05))
+
+        # Hybrid score
+        hybrid_score = (ml_score * weight) + (keyword_score * (1 - weight))
+
+        return hybrid_score
+
+    def _get_ml_score(self, agent: str) -> float:
+        """Ottiene ML score per un agent, con transfer learning.
+
+        V14.0.4: L2 eredita score da L1 parent se non ha dati propri.
+
+        Args:
+            agent: Agent ID
+
+        Returns:
+            ML score normalizzato tra 0.0 e 1.0
+        """
+        if not self.performance_db:
+            return 0.5  # Neutral score se no DB
+
+        m = self.performance_db.get_metrics(agent)
+        if m is not None and m.total_tasks > 0:
+            # Score basato su success_rate (gia 0.0-1.0)
+            return m.success_rate
+
+        # V14.0.4: Transfer learning - L2 eredita da L1
+        if is_l2_agent(agent):
+            lazy_loader = get_lazy_agent_loader()
+            parent = lazy_loader.get_parent_agent(agent)
+            if parent:
+                parent_m = self.performance_db.get_metrics(parent)
+                if parent_m is not None and parent_m.total_tasks > 0:
+                    # L2 eredita il 90% del parent score (penalita per incertezza)
+                    inherited_score = parent_m.success_rate * 0.9
+                    logger.debug(
+                        f"L2 '{agent}' inheriting ML score {inherited_score:.2f} "
+                        f"from parent '{parent}'"
+                    )
+                    return inherited_score
+
+        return 0.5  # Neutral score per cold start totale
+
+    def _get_keyword_score(self, agent: str, task: str) -> float:
+        """Calcola keyword matching score.
+
+        V14.0.4: Score basato su specificita keyword match.
+
+        Args:
+            agent: Agent ID
+            task: Task description
+
+        Returns:
+            Keyword score tra 0.0 e 1.0
+        """
         keywords = self.extract_keywords(task)
 
+        if not keywords:
+            return 0.5  # Neutral score se no keywords
+
+        # Controlla match diretto nel routing table
         for kw in keywords:
-            agent = self._get_cached_agent(kw)
-            if agent and agent in candidates:
-                logger.info(f"Cold start selected '{agent}' via keyword '{kw}'")
-                return agent
+            cached_agent = self._get_cached_agent(kw)
+            if cached_agent == agent:
+                # Score basato su lunghezza keyword (piu lunga = piu specifica)
+                return min(1.0, 0.5 + (len(kw) / 20.0))
 
-            # Check L2 agents
+        # Controlla match L2
+        lazy_loader = get_lazy_agent_loader()
+        if is_l2_agent(agent):
+            agent_keywords = lazy_loader.get_agent_keywords(agent)
+            task_lower = task.lower()
+
+            match_count = 0
+            for kw in agent_keywords:
+                if kw in task_lower:
+                    match_count += 1
+
+            if match_count > 0:
+                # Score basato su numero match
+                return min(1.0, 0.5 + (match_count * 0.1))
+
+        return 0.3  # Low score se nessun match
+
+    def _get_task_count(self, agent: str) -> int:
+        """Ottiene numero task per un agent, con transfer learning.
+
+        V14.0.4: L2 eredita count da L1 parent.
+
+        Args:
+            agent: Agent ID
+
+        Returns:
+            Numero di task completati
+        """
+        if not self.performance_db:
+            return 0
+
+        m = self.performance_db.get_metrics(agent)
+        if m is not None:
+            return m.total_tasks
+
+        # Transfer learning per L2
+        if is_l2_agent(agent):
             lazy_loader = get_lazy_agent_loader()
-            l2_agents = lazy_loader.find_by_keyword(kw)
-            for l2_agent in l2_agents:
-                if l2_agent in candidates:
-                    logger.info(f"Cold start selected L2 agent '{l2_agent}' via keyword '{kw}'")
-                    return l2_agent
+            parent = lazy_loader.get_parent_agent(agent)
+            if parent:
+                parent_m = self.performance_db.get_metrics(parent)
+                if parent_m is not None:
+                    return parent_m.total_tasks
 
-        # Fallback: return first candidate (caller validates this is in candidates)
-        logger.warning(f"Cold start fallback: returning first candidate '{candidates[0]}'")
-        return candidates[0]
+        return 0
 
     def record_result(self, agent_id: str, success: bool,
                      duration_ms: float, tokens: int) -> None:
@@ -591,6 +864,8 @@ class AgentSelector:
     def get_ranking(self, agents: List[str]) -> List[Tuple[str, float]]:
         """Rank agents by performance score.
 
+        V14.0.4: Threshold ridotto a 1 task.
+
         Score formula: success_rate * 1000 - avg_duration_ms / 100
 
         Args:
@@ -602,7 +877,8 @@ class AgentSelector:
         ranked = []
         for agent_id in agents:
             m = self.performance_db.get_metrics(agent_id)
-            if m and m.total_tasks >= 3:
+            # V14.0.4: Threshold ridotto da 3 a 1
+            if m and m.total_tasks >= 1:
                 score = m.success_rate * 1000 - m.avg_duration_ms / 100
                 ranked.append((agent_id, score))
 
@@ -673,3 +949,54 @@ class AgentSelector:
         """
         lazy_loader = get_lazy_agent_loader()
         return lazy_loader.get_parent_agent(agent_name)
+
+    # V15.0: RoutingEngineV2 backend integration
+    def enable_routing_engine_v2(self, enabled: bool = True) -> None:
+        """Enable or disable RoutingEngineV2 backend.
+
+        Args:
+            enabled: True to use RoutingEngineV2, False for legacy
+        """
+        self._use_routing_engine_v2 = enabled
+        if enabled and self._routing_engine_v2 is None:
+            # Lazy import to avoid circular dependency
+            from lib.routing_engine import RoutingEngineV2
+            self._routing_engine_v2 = RoutingEngineV2(self.routing_table)
+            logger.info("RoutingEngineV2 backend enabled")
+        elif not enabled:
+            self._routing_engine_v2 = None
+            logger.info("RoutingEngineV2 backend disabled")
+
+    def route_with_engine_v2(self, task: str, candidates: Optional[List[str]] = None) -> str:
+        """Route using RoutingEngineV2 4-layer matching.
+
+        V15.0: Alternative routing using layered approach.
+
+        Args:
+            task: Task description
+            candidates: Optional list of valid candidate agents
+
+        Returns:
+            Selected agent ID
+        """
+        if self._routing_engine_v2 is None:
+            # Lazy init
+            from lib.routing_engine import RoutingEngineV2
+            self._routing_engine_v2 = RoutingEngineV2(self.routing_table)
+
+        return self._routing_engine_v2.route(task, candidates)
+
+    def get_routing_engine_v2_stats(self) -> Optional[Dict]:
+        """Get RoutingEngineV2 metrics if enabled.
+
+        Returns:
+            Dict with layer stats or None if not enabled
+        """
+        if self._routing_engine_v2 is None:
+            return None
+
+        return {
+            "layer_stats": self._routing_engine_v2.get_layer_stats(),
+            "total_metrics": len(self._routing_engine_v2.get_metrics()),
+        }
+
