@@ -1021,6 +1021,9 @@ class OrchestratorEngine:
 
         for name, cmd in commands:
             try:
+                # SECURITY: shell=True is safe here because `cmd` is a hardcoded
+                # literal from the `commands` list above (no user input involved).
+                # Commands are static process cleanup operations defined in this file.
                 subprocess.run(cmd, shell=True, capture_output=True, timeout=5)
                 results["cleaned"].append(name)
             except Exception as e:

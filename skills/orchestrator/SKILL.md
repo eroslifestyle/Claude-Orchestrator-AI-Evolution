@@ -8,7 +8,7 @@ metadata:
   keywords: [orchestration, multi-agent, coordination, delegation]
 ---
 
-# ORCHESTRATOR V15.0.4
+# ORCHESTRATOR V15.1.0
 
 You DELEGATE work to subagents via Task tool OR coordinate Agent Teams. NEVER do the work yourself.
 
@@ -244,7 +244,7 @@ Use for 3+ parallel tasks needing inter-agent communication.
 
 ## LIB MODULES
 
-agent_performance.py, agent_selector.py, file_locks.py, distributed_lock.py, skill_interface.py, skill_plugin.py, process_manager.py, rule_excerpts.py, lazy_agents.py, predictive_cache.py, adaptive_budget.py, ab_testing.py, auto_tuner.py, facade.py, routing_engine.py
+agent_performance.py, agent_selector.py, file_locks.py, distributed_lock.py, skill_interface.py, skill_plugin.py, process_manager.py, rule_excerpts.py, lazy_agents.py, predictive_cache.py, adaptive_budget.py, ab_testing.py, auto_tuner.py, facade.py, routing_engine.py, chaos.py, hot_reload.py
 
 ---
 
@@ -252,13 +252,13 @@ agent_performance.py, agent_selector.py, file_locks.py, distributed_lock.py, ski
 
 | Version | Date | Changes |
 |---------|------|---------|
+| V15.1.0 | 2026-03-08 | Facade API unificata (17 namespaces, 129 exports), ChaosInjector, DistributedLock, RoutingEngineV2, PluginHotReloader |
 | V15.0.4 | 2026-03-07 | +173 test, Facade API, Routing Engine, docs aligned, SKILL.md -14.7% |
 | V14.0.2 | 2026-03-07 | 8 limitazioni risolte, stress test 170 ops, 9015 ops/sec |
-| V14.0 | 2026-03-07 | AI-NATIVE: Predictive caching, Adaptive budget, A/B testing, Auto-tuning |
 
 Full history: [changelog.md](docs/changelog.md)
 
 ---
 
-**ORCHESTRATOR V15.0.4**
+**ORCHESTRATOR V15.1.0**
 *AI-NATIVE. 9000+ ops/sec. 0% error rate. Test coverage 85%+*

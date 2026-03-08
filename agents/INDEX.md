@@ -5,9 +5,9 @@ description: Complete navigation index for the multi-agent system with all 43 ag
 
 # AGENTS INDEX
 
-> **Version:** 12.0 DEEP AUDIT
+> **Version:** V15.1.0
 > **Total Agents:** 43 (6 Core + 22 L1 Experts + 15 L2 Specialists)
-> **Last Updated:** 26 Febbraio 2026
+> **Last Updated:** 2026-03-08
 
 ---
 
@@ -77,7 +77,7 @@ description: Complete navigation index for the multi-agent system with all 43 ag
 
 ## L1 EXPERTS - RECENT ADDITIONS (4)
 
-> Added in V11.3 - Fully integrated with routing and circuit-breaker
+> Added in V11.3 - Fully integrated with routing and circuit-breaker (V15.1.0 verified)
 
 | Agent | Keywords |
 |-------|----------|
@@ -290,5 +290,5 @@ agents/
 ---
 
 **Status:** Production Ready
-**Version:** 12.0 DEEP AUDIT
+**Version:** V15.1.0
 **Quality:** 100% organized - 43 agents verified

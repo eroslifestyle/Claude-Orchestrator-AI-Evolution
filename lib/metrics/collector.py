@@ -278,8 +278,33 @@ class MetricsCollector:
             f"success={success}"
         )
 
+    def _labels_match(self, label_key: str, required_labels: Dict[str, str]) -> bool:
+        """Check if a label key contains all required labels.
+
+        Args:
+            label_key: The label key string (e.g., "agent=Coder,status=success,task_type=test")
+            required_labels: Dict of required label key-value pairs
+
+        Returns:
+            True if all required labels are present in the label key
+        """
+        if not label_key:
+            return not required_labels
+
+        # Parse the label key into a dict
+        parsed = self._parse_label_key(label_key)
+
+        # Check all required labels are present with correct values
+        for key, value in required_labels.items():
+            if parsed.get(key) != value:
+                return False
+        return True
+
     def get_agent_stats(self, agent: str) -> Dict[str, Any]:
         """Get aggregated stats for an agent.
+
+        Aggregates all counters matching agent and status, including those
+        with additional labels like task_type.
 
         Args:
             agent: Agent name
@@ -288,21 +313,29 @@ class MetricsCollector:
             Dict with success_count, failure_count, success_rate, avg_duration
         """
         with self._lock:
-            success_key = self._labels_to_key({"agent": agent, "status": "success"})
-            failure_key = self._labels_to_key({"agent": agent, "status": "failure"})
-
             full_name = f"{self._prefix}agent_tasks_total"
-            success_count = self._counters[full_name].get(success_key, 0)
-            failure_count = self._counters[full_name].get(failure_key, 0)
-            total = success_count + failure_count
 
+            # Aggregate all counters matching agent + status (including extra labels)
+            success_count = 0.0
+            failure_count = 0.0
+
+            for label_key, value in self._counters[full_name].items():
+                if self._labels_match(label_key, {"agent": agent, "status": "success"}):
+                    success_count += value
+                elif self._labels_match(label_key, {"agent": agent, "status": "failure"}):
+                    failure_count += value
+
+            total = success_count + failure_count
             success_rate = success_count / total if total > 0 else 0.0
 
             # Calculate average duration from histogram
+            # Aggregate samples from all histogram entries for this agent
             duration_name = f"{self._prefix}agent_duration_seconds"
-            label_key = self._labels_to_key({"agent": agent})
-            samples = self._histograms[duration_name].get(label_key, [])
-            avg_duration = sum(samples) / len(samples) if samples else 0.0
+            all_samples: List[float] = []
+            for label_key, samples in self._histograms[duration_name].items():
+                if self._labels_match(label_key, {"agent": agent}):
+                    all_samples.extend(samples)
+            avg_duration = sum(all_samples) / len(all_samples) if all_samples else 0.0
 
             return {
                 "agent": agent,

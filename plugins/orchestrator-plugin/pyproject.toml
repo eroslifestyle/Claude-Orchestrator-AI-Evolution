@@ -92,8 +92,11 @@ addopts = [
     "--cov-report=xml",
 ]
 markers = [
-    "slow: marks tests as slow",
-    "integration: marks tests as integration tests",
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "slow: Slow tests",
+    "security: Security tests",
+    "chaos: Chaos engineering tests",
 ]
 asyncio_mode = "auto"
 

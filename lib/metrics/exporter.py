@@ -70,7 +70,8 @@ class PrometheusExporter:
         # Group metrics by base name for TYPE/HELP headers
         seen_names: set[str] = set()
 
-        for metric in sorted(metrics, key=lambda m: m.name):
+        # Sort by metric name for stable alphabetical ordering
+        for metric in sorted(metrics, key=lambda m: (m.name, sorted(m.labels.items()) if m.labels else [])):
             base_name = self._get_base_name(metric.name)
 
             # Add TYPE and HELP headers for new metric families
@@ -104,8 +105,11 @@ class PrometheusExporter:
                 base = name[:-len(suffix)]
                 # Ensure the suffix is actually a suffix, not part of the name
                 # e.g., "bucket_count" should not become "bucket"
-                if suffix == "_count" and base.endswith("_bucket"):
-                    continue  # Skip, this is part of the name
+                # If base ends with another suffix-like word, skip
+                if base and any(base.endswith(s) for s in ("_bucket", "_sum", "_count", "bucket", "sum", "count")):
+                    continue  # Skip, this suffix is likely part of the name
+                if not base:  # Empty base means the name was just the suffix
+                    continue
                 return base
         return name
 

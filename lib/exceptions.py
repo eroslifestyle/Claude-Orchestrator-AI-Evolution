@@ -55,6 +55,8 @@ class OrchestratorError(Exception):
         self.context = context or {}
         self.cause = cause
         super().__init__(message)
+        if cause is not None:
+            self.__cause__ = cause
 
     def __str__(self) -> str:
         """Return formatted error message with context."""

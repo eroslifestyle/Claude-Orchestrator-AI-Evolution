@@ -51,16 +51,37 @@ class HotReloadError(OrchestratorError):
             context: Optional dictionary with additional error context
             cause: The underlying exception that caused this error
         """
+        self._skill_name = skill_name
         ctx = context or {}
         if skill_name:
             ctx["skill_name"] = skill_name
         super().__init__(message, ctx, cause)
 
+    @property
+    def skill_name(self) -> Optional[str]:
+        """Get the skill name associated with this error."""
+        return self._skill_name
+
 
 class SkillLoadError(HotReloadError):
     """Exception raised when skill loading fails."""
 
-    pass
+    def __init__(
+        self,
+        message: str,
+        skill_name: Optional[str] = None,
+        context: Optional[Dict[str, Any]] = None,
+        cause: Optional[Exception] = None
+    ):
+        """Initialize SkillLoadError.
+
+        Args:
+            message: Human-readable error description
+            skill_name: Name of the skill that failed to load
+            context: Optional dictionary with additional error context
+            cause: The underlying exception that caused this error
+        """
+        super().__init__(message, skill_name, context, cause)
 
 
 class DependencyError(HotReloadError):
