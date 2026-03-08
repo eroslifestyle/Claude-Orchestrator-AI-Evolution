@@ -68,3 +68,9 @@ backups/*.backup.*
 # Coverage
 .coverage
 plugins/orchestrator-plugin/.coverage
+
+# Python bytecode and cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
