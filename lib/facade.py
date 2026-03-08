@@ -1,7 +1,7 @@
-"""Unified Facade for Orchestrator V14.0.4 Lib Modules.
+"""Unified Facade for Orchestrator V15.1 Lib Modules.
 
 This module provides a single entry point for all lib functionality,
-organizing 14 modules into logical namespaces for easier consumption.
+organizing 21 modules into logical namespaces for easier consumption.
 
 Namespaces:
     - selection: Agent selection and performance tracking
@@ -15,10 +15,15 @@ Namespaces:
     - rules: Rule excerpt management
     - lazy: Lazy agent loading
     - process: Process lifecycle management
+    - rate_limiter: Adaptive rate limiting (V15.0)
     - exceptions: Custom exception hierarchy (V14.0.4)
+    - chaos: Chaos engineering for resilience testing (V15.1)
+    - distributed_lock: Redis-based distributed locks (V15.1)
+    - routing: 4-layer keyword routing engine (V15.1)
+    - hot_reload: Plugin hot-reload system (V15.1)
 
 Usage:
-    from lib.facade import selection, cache, tuning, exceptions
+    from lib.facade import selection, cache, tuning, exceptions, chaos, routing
 
     # Use selection namespace
     selector = selection.AgentSelector()
@@ -31,8 +36,17 @@ Usage:
     # Use exceptions (V14.0.4)
     from lib.facade import OrchestratorError, AgentError, LockError
 
+    # Use chaos engineering (V15.1)
+    injector = chaos.get_chaos_injector()
+    if injector.should_inject(chaos.FailureType.NETWORK):
+        raise ConnectionError("Simulated failure")
+
+    # Use routing engine (V15.1)
+    engine = routing.get_routing_engine_v2()
+    agent = engine.route("write a python test")
+
     # Direct imports also work
-    from lib.facade import AgentSelector, PredictiveAgentCache
+    from lib.facade import AgentSelector, PredictiveAgentCache, ChaosInjector
 """
 
 from __future__ import annotations
@@ -817,6 +831,278 @@ __all__ = [
     "process",
     "rate_limiter",
     "exceptions",
+    # V15.1 Namespaces
+    "chaos",
+    "distributed_lock",
+    "routing",
+    "hot_reload",
+    # V15.1 Chaos
+    "ChaosInjector",
+    "ChaosConfig",
+    "ChaosEvent",
+    "FailureType",
+    "get_chaos_injector",
+    "configure_chaos",
+    # V15.1 Distributed Lock
+    "DistributedLockManager",
+    "FileDistributedLockManager",
+    "LockMetadata",
+    "LockBackend",
+    "RedisLockBackend",
+    "FileLockBackend",
+    "get_distributed_lock_manager",
+    # V15.1 Routing
+    "RoutingEngineV2",
+    "RoutingMetrics",
+    "LayerStats",
+    "PrefixTrie",
+    "InvertedIndex",
+    "SemanticCache",
+    "get_routing_engine_v2",
+    "reset_routing_engine_v2",
+    # V15.1 Hot Reload
+    "PluginHotReloader",
+    "HotReloadError",
+    "SkillLoadError",
+    "DependencyError",
+    "SkillVersion",
+    "HotReloadMetrics",
 ]
 
-__version__ = "15.0.1"
+# =============================================================================
+# CHAOS NAMESPACE (V15.1)
+# =============================================================================
+
+from .chaos import (
+    ChaosInjector,
+    ChaosConfig,
+    ChaosEvent,
+    FailureType,
+    get_chaos_injector,
+    configure_chaos,
+)
+
+
+class ChaosNamespace:
+    """Namespace for chaos engineering.
+
+    V15.1: Controlled failure injection for resilience testing.
+
+    Classes:
+        ChaosInjector: Singleton for chaos injection
+        ChaosConfig: Configuration dataclass
+        ChaosEvent: Event record dataclass
+        FailureType: Enum of failure types
+
+    Functions:
+        get_chaos_injector: Singleton accessor
+        configure_chaos: Configure global injector
+
+    Example:
+        from lib.facade import chaos
+
+        injector = chaos.get_chaos_injector()
+        if injector.should_inject(chaos.FailureType.NETWORK):
+            raise ConnectionError("Simulated failure")
+
+        # Context manager
+        with injector.chaos_context("api_call") as ctx:
+            if ctx.network_failure:
+                handle_failure()
+    """
+
+    ChaosInjector = ChaosInjector
+    ChaosConfig = ChaosConfig
+    ChaosEvent = ChaosEvent
+    FailureType = FailureType
+    get_chaos_injector = staticmethod(get_chaos_injector)
+    configure_chaos = staticmethod(configure_chaos)
+
+
+chaos = ChaosNamespace()
+
+
+# =============================================================================
+# DISTRIBUTED LOCK NAMESPACE (V15.1)
+# =============================================================================
+
+from .distributed_lock import (
+    DistributedLockManager,
+    FileDistributedLockManager,
+    LockMetadata,
+    LockBackend,
+    RedisLockBackend,
+    FileLockBackend,
+    get_distributed_lock_manager,
+)
+
+
+class DistributedLockNamespace:
+    """Namespace for distributed locking.
+
+    V15.1: Redis-based distributed locks with file fallback.
+
+    Classes:
+        DistributedLockManager: Main async lock manager
+        FileDistributedLockManager: Sync file-based lock manager
+        LockMetadata: Lock metadata dataclass
+        LockBackend: Abstract backend interface
+        RedisLockBackend: Redis implementation
+        FileLockBackend: File-based implementation
+
+    Functions:
+        get_distributed_lock_manager: Singleton accessor
+
+    Example:
+        from lib.facade import distributed_lock
+
+        # Async context manager
+        async with distributed_lock.DistributedLockManager() as lock_mgr:
+            async with lock_mgr.lock("resource", "holder", ttl=30):
+                # Exclusive access
+                pass
+
+        # Sync file-based
+        file_lock = distributed_lock.FileDistributedLockManager()
+        if file_lock.acquire("resource", "holder"):
+            try:
+                # Work
+                pass
+            finally:
+                file_lock.release("resource", "holder")
+    """
+
+    DistributedLockManager = DistributedLockManager
+    FileDistributedLockManager = FileDistributedLockManager
+    LockMetadata = LockMetadata
+    LockBackend = LockBackend
+    RedisLockBackend = RedisLockBackend
+    FileLockBackend = FileLockBackend
+    get_distributed_lock_manager = staticmethod(get_distributed_lock_manager)
+
+
+distributed_lock = DistributedLockNamespace()
+
+
+# =============================================================================
+# ROUTING NAMESPACE (V15.1)
+# =============================================================================
+
+from .routing_engine import (
+    RoutingEngineV2,
+    RoutingMetrics,
+    LayerStats,
+    PrefixTrie,
+    InvertedIndex,
+    SemanticCache,
+    get_routing_engine_v2,
+    reset_routing_engine_v2,
+)
+
+
+class RoutingNamespace:
+    """Namespace for 4-layer keyword routing.
+
+    V15.1: Multi-layer agent routing engine.
+
+    Classes:
+        RoutingEngineV2: Main routing engine
+        RoutingMetrics: Routing decision metrics
+        LayerStats: Per-layer statistics
+        PrefixTrie: O(k) prefix matching
+        InvertedIndex: O(1) keyword lookup
+        SemanticCache: Semantic cluster cache
+
+    Functions:
+        get_routing_engine_v2: Singleton accessor
+        reset_routing_engine_v2: Reset singleton (for testing)
+
+    Example:
+        from lib.facade import routing
+
+        engine = routing.get_routing_engine_v2()
+        engine.build_from_routing_table({"python": "Coder", "test": "Tester"})
+        agent = engine.route("write a python test")
+        print(f"Selected: {agent}")
+
+        # Get metrics
+        metrics = engine.get_performance_summary()
+    """
+
+    RoutingEngineV2 = RoutingEngineV2
+    RoutingMetrics = RoutingMetrics
+    LayerStats = LayerStats
+    PrefixTrie = PrefixTrie
+    InvertedIndex = InvertedIndex
+    SemanticCache = SemanticCache
+    get_routing_engine_v2 = staticmethod(get_routing_engine_v2)
+    reset_routing_engine_v2 = staticmethod(reset_routing_engine_v2)
+
+
+routing = RoutingNamespace()
+
+
+# =============================================================================
+# HOT RELOAD NAMESPACE (V15.1)
+# =============================================================================
+
+from .hot_reload import (
+    PluginHotReloader,
+    HotReloadError,
+    SkillLoadError,
+    DependencyError,
+    SkillVersion,
+    HotReloadMetrics,
+    health_check as hot_reload_health_check,
+)
+
+
+class HotReloadNamespace:
+    """Namespace for plugin hot-reload system.
+
+    V15.1: Automatic skill reload on file modification.
+
+    Classes:
+        PluginHotReloader: Main hot-reloader class
+        HotReloadError: Base exception for hot-reload errors
+        SkillLoadError: Skill loading failure exception
+        DependencyError: Dependency resolution exception
+        SkillVersion: Version tracking dataclass
+        HotReloadMetrics: Metrics dataclass
+
+    Functions:
+        health_check: Check hot-reload system health
+
+    Example:
+        from lib.facade import hot_reload
+        from pathlib import Path
+
+        reloader = hot_reload.PluginHotReloader(Path("skills"))
+        reloader.register_callback(lambda name: print(f"Reloaded: {name}"))
+        reloader.start()
+
+        # Check version
+        version = reloader.get_skill_version("orchestrator")
+
+        # Manual reload
+        success = reloader.reload_skill("orchestrator")
+
+        reloader.stop()
+
+        # Health check
+        status = hot_reload.health_check(reloader)
+    """
+
+    PluginHotReloader = PluginHotReloader
+    HotReloadError = HotReloadError
+    SkillLoadError = SkillLoadError
+    DependencyError = DependencyError
+    SkillVersion = SkillVersion
+    HotReloadMetrics = HotReloadMetrics
+    health_check = staticmethod(hot_reload_health_check)
+
+
+hot_reload = HotReloadNamespace()
+
+
+__version__ = "15.1.0"

@@ -1,6 +1,7 @@
-"""Skill Plugin System for Orchestrator V14.0.3.
+"""Skill Plugin System for Orchestrator V15.0.4.
 
 Dynamic skill loading with hot-reload capability.
+Integrated with PluginHotReloader for automatic file watching.
 """
 
 import importlib
@@ -12,12 +13,13 @@ import time
 from datetime import datetime
 from pathlib import Path
 from collections import deque
-from typing import Dict, Optional, Type, List, Any
+from typing import Dict, Optional, Type, List, Any, Callable
 import sys
 
 logger = logging.getLogger(__name__)
 
 from .skill_interface import SkillInterface, SkillResult
+from .hot_reload import PluginHotReloader, HotReloadError
 
 
 class SkillMdWrapper(SkillInterface):
@@ -109,15 +111,22 @@ class SkillMdWrapper(SkillInterface):
 
 
 class SkillPluginLoader:
-    """Dynamic skill loader with hot-reload support."""
+    """Dynamic skill loader with hot-reload support.
+
+    Integrated with PluginHotReloader for automatic file watching.
+    """
 
     def __init__(self, skills_dir: Optional[str] = None,
-                 manifest_path: Optional[str] = None):
+                 manifest_path: Optional[str] = None,
+                 enable_hot_reload: bool = True,
+                 hot_reload_interval: float = 2.0):
         """Initialize skill plugin loader.
 
         Args:
             skills_dir: Directory containing skill modules
             manifest_path: Path to skills manifest JSON
+            enable_hot_reload: Enable automatic hot-reload (default: True)
+            hot_reload_interval: Interval for file watching in seconds
         """
         if skills_dir is None:
             skills_dir = Path.home() / ".claude/skills"
@@ -132,6 +141,14 @@ class SkillPluginLoader:
         self._manifest: Dict = {}
         self._cleanup_failures: deque = deque(maxlen=100)
         self._load_manifest()
+
+        # Hot-reload integration
+        self._hot_reloader: Optional[PluginHotReloader] = None
+        self._hot_reload_callbacks: List[Callable[[str], None]] = []
+        self._enable_hot_reload = enable_hot_reload
+
+        if enable_hot_reload and self.skills_dir.exists():
+            self._setup_hot_reload(hot_reload_interval)
 
     def _load_manifest(self) -> None:
         """Load skills manifest from disk."""
@@ -427,6 +444,145 @@ class SkillPluginLoader:
     def clear_cleanup_failures(self) -> None:
         """Clear cleanup failure log."""
         self._cleanup_failures.clear()
+
+    # =========================================================================
+    # HOT-RELOAD INTEGRATION
+    # =========================================================================
+
+    def _setup_hot_reload(self, watch_interval: float) -> None:
+        """Setup hot-reload watcher for skills directory.
+
+        Args:
+            watch_interval: Interval for file watching in seconds
+        """
+        try:
+            self._hot_reloader = PluginHotReloader(
+                skills_dir=self.skills_dir,
+                watch_interval=watch_interval
+            )
+            # Set skill loader reference
+            self._hot_reloader.set_skill_loader(self)
+            # Register internal callback
+            self._hot_reloader.register_callback(self._on_skill_reload)
+            logger.info("Hot-reload enabled for skills directory")
+        except Exception as e:
+            logger.warning(f"Failed to setup hot-reload: {e}")
+            self._hot_reloader = None
+
+    def _on_skill_reload(self, skill_name: str) -> None:
+        """Internal callback when a skill is reloaded.
+
+        Args:
+            skill_name: Name of the reloaded skill
+        """
+        logger.info(f"Skill reloaded: {skill_name}")
+
+        # Notify external callbacks
+        for callback in self._hot_reload_callbacks:
+            try:
+                callback(skill_name)
+            except Exception as e:
+                logger.warning(f"Hot-reload callback failed: {e}")
+
+    def start_hot_reload(self) -> bool:
+        """Start hot-reload file watching.
+
+        Returns:
+            True if started successfully
+        """
+        if self._hot_reloader is None:
+            logger.warning("Hot-reload not configured")
+            return False
+
+        self._hot_reloader.start()
+        return True
+
+    def stop_hot_reload(self) -> None:
+        """Stop hot-reload file watching."""
+        if self._hot_reloader is not None:
+            self._hot_reloader.stop()
+
+    def register_hot_reload_callback(self, callback: Callable[[str], None]) -> None:
+        """Register callback for hot-reload notifications.
+
+        Args:
+            callback: Function to call when skill is reloaded
+        """
+        self._hot_reload_callbacks.append(callback)
+
+    def unregister_hot_reload_callback(self, callback: Callable[[str], None]) -> bool:
+        """Unregister hot-reload callback.
+
+        Args:
+            callback: Callback to remove
+
+        Returns:
+            True if callback was removed
+        """
+        try:
+            self._hot_reload_callbacks.remove(callback)
+            return True
+        except ValueError:
+            return False
+
+    def get_hot_reload_status(self) -> Dict[str, Any]:
+        """Get hot-reload status and metrics.
+
+        Returns:
+            Dict with hot-reload status
+        """
+        if self._hot_reloader is None:
+            return {
+                "enabled": False,
+                "status": "not_configured"
+            }
+
+        return {
+            "enabled": True,
+            "status": "watching" if self._hot_reloader._is_watching else "stopped",
+            "metrics": self._hot_reloader.get_metrics(),
+            "tracked_skills": list(self._hot_reloader._versions.keys())
+        }
+
+    def get_skill_version(self, skill_id: str) -> Optional[str]:
+        """Get version hash for a skill.
+
+        Args:
+            skill_id: Skill identifier
+
+        Returns:
+            Version hash or None if not tracked
+        """
+        if self._hot_reloader is None:
+            return None
+
+        version = self._hot_reloader._versions.get(skill_id)
+        return version.version_hash if version else None
+
+    def force_reload_skill(self, skill_id: str) -> bool:
+        """Force reload of a skill regardless of file changes.
+
+        Args:
+            skill_id: Skill identifier
+
+        Returns:
+            True if reload successful
+        """
+        if self._hot_reloader is None:
+            # Fallback to manual reload
+            result = self.reload_skill(skill_id)
+            return result is not None
+
+        return self._hot_reloader.reload_skill(skill_id)
+
+    def __enter__(self) -> 'SkillPluginLoader':
+        """Context manager entry."""
+        self.start_hot_reload()
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        """Context manager exit."""
+        self.stop_hot_reload()
 
 
 def create_skill_plugin(skill_id: str, skill_name: str,

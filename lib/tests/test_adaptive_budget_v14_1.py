@@ -251,9 +251,9 @@ class TestAdaptiveTokenBudgetIntegration:
         """Verifica che la storia complessita viene tracciata."""
         budget_calc = AdaptiveTokenBudget()
 
-        # Calcola alcuni budget
-        for _ in range(5):
-            budget_calc.calculate_budget("refactor authentication module")
+        # Calcola alcuni budget con use_cache=False per evitare cache hit
+        for i in range(5):
+            budget_calc.calculate_budget(f"refactor authentication module {i}", use_cache=False)
 
         # La storia deve essere popolata
         assert len(budget_calc._complexity_history) == 5
@@ -266,9 +266,9 @@ class TestAdaptiveTokenBudgetIntegration:
         )
         budget_calc = AdaptiveTokenBudget(thresholds=thresholds)
 
-        # Genera 5 task con bassa complessita
-        for _ in range(5):
-            budget_calc.calculate_budget("fix typo")  # Task semplice
+        # Genera 5 task con bassa complessita usando task diversi per evitare cache
+        for i in range(5):
+            budget_calc.calculate_budget(f"fix typo {i}", use_cache=False)
 
         # Le soglie devono essersi adattate verso valori piu bassi
         # Nota: non verifichiamo il valore esatto perche' dipende dalla distribuzione

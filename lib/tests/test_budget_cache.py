@@ -1,8 +1,11 @@
-"""Test BudgetCache for V14.2.
+"""Test BudgetCache for V14.0.3.
 
 Test suite per BudgetCache class con TTL e LRU eviction.
 
-V14.2.0 - Budget caching for performance optimization.
+Features testate:
+- Budget caching per performance optimization
+- TTL-based cache invalidation
+- LRU eviction
 """
 import pytest
 import time

@@ -517,13 +517,19 @@ class TestAgentSelectorGetStats:
         assert ranking[0][0] == "Coder"
 
     def test_get_ranking_cold_start_threshold(self, selector):
-        """Test get_ranking requires 3+ tasks (cold start threshold)."""
+        """Test get_ranking with reduced cold start threshold (V14.0.4: 1 task).
+
+        V14.0.4: Cold start threshold reduced from 3 to 1 task.
+        With 2 tasks, ranking should now be populated (>= threshold of 1).
+        """
         selector.record_result("Coder", success=True, duration_ms=100, tokens=50)
         selector.record_result("Coder", success=True, duration_ms=100, tokens=50)
 
         ranking = selector.get_ranking(["Coder"])
-        # Only 2 tasks, below threshold
-        assert ranking == []
+        # V14.0.4: With threshold=1, 2 tasks are now ABOVE threshold
+        # So ranking should NOT be empty
+        assert len(ranking) == 1
+        assert ranking[0][0] == "Coder"
 
 
 # ============================================================================

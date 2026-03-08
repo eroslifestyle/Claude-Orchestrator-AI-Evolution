@@ -9,16 +9,16 @@
 |    O    O  R  R   C      H   H  E          S    T    R  R   A    A          |
 |     OOOO   R   R   CCCC  H   H  EEEEE  SSSS     T    R   R  A    A          |
 |                                                                              |
-|               V14.0.3 - AI-NATIVE - PREDICTIVE MULTI-AGENT SYSTEM           |
+|               V15.1.0 - FACADE API UNIFIED - PREDICTIVE MULTI-AGENT SYSTEM  |
 |                                                                              |
 +==============================================================================+
 ```
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Claude--Orchestrator--AI--Evolution-blue?logo=github)](https://github.com/eroslifestyle/Claude-Orchestrator-AI-Evolution)
-![Version](https://img.shields.io/badge/Version-14.0.3-green)
-![Tests](https://img.shields.io/badge/Tests-91_total-brightgreen)
-![Stress Test](https://img.shields.io/badge/Stress_Test-5%2F5_PASS-brightgreen)
-![Coverage](https://img.shields.io/badge/Coverage-99.7%25-brightgreen)
+![Version](https://img.shields.io/badge/Version-15.1.0-green)
+![CI](https://github.com/eroslifestyle/Claude-Orchestrator-AI-Evolution/workflows/CI/badge.svg)
+![Coverage](https://codecov.io/gh/eroslifestyle/Claude-Orchestrator-AI-Evolution/branch/main/graph/badge.svg)
+![Tests](https://img.shields.io/badge/Tests-350%2B_total-brightgreen)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
@@ -34,15 +34,15 @@ A **self-optimizing** multi-agent orchestration system for Claude Code with:
 
 ---
 
-## 📊 Performance Benchmarks (V14.0.3)
+## Performance Benchmarks (V15.1.0)
 
 | Test | Throughput | Status |
 |------|------------|--------|
-| Multi-Task | **4,228 task/sec** | ✅ PASS |
-| Multi-Agent | **4,149 pred/sec** | ✅ PASS |
-| Multi-Skill | **5,502 skill/sec** | ✅ PASS |
-| Simultaneous | **5,838 ops/sec** | ✅ PASS |
-| Memory | **128 bytes/op** | ✅ PASS |
+| Multi-Task | **4,228 task/sec** | PASS |
+| Multi-Agent | **4,149 pred/sec** | PASS |
+| Multi-Skill | **5,502 skill/sec** | PASS |
+| Simultaneous | **9,000+ ops/sec** | PASS |
+| Memory | **128 bytes/op** | PASS |
 
 **Overall: 5/5 PASS - 0% error rate**
 
@@ -70,9 +70,22 @@ A **self-optimizing** multi-agent orchestration system for Claude Code with:
 
 ---
 
-## 🧠 AI-Native Features (V14.0.2+)
+## 🧠 AI-Native Features (V15.1.0+)
 
-### 1. Predictive Agent Cache (`lib/predictive_cache.py`)
+### 1. Facade API Unificata (`lib/facade.py`)
+
+```python
+from lib import get_facade
+
+facade = get_facade()
+# 17 namespaces + 112 direct exports
+routing = facade.routing  # RoutingEngine V2
+chaos = facade.chaos      # ChaosInjector
+locks = facade.distributed_lock  # Redis-based
+hot_reload = facade.hot_reload   # PluginHotReloader
+```
+
+### 2. Predictive Agent Cache (`lib/predictive_cache.py`)
 
 ```python
 from lib.predictive_cache import get_predictive_cache
@@ -204,17 +217,18 @@ cp -r .claude ~/.claude
 
 ## 🗺️ Roadmap
 
-### V14.0.3 (Current) ✅
-- [x] Predictive Agent Caching
-- [x] Adaptive Token Budgeting
-- [x] A/B Testing Framework
-- [x] Auto-Tuning Parameters
-- [x] Stress Test 5/5 PASS
-- [x] Memory optimization (gc.collect periodic)
+### V15.1.0 (Current) ✅
+- [x] Facade API Unificata (129 exports)
+- [x] Chaos Engineering (5 failure types)
+- [x] Distributed Lock (Redis-based)
+- [x] Routing Engine V2 (4-layer matching)
+- [x] Hot Reload (PluginHotReloader)
+- [x] Metrics Dashboard (FastAPI + WebSocket)
+- [x] CI/CD Pipeline (3 OS x 5 Python)
 
-### V15.0 (Planned)
-- [ ] Distributed Cache (Redis support)
-- [ ] Analytics Dashboard
+### V15.2 (Planned)
+- [ ] Distributed Cache (Redis cluster)
+- [ ] Analytics Dashboard Enhancement
 - [ ] Multi-process coordination
 - [ ] Enhanced observability
 
@@ -251,4 +265,4 @@ MIT License - See [LICENSE](LICENSE) for details.
 
 **Made with ❤️ by [eroslifestyle](https://github.com/eroslifestyle)**
 
-*V14.0.3 - AI-Native - March 2026*
+*V15.1.0 - Facade API Unified - March 2026*
