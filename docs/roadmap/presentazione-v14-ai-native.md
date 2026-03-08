@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-Orchestrator V14.0 introduce **4 moduli AI-NATIVE** per l'ottimizzazione automatica del sistema multi-agente. La versione V14.0.3 risolve 8 limitazioni architetturali identificate durante lo stress test.
+Orchestrator V14.0 introduce **4 moduli AI-NATIVE** per l'ottimizzazione automatica del sistema multi-agente. La versione V15.0.4 risolve 8 limitazioni architetturali identificate durante lo stress test.
 
 ### Risultati Chiave
 
@@ -31,7 +31,7 @@ Orchestrator V14.0 introduce **4 moduli AI-NATIVE** per l'ottimizzazione automat
 - Task embedding con keyword extraction
 - Pattern recognition per sequenze agent
 - Preload con confidence threshold (0.7)
-- **V14.0.3:** Cold start fallback, tiered storage, distributed lock
+- **V15.0.4:** Cold start fallback, tiered storage, distributed lock
 
 **Performance:**
 - 32,290 ops/sec
@@ -57,7 +57,7 @@ predictions = cache.predict_next_agents("refactor authentication with JWT")
 - Range: 200-1500 token
 - 4 tier: simple, medium, complex, very_complex
 - Fattori: keyword count, dependency depth, agent count
-- **V14.0.3:** Soglie adattive, rule budget dinamico (20-60%)
+- **V15.0.4:** Soglie adattive, rule budget dinamico (20-60%)
 
 **Performance:**
 - 0.03ms avg response time (100x meglio del target 3ms)
@@ -81,7 +81,7 @@ budget = budget_calc.calculate_budget("implement OAuth login", {"files": ["auth.
 - Assegnazione deterministica (SHA-256 hash)
 - Z-test per significativita (alpha = 0.05)
 - Min 30 campioni per variante
-- **V14.0.3:** Multi-variant (A/B/C/D) con pesi configurabili
+- **V15.0.4:** Multi-variant (A/B/C/D) con pesi configurabili
 
 **Performance:**
 - 50/50 split verificato
@@ -108,7 +108,7 @@ variant = ab.assign_variant("cache_test", "user_123")  # "control" or "treatment
 **Features:**
 - UCB (Upper Confidence Bound) acquisition
 - Parametri: cache_ttl, batch_size, pool_size, preload_threshold
-- **V14.0.3:** Vero Gaussian Process (RBF kernel), n_candidates adattivo
+- **V15.0.4:** Vero Gaussian Process (RBF kernel), n_candidates adattivo
 
 **Performance:**
 - +5.75% score improvement
@@ -128,7 +128,7 @@ tuner.record_outcome(params, {"success_rate": 0.95, "latency_ms": 120})
 
 ---
 
-## V14.0.3 Bug Fixes
+## V15.0.4 Bug Fixes
 
 | # | Limitazione | Soluzione |
 |---|-------------|-----------|
@@ -156,7 +156,7 @@ tuner.record_outcome(params, {"success_rate": 0.95, "latency_ms": 120})
 
 ```
 +-------------------------------------------------------------+
-|  BRUTEFORCE STRESS TEST V14.0.3                            |
+|  BRUTEFORCE STRESS TEST V15.0.4                            |
 |                                                             |
 |  Multi-Task Throughput:     4,540.6 tasks/sec              |
 |  Multi-Agent Coordination:  8,854.9 pred/sec               |
@@ -187,10 +187,10 @@ tuner.record_outcome(params, {"success_rate": 0.95, "latency_ms": 120})
 
 ```
 lib/
-├── predictive_cache.py  (V14.0.3 - 815 righe)
-├── adaptive_budget.py   (V14.0.3 - 403 righe)
-├── ab_testing.py        (V14.0.3 - 652 righe)
-├── auto_tuner.py        (V14.0.3 - 922 righe)
+├── predictive_cache.py  (V15.0.4 - 815 righe)
+├── adaptive_budget.py   (V15.0.4 - 403 righe)
+├── ab_testing.py        (V15.0.4 - 652 righe)
+├── auto_tuner.py        (V15.0.4 - 922 righe)
 └── tests/
     ├── test_predictive_cache_fixes.py    (31 test)
     ├── test_adaptive_budget_v14_1.py     (24 test)
@@ -217,7 +217,7 @@ lib/
 
 ## Conclusioni
 
-Orchestrator V14.0.3 e **production-ready** con:
+Orchestrator V15.0.4 e **production-ready** con:
 - 8/8 limitazioni risolte
 - 91/91 test passati
 - 9,000+ ops/sec throughput
@@ -229,4 +229,4 @@ Orchestrator V14.0.3 e **production-ready** con:
 ---
 
 *Document generated: 2026-03-07*
-*Orchestrator V14.0.3 AI-NATIVE*
+*Orchestrator V15.0.4 AI-NATIVE*
