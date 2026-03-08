@@ -1160,3 +1160,135 @@ class FileDistributedLockManager:
             if self.release(resource, holder_id):
                 released += 1
         return released
+
+    def is_locked(self, resource: str) -> bool:
+        """
+        Check if resource is currently locked.
+
+        Args:
+            resource: Resource identifier
+
+        Returns:
+            True if locked, False otherwise
+        """
+        lock_file = self._get_lock_path(resource)
+        if not lock_file.exists():
+            return False
+        if self._is_lock_stale(lock_file):
+            return False
+        return True
+
+    def get_holder(self, resource: str) -> Optional[str]:
+        """
+        Get holder ID for a locked resource.
+
+        Args:
+            resource: Resource identifier
+
+        Returns:
+            Holder ID if locked, None otherwise
+        """
+        lock_file = self._get_lock_path(resource)
+        if not lock_file.exists():
+            return None
+        if self._is_lock_stale(lock_file):
+            return None
+        try:
+            content = lock_file.read_text().strip()
+            if content:
+                return content.split('\n')[0]
+        except (OSError, IOError):
+            pass
+        return None
+
+    def get_status(self) -> Dict[str, Any]:
+        """
+        Get current lock manager status.
+
+        Returns:
+            Dict with status information
+        """
+        with self._local_lock:
+            local_locks = list(self._held_locks.keys())
+
+        lock_files = list(self.lock_dir.glob("*.lock"))
+
+        return {
+            "local_held_locks": len(local_locks),
+            "total_lock_files": len(lock_files),
+            "local_locks": local_locks,
+            "lock_dir": str(self.lock_dir),
+            "stale_timeout": self.stale_timeout
+        }
+
+    def cleanup_stale(self) -> int:
+        """
+        Remove all stale lock files.
+
+        Returns:
+            Number of stale locks removed
+        """
+        removed = 0
+        for lock_file in self.lock_dir.glob("*.lock"):
+            if self._is_lock_stale(lock_file):
+                try:
+                    lock_file.unlink()
+                    removed += 1
+                except OSError:
+                    pass
+        return removed
+
+    def acquire_ctx(
+        self,
+        resource: str,
+        holder_id: str,
+        timeout: float = 30.0
+    ):
+        """
+        Context manager for lock acquisition.
+
+        Args:
+            resource: Resource to lock
+            holder_id: Holder ID
+            timeout: Max wait seconds
+
+        Yields:
+            None
+
+        Raises:
+            TimeoutError: If lock cannot be acquired
+        """
+        return _LockContextManager(self, resource, holder_id, timeout)
+
+
+class _LockContextManager:
+    """Context manager helper for FileDistributedLockManager."""
+
+    def __init__(
+        self,
+        lock_manager: "FileDistributedLockManager",
+        resource: str,
+        holder_id: str,
+        timeout: float
+    ):
+        self._lock_manager = lock_manager
+        self._resource = resource
+        self._holder_id = holder_id
+        self._timeout = timeout
+
+    def __enter__(self):
+        acquired = self._lock_manager.acquire(
+            self._resource,
+            self._holder_id,
+            self._timeout
+        )
+        if not acquired:
+            raise TimeoutError(
+                f"Could not acquire lock for {self._resource} "
+                f"within {self._timeout}s"
+            )
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._lock_manager.release(self._resource, self._holder_id)
+        return False

@@ -488,6 +488,25 @@ class PatternRecognitionEngine:
         "trading": ["Trading Strategy Expert", "Trading Risk Calculator L2"],
     }
 
+    # V14.0.4: Agent comuni per warm start (copiato per uso in warmup_from_keywords)
+    _COMMON_AGENTS: Dict[str, Dict[str, Any]] = {
+        # Core agents (usati molto frequentemente)
+        "Analyzer": {"confidence": 0.85, "keywords": ["analyze", "analizza", "review", "check", "examine"]},
+        "Coder": {"confidence": 0.80, "keywords": ["code", "implement", "fix", "create", "develop", "write"]},
+        "Reviewer": {"confidence": 0.75, "keywords": ["review", "validate", "check", "verify", "audit"]},
+        "Tech Lead": {"confidence": 0.70, "keywords": ["plan", "architect", "design", "coordinate", "lead"]},
+        # Specialists comuni
+        "Database Expert": {"confidence": 0.65, "keywords": ["database", "sql", "query", "db", "table"]},
+        "Security Unified Expert": {"confidence": 0.65, "keywords": ["security", "auth", "vulnerability", "secure"]},
+        "Integration Expert": {"confidence": 0.60, "keywords": ["api", "integration", "connect", "webhook"]},
+        "GUI Super Expert": {"confidence": 0.60, "keywords": ["ui", "gui", "frontend", "component", "react"]},
+        "DevOps Infra": {"confidence": 0.55, "keywords": ["deploy", "infra", "docker", "kubernetes", "ci"]},
+        # Linguaggi
+        "Python Expert": {"confidence": 0.50, "keywords": ["python", "py", "django", "flask"]},
+        "TypeScript Expert": {"confidence": 0.50, "keywords": ["typescript", "ts", "javascript", "node"]},
+        "Go Expert": {"confidence": 0.50, "keywords": ["golang", "go"]},
+    }
+
     # Memory limits
     MAX_PATTERN_HISTORY = 500
     MAX_KEYWORD_COOCCURRENCE = 1000

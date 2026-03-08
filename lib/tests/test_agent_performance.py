@@ -19,6 +19,7 @@ from lib.agent_performance import (
     AgentMetrics,
     AgentPerformanceDB
 )
+from lib.exceptions import DatabaseConnectionError, AgentError
 
 
 # ============================================================================
@@ -145,7 +146,7 @@ class TestConnectionPoolGetConnection:
     def test_get_connection_without_init_raises(self):
         """Test get_connection raises without initialization."""
         ConnectionPool._instance = None
-        with pytest.raises(RuntimeError, match="not initialized"):
+        with pytest.raises(DatabaseConnectionError, match="not initialized"):
             with ConnectionPool.get_connection():
                 pass
 
@@ -633,13 +634,13 @@ class TestAgentPerformanceDBRecordTask:
 
     def test_record_task_validates_agent_id(self, in_memory_db):
         """Test record_task validates agent_id."""
-        with pytest.raises(ValueError):
+        with pytest.raises(AgentError):
             in_memory_db.record_task("", success=True, duration_ms=100.0, tokens=50)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(AgentError):
             in_memory_db.record_task(None, success=True, duration_ms=100.0, tokens=50)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(AgentError):
             in_memory_db.record_task("   ", success=True, duration_ms=100.0, tokens=50)
 
     def test_record_task_clamps_duration(self, in_memory_db):

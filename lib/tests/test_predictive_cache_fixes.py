@@ -89,12 +89,15 @@ class TestColdStartHandling:
         assert isinstance(predictions, list)
 
     def test_warmup_source_is_cold_start_fallback(self, pattern_engine):
-        """Test che source e 'cold_start_fallback'."""
+        """Test che source e 'cold_start_fallback' o 'warm_start_fallback'."""
         task = "Fix database query"
         predictions = pattern_engine.warmup_from_keywords(task)
 
+        # V14.0.4: Accetta sia warm_start_fallback (da _COMMON_AGENTS)
+        # che cold_start_fallback (da KEYWORD_AGENT_MAP)
+        valid_sources = {"cold_start_fallback", "warm_start_fallback"}
         for pred in predictions:
-            assert pred.source == "cold_start_fallback"
+            assert pred.source in valid_sources, f"Invalid source: {pred.source}"
 
     def test_warmup_first_agent_higher_confidence(self, pattern_engine):
         """Test che primo agent nella lista ha confidence piu alta."""

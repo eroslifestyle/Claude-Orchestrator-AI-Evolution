@@ -47,16 +47,17 @@ class TestFL2MemoryLeakAsyncEvents:
     """Test per FL-2: Memory leak in async events."""
 
     def test_async_events_bounded_size(self):
-        """Verifica _async_events bounded (max 1000)."""
+        """Verifica _async_events bounded (max 1000) tramite AsyncEventManager."""
         lock_manager = FileLockManager()
-        
+
+        # Usa get_or_create() invece di dict assignment
+        # AsyncEventManager implementa LRU eviction
         for i in range(1500):
             file_path = f"/test/file_{i}.txt"
-            lock_manager._async_events[file_path] = asyncio.Event()
-            if hasattr(lock_manager, '_async_events_keys'):
-                lock_manager._async_events_keys.append(file_path)
-        
-        assert len(lock_manager._async_events) <= 1500
+            lock_manager._async_events.get_or_create(file_path)
+
+        # Verifica che la dimensione sia limitata al max_size
+        assert lock_manager._async_events.size <= lock_manager._async_events._max_size
 
 
 class TestAP1ShutdownCrash:

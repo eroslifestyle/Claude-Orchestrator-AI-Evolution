@@ -341,6 +341,64 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
 
 
 # =============================================================================
+# STATE CLEANUP FIXTURES
+# =============================================================================
+
+@pytest.fixture(autouse=True)
+def cleanup_global_state():
+    """Reset global state between tests to prevent state leaks.
+
+    This fixture runs automatically before and after each test to ensure
+    no state persists between tests that could cause flaky behavior.
+    """
+    # Pre-test cleanup (in case previous test didn't clean up)
+    _reset_predictive_cache_state()
+    _reset_chaos_state()
+
+    yield
+
+    # Post-test cleanup
+    _reset_predictive_cache_state()
+    _reset_chaos_state()
+
+
+def _reset_predictive_cache_state() -> None:
+    """Reset PatternRecognitionEngine and PredictiveAgentCache state."""
+    try:
+        from lib.predictive_cache import (
+            PatternRecognitionEngine,
+            reset_predictive_cache,
+        )
+
+        # Reset class-level state
+        if hasattr(PatternRecognitionEngine, '_pattern_history'):
+            PatternRecognitionEngine._pattern_history.clear()
+        if hasattr(PatternRecognitionEngine, '_keyword_cooccurrence'):
+            PatternRecognitionEngine._keyword_cooccurrence.clear()
+        if hasattr(PatternRecognitionEngine, '_domain_patterns'):
+            PatternRecognitionEngine._domain_patterns.clear()
+
+        # Reset singleton
+        reset_predictive_cache()
+    except ImportError:
+        pass
+    except Exception:
+        pass  # Silently ignore cleanup errors
+
+
+def _reset_chaos_state() -> None:
+    """Reset ChaosInjector state."""
+    try:
+        from lib.chaos import get_chaos_injector
+        chaos = get_chaos_injector()
+        chaos.reset()
+    except ImportError:
+        pass
+    except Exception:
+        pass  # Silently ignore cleanup errors
+
+
+# =============================================================================
 # PUBLIC API
 # =============================================================================
 
@@ -350,4 +408,5 @@ __all__ = [
     "chaos_injector",
     "chaos_enabled",
     "chaos_disabled",
+    "cleanup_global_state",
 ]

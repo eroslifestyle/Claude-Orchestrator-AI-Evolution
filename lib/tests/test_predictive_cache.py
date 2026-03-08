@@ -238,7 +238,9 @@ class TestPredictiveAgentCache:
         )
 
         assert cache._confidence_threshold == 0.7
-        assert len(cache._pattern_engine._pattern_history) == 0
+        # V14.0.4: Warm start pre-populates pattern history with common agents
+        # Pattern history should NOT be empty after initialization
+        assert len(cache._pattern_engine._pattern_history) > 0
 
         cache.clear_history()
 

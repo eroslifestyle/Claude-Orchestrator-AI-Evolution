@@ -15,7 +15,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from distributed_lock import (
-    DistributedLockManager,
+    FileDistributedLockManager as DistributedLockManager,
     get_distributed_lock_manager,
     DEFAULT_STALE_TIMEOUT
 )
