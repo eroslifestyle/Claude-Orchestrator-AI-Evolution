@@ -1,0 +1,8 @@
+{
+  "id": "48",
+  "subject": "Scansiona try/except vuoti o generici",
+  "description": "Cerca try/except vuoti o con solo Exception generico in C:\\Users\\LeoDg\\.claude. Pattern: \"except:\" (vuoto), \"except Exception:\", \"except Exception as e:\" seguito da pass o solo log generico. Riporta file e riga.",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

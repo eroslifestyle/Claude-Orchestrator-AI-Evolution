@@ -1,0 +1,9 @@
+{
+  "id": "32",
+  "subject": "Analizzare 3 file language/ patterns",
+  "description": "Analizza i seguenti file in C:\\Users\\LeoDg\\.claude\\rules\\:\n- python/patterns.md\n- typescript/patterns.md\n- go/patterns.md\n\nPer ogni file, estrai:\n1. Numero totale di regole/pattern\n2. Categorie tematiche (es. type hints, async, testing)\n3. Sovrapposizioni con common/ rules\n4. Regole specifiche del linguaggio (non in common/)\n\nOutput formato JSON:\n{\n  \"file\": \"nome.md\",\n  \"lines\": N,\n  \"patterns_count\": N,\n  \"categories\": [\"cat1\", \"cat2\"],\n  \"overlaps_with_common\": [\"pattern1\", \"pattern2\"],\n  \"language_specific\": [\"pattern1\", \"pattern2\"]\n}\n\nEXECUTION RULES:\n1. READ tutti i file in UN SOLO messaggio (3 Read parallele)\n2. Parallelo assoluto per analisi\n3. Output strutturato JSON\n4. Lingua: italiano",
+  "activeForm": "Analizzando 3 file language/ patterns",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

@@ -221,3 +221,154 @@ pytest -m integration
 # Parallel execution
 pytest -n 4
 ```
+
+## TOOL USE EXAMPLES
+
+### Example 1: Test Discovery and Analysis
+**Tools**: Glob, Read, Grep
+**Pattern**: Scoperta e analisi test esistenti
+
+```markdown
+# Step 1: Trova tutti i file di test
+Use Glob with pattern: "tests/**/test_*.py" and path: "project/"
+
+# Step 2: Identifica test senza asserzioni
+Use Grep with pattern: "def test_" and path: "tests/" and output_mode: "content"
+  -> Check: ogni test ha assert/expect?
+
+# Step 3: Leggi test file specifici per analisi
+Use Read with file_path: "tests/unit/test_user_service.py"
+
+# Step 4: Cerca mock non configurati
+Use Grep with pattern: "Mock\(|Mock\.|\.return_value\s*=" and path: "tests/"
+```
+
+### Example 2: Coverage Gap Analysis
+**Tools**: Bash, Read, Grep
+**Pattern**: Identificazione gap di coverage
+
+```markdown
+# Step 1: Esegui test con coverage
+Use Bash with command: "pytest --cov=src --cov-report=term-missing --cov-report=json:coverage.json"
+  timeout: 120000
+
+# Step 2: Analizza report coverage
+Use Read with file_path: "coverage.json"
+  -> Identify: file con coverage < 80%
+
+# Step 3: Per ogni file con bassa coverage
+For each low-coverage file:
+  Use Grep with pattern: "def |class |async def " and path: "<file>"
+    -> Output: funzioni/metodi non testati
+
+# Step 4: Genera test mancanti
+Use Read with file_path: "src/services/payment.py"
+  -> Create: tests/unit/test_payment.py per funzioni mancanti
+```
+
+### Example 3: Integration Test Setup
+**Tools**: Read, Write, Bash
+**Pattern**: Setup ambiente test integrazione
+
+```markdown
+# Step 1: Verifica configurazione test
+Use Read with file_path: "tests/conftest.py"
+
+# Step 2: Crea database test
+Use Bash with command: "python -c \"from tests.fixtures import setup_test_db; setup_test_db()\""
+  timeout: 30000
+
+# Step 3: Esegui migration test
+Use Bash with command: "alembic upgrade test && alembic downgrade base"
+  timeout: 60000
+
+# Step 4: Valida fixtures
+Use Grep with pattern: "@pytest.fixture" and path: "tests/"
+  -> Output: lista fixtures disponibili
+```
+
+### Example 4: Test Generation Workflow
+**Tools**: Read, Grep, Glob, Write
+**Pattern**: Generazione automatica test da codice
+
+```markdown
+# Fase 1: Analizza modulo da testare
+Use Read with file_path: "src/utils/validators.py"
+  -> Extract: tutte le funzioni pubbliche
+
+# Fase 2: Identifica edge cases
+Use Grep with pattern: "def validate_|def check_|def parse_" and path: "src/utils/"
+  and output_mode: "content"
+
+# Fase 3: Genera struttura test
+Use Write with file_path: "tests/unit/test_validators.py" and content: """
+import pytest
+from src.utils.validators import *
+
+class TestValidateEmail:
+    def test_valid_email_returns_true(self):
+        assert validate_email("test@example.com") is True
+
+    def test_invalid_email_returns_false(self):
+        assert validate_email("invalid") is False
+
+    def test_empty_string_returns_false(self):
+        assert validate_email("") is False
+
+    @pytest.mark.parametrize("email,expected", [
+        ("user@domain.com", True),
+        ("user.name@domain.co.uk", True),
+        ("@domain.com", False),
+        ("user@", False),
+        (None, False),
+    ])
+    def test_email_variants(self, email, expected):
+        assert validate_email(email) is expected
+"""
+```
+
+### Example 5: Flaky Test Detection
+**Tools**: Bash, Read, Grep
+**Pattern**: Rilevamento test flaky
+
+```markdown
+# Step 1: Esegui test multipli volte
+Use Bash with command: "for i in {1..5}; do pytest tests/ --tb=no -q; done > test_runs.log"
+  timeout: 300000
+
+# Step 2: Analizza risultati
+Use Bash with command: "grep -E '(PASSED|FAILED)' test_runs.log | sort | uniq -c | sort -rn"
+
+# Step 3: Identifica test con risultati inconsistenti
+Use Grep with pattern: "test_.*::" and path: "test_runs.log" and output_mode: "content"
+
+# Step 4: Leggi test flaky per analisi
+Use Read with file_path: "tests/integration/test_api.py"
+  -> Look for: time-dependent, network-dependent, shared state
+```
+
+## BEST PRACTICES (Tool Usage)
+
+- **Parallel test discovery**: Usa N Read in un messaggio per N test file
+- **Coverage-first**: Esegui coverage prima di leggere codice sorgente
+- **Parametrized generation**: Genera test parametrizzati per edge cases
+- **Isolated execution**: Ogni Bash call e' isolata, usa file per stato
+- **Structured output**: Usa --tb=short per traceback leggibili
+
+## ERROR HANDLING (Tool Calls)
+
+| Errore | Causa | Recovery |
+|--------|-------|----------|
+| `Test timeout` | Test lento o bloccato | Aumenta timeout o skip test |
+| `Import error` | Dipendenze mancanti | Installa con pip install |
+| `Fixture not found` | conftest.py mancante | Crea/verifica fixtures |
+| `Coverage < threshold` | Test insufficienti | Aggiungi test per codice non coperto |
+
+```markdown
+# Pattern: Robust test execution
+1. Always set timeout for pytest (>60s for integration)
+2. Use --tb=short for cleaner error output
+3. Capture both stdout and stderr
+4. Run with -x to stop on first failure during debugging
+5. Use -v for verbose output during investigation
+```

@@ -1,0 +1,9 @@
+{
+  "id": "31",
+  "subject": "Identificazione file più grandi",
+  "description": "Identifica i 10 file più grandi del progetto con dimensione, righe e categoria. Includi warning per file >50KB. Output in italiano.",
+  "activeForm": "Identificando file più grandi",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

@@ -1,0 +1,8 @@
+{
+  "id": "50",
+  "subject": "Check version mismatch",
+  "description": "Cerca versioni mismatch in C:\\Users\\LeoDg\\.claude. Controlla: pyproject.toml, package.json, requirements.txt, versioni nei file .py (__version__). Riporta discrepanze.",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

@@ -1,0 +1,9 @@
+{
+  "id": "38",
+  "subject": "Analisi process_manager.py e predictive_cache.py",
+  "description": "Analizza C:\\Users\\LeoDg\\.claude\\lib\\process_manager.py e C:\\Users\\LeoDg\\.claude\\lib\\predictive_cache.py\n\nPer ogni modulo identifica:\n1. Funzioni/classi esportate (con signature)\n2. Dipendenze (import)\n3. Pattern utilizzati (singleton, factory, etc.)\n4. Problemi di sicurezza (hardcoded secrets, injection, etc.)\n5. Gap nella gestione errori (bare except, silent failures)\n6. Thread-safety issues (race conditions, shared state)\n7. Memory leaks potenziali (unclosed resources, caches senza limiti)\n\nOutput in ITALIANO con formato JSON strutturato.",
+  "activeForm": "Analizzando process manager e predictive cache",
+  "status": "in_progress",
+  "blocks": [],
+  "blockedBy": []
+}

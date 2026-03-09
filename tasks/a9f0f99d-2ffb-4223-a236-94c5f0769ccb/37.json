@@ -1,0 +1,9 @@
+{
+  "id": "37",
+  "subject": "Analisi file_locks.py e distributed_lock.py",
+  "description": "Analizza C:\\Users\\LeoDg\\.claude\\lib\\file_locks.py e C:\\Users\\LeoDg\\.claude\\lib\\distributed_lock.py\n\nPer ogni modulo identifica:\n1. Funzioni/classi esportate (con signature)\n2. Dipendenze (import)\n3. Pattern utilizzati (singleton, factory, etc.)\n4. Problemi di sicurezza (hardcoded secrets, injection, etc.)\n5. Gap nella gestione errori (bare except, silent failures)\n6. Thread-safety issues (race conditions, shared state)\n7. Memory leaks potenziali (unclosed resources, caches senza limiti)\n\nOutput in ITALIANO con formato JSON strutturato.",
+  "activeForm": "Analizzando file locks e distributed lock",
+  "status": "in_progress",
+  "blocks": [],
+  "blockedBy": []
+}

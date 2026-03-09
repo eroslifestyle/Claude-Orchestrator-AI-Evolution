@@ -501,3 +501,109 @@ class ContextDebugger:
 3. **Use appropriate debugging tools**
 4. **Document findings** during debugging
 5. **Test fixes thoroughly** after resolution
+
+## TOOL USE EXAMPLES
+
+### Example 1: Stack Trace Analysis
+**Tools**: Read, Grep, Bash
+**Pattern**: Analisi traceback con ricerca nel codice
+
+```markdown
+# Step 1: Analizza lo stack trace fornito
+Parse error: "File 'app.py', line 42, in process_user"
+
+# Step 2: Leggi il file con errore contestualizzato
+Use Read with file_path: "app.py" and offset: 35 and limit: 20
+  -> Output: contesto attorno alla riga 42
+
+# Step 3: Cerca definizioni correlate
+Use Grep with pattern: "def process_user|class User" and path: "."
+
+# Step 4: Verifica variabili coinvolte
+Use Grep with pattern: "user_data|user_id" and path: "app.py" and output_mode: "content"
+```
+
+### Example 2: Performance Profiling Workflow
+**Tools**: Bash, Read, Grep
+**Pattern**: Profilazione con strumenti nativi
+
+```markdown
+# Step 1: Esegui profiler Python
+Use Bash with command: "python -m cProfile -o profile.stats app.py"
+  timeout: 60000
+
+# Step 2: Analizza risultati
+Use Bash with command: "python -c \"import pstats; p=pstats.Stats('profile.stats'); p.sort_stats('cumulative').print_stats(20)\""
+
+# Step 3: Identifica funzioni lente
+Use Grep with pattern: "def (slow_function|heavy_process)" and path: "src/"
+
+# Step 4: Leggi funzioni target per ottimizzazione
+Use Read with file_path: "src/processing.py"
+```
+
+### Example 3: Memory Leak Investigation
+**Tools**: Bash, Read, Grep
+**Pattern**: Rilevamento memory leak con tracemalloc
+
+```markdown
+# Step 1: Esegui con memory tracking
+Use Bash with command: "python -c \"import tracemalloc; tracemalloc.start(); import app; app.run(); snapshot = tracemalloc.take_snapshot(); top = snapshot.statistics('lineno'); [print(stat) for stat in top[:10]]\""
+  timeout: 30000
+
+# Step 2: Cerca pattern problematici
+Use Grep with pattern: "global\s+\w+\s*=|cache\[|_instances\s*=" and path: "src/"
+
+# Step 3: Analizza classi con potenziali leak
+Use Read with file_path: "src/cache.py"
+  -> Look for: __del__ issues, circular refs, unbounded collections
+```
+
+### Example 4: Debugging Multi-File con Chaining
+**Tools**: Read, Grep, Glob
+**Pattern**: Tracciamento flusso attraverso piu file
+
+```markdown
+# Fase 1: Identifica punto di errore
+Error: "AttributeError: 'NoneType' object has no attribute 'id'"
+
+# Fase 2: Trova tutti i file coinvolti
+Use Glob with pattern: "src/**/*user*.py"
+
+# Fase 3: Cerca assegnazioni problematiche
+Use Grep with pattern: "user\s*=\s*None|return None|\.user\s*=" and path: "src/"
+
+# Fase 4: Leggi file con potenziali problemi
+For each suspicious file:
+  Use Read with file_path: "<file>"
+  -> Trace: dove user viene settato a None
+
+# Fase 5: Valida fix
+Use Read with file_path: "src/services/user_service.py"
+  -> Verify: null check prima dell'accesso
+```
+
+## BEST PRACTICES (Tool Usage)
+
+- **Timeout appropriati**: Imposta timeout Bash per operazioni lunghe (>30s)
+- **Lettura mirata**: Usa offset/limit per file grandi
+- **Ricorsione controllata**: Usa Glob con pattern specifici per evitare troppi risultati
+- **Log strutturato**: Usa Bash con redirect per catturare output
+- **Processi isolati**: Ogni Bash call e' isolata, usa file per stato
+
+## ERROR HANDLING (Tool Calls)
+
+| Errore | Causa | Recovery |
+|--------|-------|----------|
+| `Command timeout` | Processo bloccato | Aumenta timeout o killa processo |
+| `File not found` | Path relativo errato | Usa path assoluti |
+| `Permission denied` | Privilegi insufficienti | Esegui con permessi adeguati |
+| `Memory error` | Output troppo grande | Limita output con head/pipe |
+
+```markdown
+# Pattern: Safe Bash execution
+1. Always set timeout for long-running commands
+2. Capture stderr: command 2>&1
+3. Use head/limit for large output: command | head -50
+4. Check exit code: command && echo "SUCCESS" || echo "FAILED"
+```

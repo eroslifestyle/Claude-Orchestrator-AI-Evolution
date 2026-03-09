@@ -1,0 +1,9 @@
+{
+  "id": "28",
+  "subject": "Conteggio righe codice totali",
+  "description": "Conta le righe di codice totali per componente (agents, skills, rules, lib, docs). Stima i token basandosi su ~4 caratteri per token. Output in italiano.",
+  "activeForm": "Contando righe codice totali",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

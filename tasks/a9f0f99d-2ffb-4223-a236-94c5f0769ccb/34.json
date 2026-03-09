@@ -1,0 +1,9 @@
+{
+  "id": "34",
+  "subject": "Analizzare 8 file common/ rules",
+  "description": "Analizza i seguenti file in C:\\Users\\LeoDg\\.claude\\rules\\common\\:\n- coding-style.md\n- security.md\n- testing.md\n- git-workflow.md\n- database.md\n- api-design.md\n- process-management.md\n- language-response.md\n\nPer ogni file, estrai:\n1. Numero totale di regole\n2. Categorie tematiche (es. naming, error handling, etc.)\n3. Regole duplicate all'interno del file\n4. Regole troppo verbose o vaghe\n\nOutput formato JSON:\n{\n  \"file\": \"nome.md\",\n  \"lines\": N,\n  \"rules_count\": N,\n  \"categories\": [\"cat1\", \"cat2\"],\n  \"duplicates\": [\"rule1\", \"rule2\"],\n  \"verbose_rules\": [\"desc1\", \"desc2\"]\n}\n\nEXECUTION RULES:\n1. READ tutti i file in UN SOLO messaggio (8 Read parallele)\n2. Parallelo assoluto per analisi\n3. Output strutturato JSON\n4. Lingua: italiano",
+  "activeForm": "Analizzando 8 file common/ rules",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

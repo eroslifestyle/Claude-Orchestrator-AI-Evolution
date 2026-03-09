@@ -1,0 +1,8 @@
+{
+  "id": "44",
+  "subject": "Scansiona hardcoded paths",
+  "description": "Cerca path hardcoded tipo C:\\Users, /home/user, /Users/ in file .py in C:\\Users\\LeoDg\\.claude. Pattern: r\"(C:\\\\|/home/|/Users/)[a-zA-Z]+\". Riporta file e riga.",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

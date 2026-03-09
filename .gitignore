@@ -42,6 +42,10 @@ monitoring/
 temp_*.py
 temp_*.ps1
 temp_*.js
+*.tmp
+*.temp
+.tmp/
+.cache/
 NUL
 verify.txt
 stress_test_*.json

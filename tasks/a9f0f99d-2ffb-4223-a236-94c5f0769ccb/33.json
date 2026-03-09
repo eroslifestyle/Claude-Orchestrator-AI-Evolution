@@ -1,0 +1,9 @@
+{
+  "id": "33",
+  "subject": "Analizzare README.md e format-standard.md",
+  "description": "Analizza i seguenti file in C:\\Users\\LeoDg\\.claude\\rules\\:\n- README.md\n- format-standard.md\n\nPer ogni file, verifica:\n1. Coerenza con il contenuto effettivo dei file rules\n2. Accuratezza dei conteggi (numero rules, file listati)\n3. Completezza della documentazione\n4. Istruzioni chiare per aggiungere nuove regole\n\nOutput formato JSON:\n{\n  \"file\": \"nome.md\",\n  \"lines\": N,\n  \"accuracy\": \"HIGH|MEDIUM|LOW\",\n  \"inconsistencies\": [\"issue1\", \"issue2\"],\n  \"missing_docs\": [\"topic1\", \"topic2\"]\n}\n\nEXECUTION RULES:\n1. READ tutti i file in UN SOLO messaggio (2 Read parallele)\n2. Confronta con struttura effettiva directory rules/\n3. Output strutturato JSON\n4. Lingua: italiano",
+  "activeForm": "Analizzando README.md e format-standard.md",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

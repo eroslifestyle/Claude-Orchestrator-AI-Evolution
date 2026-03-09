@@ -1,0 +1,9 @@
+{
+  "id": "35",
+  "subject": "Analizzare README e format-standard",
+  "description": "Analizza i seguenti file in C:\\Users\\LeoDg\\.claude\\rules\\:\n- README.md\n- format-standard.md\n\nVerifica:\n1. README.md descrive correttamente la struttura rules/?\n2. format-standard.md è applicato coerentemente?\n3. Metriche dichiarate corrispondono a reali?\n4. Istruzioni chiare per aggiungere nuove regole?\n\nOutput formato JSON:\n{\n  \"readme_accuracy\": true/false,\n  \"format_applied\": true/false,\n  \"metrics_match\": true/false,\n  \"issues\": [\"issue1\", \"issue2\"]\n}\n\nEXECUTION RULES:\n1. READ entrambi i file in UN SOLO messaggio (2 Read parallele)\n2. Output strutturato JSON\n3. Lingua: italiano",
+  "activeForm": "Analizzando README e format-standard",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

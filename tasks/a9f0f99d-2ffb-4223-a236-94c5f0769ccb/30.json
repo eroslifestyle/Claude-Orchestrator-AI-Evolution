@@ -1,0 +1,9 @@
+{
+  "id": "30",
+  "subject": "Analisi dimensioni file per categoria",
+  "description": "Analizza la dimensione totale dei file per ogni categoria (agents/, skills/, rules/, lib/, docs/, learnings/). Calcola dimensione in KB e percentuale sul totale. Output in italiano.",
+  "activeForm": "Analizzando dimensioni file per categoria",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

@@ -1,0 +1,8 @@
+{
+  "id": "49",
+  "subject": "Rileva circular imports",
+  "description": "Analizza struttura import in C:\\Users\\LeoDg\\.claude/lib. Cerca potenziali circular imports. Usa Grep per \"from \\.\" e \"import \\.\" per trovare import relativi. Analizza dipendenze circolari.",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

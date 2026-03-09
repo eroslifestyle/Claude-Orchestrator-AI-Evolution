@@ -55,8 +55,8 @@ $script:Config = @{
     ClaudeDir       = Join-Path $env:USERPROFILE '.claude'
     SettingsFile    = 'settings.json'
     ProfileFiles    = @{
-        cca = 'settings-anthropic.json'
-        ccg = 'settings-glm.json'
+        cca = 'settings-cca.json'
+        ccg = 'settings-ccg.json'
     }
     ProfileNames    = @{
         cca = 'CCA (Anthropic Claude Opus 4.6)'

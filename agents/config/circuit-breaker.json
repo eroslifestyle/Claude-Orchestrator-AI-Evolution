@@ -26,9 +26,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "core/coder.md": {
@@ -47,9 +59,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "core/reviewer.md": {
@@ -68,9 +92,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "core/documenter.md": {
@@ -89,9 +125,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "core/system_coordinator.md": {
@@ -110,9 +158,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "core/orchestrator.md": {
@@ -131,9 +191,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/gui-super-expert.md": {
@@ -152,9 +224,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/database_expert.md": {
@@ -173,9 +257,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/security_unified_expert.md": {
@@ -194,9 +290,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/integration_expert.md": {
@@ -215,9 +323,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/tester_expert.md": {
@@ -236,9 +356,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/mql_expert.md": {
@@ -257,9 +389,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/trading_strategy_expert.md": {
@@ -278,9 +422,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/architect_expert.md": {
@@ -299,9 +455,54 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
+      }
+    },
+    "experts/browser_automation_expert.md": {
+      "status": "healthy",
+      "failures": 0,
+      "last_failure": null,
+      "blacklisted_until": null,
+      "metrics": {
+        "tasks_total": 0,
+        "tasks_successful": 0,
+        "tasks_failed": 0,
+        "tasks_cancelled": 0,
+        "avg_duration_seconds": 0.0,
+        "total_duration_seconds": 0.0,
+        "last_task_timestamp": null,
+        "first_task_timestamp": null
+      },
+      "token_usage": {
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/devops_expert.md": {
@@ -320,9 +521,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/languages_expert.md": {
@@ -341,9 +554,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/ai_integration_expert.md": {
@@ -362,9 +587,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/claude_systems_expert.md": {
@@ -383,9 +620,54 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
+      }
+    },
+    "experts/mcp_integration_expert.md": {
+      "status": "healthy",
+      "failures": 0,
+      "last_failure": null,
+      "blacklisted_until": null,
+      "metrics": {
+        "tasks_total": 0,
+        "tasks_successful": 0,
+        "tasks_failed": 0,
+        "tasks_cancelled": 0,
+        "avg_duration_seconds": 0.0,
+        "total_duration_seconds": 0.0,
+        "last_task_timestamp": null,
+        "first_task_timestamp": null
+      },
+      "token_usage": {
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/mobile_expert.md": {
@@ -404,12 +686,24 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
-    "experts/n8n_expert.md": {
+    "experts/mql_decompilation_expert.md": {
       "status": "healthy",
       "failures": 0,
       "last_failure": null,
@@ -425,9 +719,54 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
+      }
+    },
+    "experts/notification_expert.md": {
+      "status": "healthy",
+      "failures": 0,
+      "last_failure": null,
+      "blacklisted_until": null,
+      "metrics": {
+        "tasks_total": 0,
+        "tasks_successful": 0,
+        "tasks_failed": 0,
+        "tasks_cancelled": 0,
+        "avg_duration_seconds": 0.0,
+        "total_duration_seconds": 0.0,
+        "last_task_timestamp": null,
+        "first_task_timestamp": null
+      },
+      "token_usage": {
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/social_identity_expert.md": {
@@ -446,9 +785,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/reverse_engineering_expert.md": {
@@ -467,9 +818,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/offensive_security_expert.md": {
@@ -488,12 +851,24 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
-    "experts/mcp_design_specialist.md": {
+    "experts/payment_integration_expert.md": {
       "status": "healthy",
       "failures": 0,
       "last_failure": null,
@@ -509,12 +884,24 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
-    "experts/mcp_web_specialist.md": {
+    "experts/n8n_expert.md": {
       "status": "healthy",
       "failures": 0,
       "last_failure": null,
@@ -530,30 +917,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
-      }
-    },
-    "experts/mcp_ui_ux_specialist.md": {
-      "status": "healthy",
-      "failures": 0,
-      "last_failure": null,
-      "blacklisted_until": null,
-      "metrics": {
-        "tasks_total": 0,
-        "tasks_successful": 0,
-        "tasks_failed": 0,
-        "tasks_cancelled": 0,
-        "avg_duration_seconds": 0.0,
-        "total_duration_seconds": 0.0,
-        "last_task_timestamp": null,
-        "first_task_timestamp": null
-      },
-      "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/gui-layout-specialist.md": {
@@ -572,9 +950,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/db-query-optimizer.md": {
@@ -593,9 +983,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/security-auth-specialist.md": {
@@ -614,9 +1016,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/api-endpoint-builder.md": {
@@ -635,9 +1049,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/test-unit-specialist.md": {
@@ -656,9 +1082,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/mql-optimization.md": {
@@ -677,9 +1115,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/trading-risk-calculator.md": {
@@ -698,9 +1148,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/mobile-ui-specialist.md": {
@@ -719,9 +1181,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/n8n-workflow-builder.md": {
@@ -740,9 +1214,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/claude-prompt-optimizer.md": {
@@ -761,9 +1247,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/architect-design-specialist.md": {
@@ -782,9 +1280,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/devops-pipeline-specialist.md": {
@@ -803,9 +1313,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/languages-refactor-specialist.md": {
@@ -824,9 +1346,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/ai-model-specialist.md": {
@@ -845,9 +1379,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     },
     "experts/L2/social-oauth-specialist.md": {
@@ -866,30 +1412,21 @@
         "first_task_timestamp": null
       },
       "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
-      }
-    },
-    "experts/L2/mcp_vision_specialist.md": {
-      "status": "healthy",
-      "failures": 0,
-      "last_failure": null,
-      "blacklisted_until": null,
-      "metrics": {
-        "tasks_total": 0,
-        "tasks_successful": 0,
-        "tasks_failed": 0,
-        "tasks_cancelled": 0,
-        "avg_duration_seconds": 0.0,
-        "total_duration_seconds": 0.0,
-        "last_task_timestamp": null,
-        "first_task_timestamp": null
-      },
-      "token_usage": {
-        "haiku": {"total": 0, "last": null, "count": 0},
-        "sonnet": {"total": 0, "last": null, "count": 0},
-        "opus": {"total": 0, "last": null, "count": 0}
+        "haiku": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "sonnet": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        },
+        "opus": {
+          "total": 0,
+          "last": null,
+          "count": 0
+        }
       }
     }
   },
@@ -909,8 +1446,13 @@
       "devops-pipeline-specialist": "devops_expert",
       "languages-refactor-specialist": "languages_expert",
       "ai-model-specialist": "ai_integration_expert",
-      "social-oauth-specialist": "social_identity_expert",
-      "mcp_vision_specialist": "mcp_ui_ux_specialist"
+      "social-oauth-specialist": "social_identity_expert"
+    },
+    "L1_fallbacks": {
+      "n8n_expert": {
+        "fallbacks": ["integration_expert", "devops_expert"],
+        "escalation_policy": "domain_first"
+      }
     },
     "ultimate_fallback": "core/coder.md"
   },

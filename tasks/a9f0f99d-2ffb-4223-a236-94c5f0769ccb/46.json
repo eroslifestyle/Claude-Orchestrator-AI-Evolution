@@ -1,0 +1,8 @@
+{
+  "id": "46",
+  "subject": "Scansiona print() statements",
+  "description": "Cerca print() statements in file .py in C:\\Users\\LeoDg\\.claude che non siano test o __main__. Riporta file, riga, contesto. Escludi directory tests/, __pycache__/.",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

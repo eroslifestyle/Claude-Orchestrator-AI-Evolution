@@ -1,0 +1,9 @@
+{
+  "id": "29",
+  "subject": "Analisi operazioni I/O e CPU/RAM",
+  "description": "Analizza il codice per identificare: operazioni I/O frequenti, potenziali memory leaks (cache senza limiti, connessioni non chiuse), consumo CPU (loop, algoritmi inefficienti). Focus su lib/ e skills/. Output in italiano.",
+  "activeForm": "Analizzando operazioni I/O e CPU/RAM",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

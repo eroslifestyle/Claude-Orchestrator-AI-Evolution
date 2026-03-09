@@ -1,0 +1,8 @@
+{
+  "id": "43",
+  "subject": "Scansiona TODO/FIXME/XXX/HACK",
+  "description": "Cerca pattern TODO, FIXME, XXX, HACK in tutti i file .py in C:\\Users\\LeoDg\\.claude. Usa Grep con pattern \"(TODO|FIXME|XXX|HACK)\". Riporta file, riga, contenuto. Escludi node_modules, .git, __pycache__.",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

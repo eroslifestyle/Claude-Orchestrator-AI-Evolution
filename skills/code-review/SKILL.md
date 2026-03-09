@@ -189,6 +189,93 @@ output:
 /code-review --format html --output report.html app/
 ```
 
+## TOOL USE EXAMPLES
+
+### Example 1: Code Review con Lettura Multipla File
+**Tools**: Read, Grep, Glob
+**Pattern**: Analisi strutturata con ricerca pattern
+
+```markdown
+# Step 1: Trova tutti i file Python nel progetto
+Use Glob with pattern: "src/**/*.py"
+
+# Step 2: Leggi il file principale da analizzare
+Use Read with file_path: "src/services/user_service.py"
+
+# Step 3: Cerca potenziali vulnerabilita SQL injection
+Use Grep with pattern: "execute\(|cursor\.|raw\(" and path: "src/"
+
+# Step 4: Cerca anti-pattern (god class, deep nesting)
+Use Grep with pattern: "class.*:.*\n(def ){5,}" and multiline: true
+```
+
+### Example 2: Security-Focused Review con Chaining
+**Tools**: Read, Grep, Glob
+**Pattern**: Catena di tool call per analisi sicurezza
+
+```markdown
+# Fase 1: Identifica entry points
+Use Grep with pattern: "@app\.route|@router\.|def (login|auth|register)"
+  -> Output: lista endpoint sensibili
+
+# Fase 2: Analizza ogni endpoint
+For each endpoint:
+  Use Read with file_path: "<endpoint_file>"
+  Use Grep with pattern: "password|token|secret|api_key"
+    -> Output: potenziali esposizioni
+
+# Fase 3: Verifica input validation
+Use Grep with pattern: "request\.(form|json|args)\[|request\.data"
+  -> Output: punti di input non validati
+```
+
+### Example 3: Metrics Collection con Report
+**Tools**: Read, Glob, Write
+**Pattern**: Colleziona metriche e genera report
+
+```markdown
+# Step 1: Trova tutti i file
+Use Glob with pattern: "**/*.py" and path: "src/"
+
+# Step 2: Per ogni file, calcola metriche
+For each file:
+  Use Read with file_path: "<file>"
+  -> Analyze: line count, function count, class count
+
+# Step 3: Genera report aggregato
+Use Write with file_path: "reports/code_metrics.md" and content: """
+# Code Metrics Report
+- Total files: N
+- Total lines: N
+- Avg complexity: X
+- Security issues: Y
+"""
+```
+
+## BEST PRACTICES (Tool Usage)
+
+- **Parallelismo**: Usa N Read in un messaggio per N file indipendenti
+- **Filtraggio**: Usa Grep prima di Read per identificare file rilevanti
+- **Caching**: Evita di rileggere lo stesso file piu volte nella sessione
+- **Pattern precision**: Usa regex specifiche per ridurre falsi positivi
+- **Output limit**: Imposta head_limit su Grep per output grandi
+
+## ERROR HANDLING (Tool Calls)
+
+| Errore | Causa | Recovery |
+|--------|-------|----------|
+| `File does not exist` | Path errato | Verifica con Glob prima |
+| `Pattern not found` | Regex troppo specifica | Allarga pattern o usa flag -i |
+| `Permission denied` | File system lock | Riprova o salta file |
+| `Timeout` | File troppo grande | Leggi a chunk con offset/limit |
+
+```markdown
+# Pattern: Graceful degradation
+1. Try: Read file
+2. On error: Log warning, continue with next file
+3. Aggregate partial results at end
+```
+
 ## Troubleshooting
 
 ### Common Issues

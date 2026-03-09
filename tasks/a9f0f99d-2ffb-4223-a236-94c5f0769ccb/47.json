@@ -1,0 +1,8 @@
+{
+  "id": "47",
+  "subject": "Scansiona import *",
+  "description": "Cerca \"from X import *\" in file .py in C:\\Users\\LeoDg\\.claude. Riporta file, riga, modulo importato. Escludi __init__.py files.",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

@@ -1,0 +1,8 @@
+{
+  "id": "45",
+  "subject": "Scansiona secrets/password",
+  "description": "Cerca potenziali secrets in chiaro in C:\\Users\\LeoDg\\.claude. Pattern: (password|secret|api_key|token|credential)\\s*=\\s*['\\\"][^'\\\"]+['\\\"]. Escludi file .env.example, test files. Riporta con severita HIGH.",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

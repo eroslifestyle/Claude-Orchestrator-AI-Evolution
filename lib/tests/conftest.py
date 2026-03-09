@@ -230,6 +230,18 @@ def pytest_configure(config: pytest.Config) -> None:
         "markers",
         "chaos_resilience: mark test as resilience test requiring chaos mode"
     )
+    config.addinivalue_line(
+        "markers",
+        "unit: mark test as unit test"
+    )
+    config.addinivalue_line(
+        "markers",
+        "integration: mark test as integration test"
+    )
+    config.addinivalue_line(
+        "markers",
+        "slow: mark test as slow running test"
+    )
 
 
 @pytest.fixture(autouse=True)

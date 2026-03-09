@@ -11,6 +11,9 @@ Features:
 - Distributed lock opzionale per multi-process
 - Integrazione con AgentUsageTracker
 - Accuracy target: >90%
+- V14.0.6: Cache warming all'avvio con preload tool frequenti
+- V14.0.6: Metriche cache_warming_hits per monitoraggio
+- V14.0.6: Lazy loading agents ottimizzato
 """
 
 from __future__ import annotations
@@ -848,12 +851,18 @@ class PredictiveAgentCache:
     # Max predizioni da restituire
     MAX_PREDICTIONS = 5
 
+    # V14.0.6: Configurazione cache warming
+    WARM_ON_STARTUP_DEFAULT = True
+    WARM_CACHE_SIZE = 10  # Numero tool/agent da preloadare
+    WARM_MIN_CONFIDENCE = 0.6  # Confidenza minima per warmup
+
     def __init__(
         self,
         confidence_threshold: float = DEFAULT_CONFIDENCE_THRESHOLD,
         patterns_path: Optional[str] = None,
         use_tiered_storage: bool = True,
-        use_distributed_lock: Optional[bool] = None
+        use_distributed_lock: Optional[bool] = None,
+        warm_on_startup: bool = True  # V14.0.6: Cache warming opzionale
     ) -> None:
         """Inizializza la cache predittiva.
 
@@ -863,6 +872,7 @@ class PredictiveAgentCache:
             use_tiered_storage: Se True, usa TieredPatternStorage (default: True)
             use_distributed_lock: Se True, usa distributed lock.
                                   None = auto-detect da ambiente
+            warm_on_startup: Se True, esegue cache warming all'inizializzazione (default: True)
         """
         self._confidence_threshold = confidence_threshold
         self._pattern_engine = PatternRecognitionEngine(
@@ -897,13 +907,26 @@ class PredictiveAgentCache:
         # V14.0.4: Pre-popola cache con agent piu' usati (warm start)
         self._prepopulate_common_agents()
 
+        # V14.0.6: Metriche cache warming
+        self._warming_metrics = {
+            "cache_warming_hits": 0,
+            "cache_warming_misses": 0,
+            "warmed_agents": 0,
+            "warm_time_ms": 0.0,
+        }
+
         # Contatore per gc.collect() periodico (ogni 100 chiamate)
         self._call_counter = 0
         self._gc_interval = 100
 
+        # V14.0.6: Cache warming all'avvio
+        self._warm_on_startup = warm_on_startup
+        if warm_on_startup:
+            self.warm_cache()
+
         logger.info(
-            "PredictiveAgentCache initialized (threshold=%.2f, tiered=%s, distributed=%s)",
-            confidence_threshold, use_tiered_storage, self._use_distributed_lock
+            "PredictiveAgentCache initialized (threshold=%.2f, tiered=%s, distributed=%s, warm=%s)",
+            confidence_threshold, use_tiered_storage, self._use_distributed_lock, warm_on_startup
         )
 
     # V14.0.4: Agent comuni per warm start
@@ -951,6 +974,110 @@ class PredictiveAgentCache:
             "Warm start: pre-populated %d common agents into pattern engine",
             prepopulated
         )
+
+    def warm_cache(self, task_samples: Optional[List[str]] = None) -> Dict[str, Any]:
+        """V14.0.6: Esegue cache warming preloadando agent frequenti.
+
+        Preloada gli agent piu' usati basandosi su:
+        1. Agent comuni predefiniti (_COMMON_AGENTS)
+        2. Pattern storici da disco
+        3. Task samples opzionali forniti
+
+        Args:
+            task_samples: Lista di task di esempio per warmup (opzionale)
+
+        Returns:
+            Dict con metriche di warming
+        """
+        start_time = time.time()
+        warmed_count = 0
+        warmed_agents: Set[str] = set()
+
+        # 1. Warm da agent comuni (alta priorita')
+        for agent_id, config in self._COMMON_AGENTS.items():
+            if config["confidence"] >= self.WARM_MIN_CONFIDENCE:
+                warmed_agents.add(agent_id)
+
+        # 2. Warm da pattern storici piu' frequenti
+        with self._lock:
+            sorted_patterns = sorted(
+                self._pattern_engine._pattern_history.items(),
+                key=lambda x: x[1].frequency,
+                reverse=True
+            )[:self.WARM_CACHE_SIZE]
+
+            for pattern_key, seq in sorted_patterns:
+                for agent_id in seq.agents:
+                    if len(warmed_agents) < self.WARM_CACHE_SIZE:
+                        warmed_agents.add(agent_id)
+
+        # 3. Warm da task samples se forniti
+        if task_samples:
+            for sample_task in task_samples[:5]:  # Max 5 samples
+                predictions = self._pattern_engine.warmup_from_keywords(sample_task)
+                for pred in predictions:
+                    if len(warmed_agents) < self.WARM_CACHE_SIZE:
+                        warmed_agents.add(pred.agent_id)
+
+        # 4. Preload effettivo tramite LazyAgentLoader
+        if get_lazy_agent_loader is not None:
+            loader = get_lazy_agent_loader()
+            for agent_id in warmed_agents:
+                try:
+                    # Lazy load dell'agent
+                    agent = loader.get_agent(agent_id)
+                    if agent is not None:
+                        warmed_count += 1
+                        logger.debug(
+                            "Cache warmed: %s",
+                            agent_id
+                        )
+                except Exception as e:
+                    logger.warning(
+                        "Failed to warm cache for agent %s: %s",
+                        agent_id, e
+                    )
+
+        # Aggiorna metriche
+        warm_time_ms = (time.time() - start_time) * 1000
+        self._warming_metrics["warmed_agents"] = warmed_count
+        self._warming_metrics["warm_time_ms"] = warm_time_ms
+        self._warming_metrics["cache_warming_hits"] = warmed_count
+
+        logger.info(
+            "Cache warming completed: %d agents loaded in %.2f ms",
+            warmed_count, warm_time_ms
+        )
+
+        return {
+            "warmed_agents": warmed_count,
+            "warm_time_ms": warm_time_ms,
+            "agents": list(warmed_agents),
+        }
+
+    def get_warming_metrics(self) -> Dict[str, Any]:
+        """V14.0.6: Ottiene metriche di cache warming.
+
+        Returns:
+            Dict con metriche di warming
+        """
+        return {
+            **self._warming_metrics,
+            "warm_on_startup": self._warm_on_startup,
+            "cache_size_limit": self.WARM_CACHE_SIZE,
+        }
+
+    def record_cache_hit(self, agent_id: str, from_warm: bool = False) -> None:
+        """V14.0.6: Registra un cache hit/miss per metriche.
+
+        Args:
+            agent_id: ID dell'agent
+            from_warm: Se True, l'agent era gia' in cache warmed
+        """
+        if from_warm:
+            self._warming_metrics["cache_warming_hits"] += 1
+        else:
+            self._warming_metrics["cache_warming_misses"] += 1
 
     def predict_next_agents(
         self,
@@ -1103,6 +1230,8 @@ class PredictiveAgentCache:
     def preload_agents(self, predictions: List[Prediction]) -> int:
         """Preload agent nella cache lazy.
 
+        V14.0.6: Aggiornato per tracciare metriche cache warming.
+
         Args:
             predictions: Lista di predizioni da preloadare
 
@@ -1115,6 +1244,34 @@ class PredictiveAgentCache:
 
         loader = get_lazy_agent_loader()
         loaded = 0
+        warmed_hits = 0
+
+        for pred in predictions:
+            try:
+                # V14.0.6: Lazy loading con tracking
+                agent = loader.get_agent(pred.agent_id)
+                if agent is not None:
+                    loaded += 1
+                    # Controlla se era gia' in cache warmed
+                    if hasattr(loader, 'is_cached') and loader.is_cached(pred.agent_id):
+                        warmed_hits += 1
+                    logger.debug(
+                        "Preloaded agent: %s (confidence=%.2f)",
+                        pred.agent_id, pred.confidence
+                    )
+            except Exception as e:
+                logger.warning(
+                    "Failed to preload agent %s: %s",
+                    pred.agent_id, e
+                )
+
+        # V14.0.6: Aggiorna metriche warming
+        if warmed_hits > 0:
+            self._warming_metrics["cache_warming_hits"] += warmed_hits
+
+        logger.info("Preloaded %d/%d predicted agents (warm hits: %d)",
+                    loaded, len(predictions), warmed_hits)
+        return loaded
 
         for pred in predictions:
             try:
@@ -1203,6 +1360,8 @@ class PredictiveAgentCache:
     def get_accuracy_metrics(self) -> Dict[str, Any]:
         """Calcola metriche di accuracy.
 
+        V14.0.6: Include metriche di cache warming.
+
         Returns:
             Dict con metriche di accuracy
         """
@@ -1212,6 +1371,8 @@ class PredictiveAgentCache:
                     "total_predictions": 0,
                     "accuracy": 0.0,
                     "high_confidence_accuracy": 0.0,
+                    # V14.0.6: Aggiunte metriche warming
+                    **self._warming_metrics,
                 }
 
             total = len(self._accuracy_history)
@@ -1230,6 +1391,11 @@ class PredictiveAgentCache:
                 "high_confidence_count": len(high_conf),
                 "pattern_count": len(self._pattern_engine._pattern_history),
                 "cooccurrence_count": len(self._pattern_engine._keyword_cooccurrence),
+                # V14.0.6: Metriche cache warming
+                "cache_warming_hits": self._warming_metrics["cache_warming_hits"],
+                "cache_warming_misses": self._warming_metrics["cache_warming_misses"],
+                "warmed_agents": self._warming_metrics["warmed_agents"],
+                "warm_time_ms": self._warming_metrics["warm_time_ms"],
             }
 
     def _load_patterns_from_disk(self) -> None:

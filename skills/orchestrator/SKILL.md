@@ -8,9 +8,38 @@ metadata:
   keywords: [orchestration, multi-agent, coordination, delegation]
 ---
 
-# ORCHESTRATOR V15.1.0
+# ORCHESTRATOR V16.0.0
 
 You DELEGATE work to subagents via Task tool OR coordinate Agent Teams. NEVER do the work yourself.
+
+## CLAUDE TOOL CALLING CORE (V16)
+
+Il cuore del sistema ora si basa su 3 componenti Claude API:
+1. **Programmatic Tool Calling** - Esecuzione tool in container sandboxed
+2. **Tool Search Tool** - Ricerca dinamica tool con deferred loading
+3. **Fine-Grained Tool Streaming** - Streaming parametri senza buffering
+
+Vedi: [CLAUDE-Tool-Integration.md](../../docs/CLAUDE-Tool-Integration.md)
+
+```python
+from lib.facade import claude_core
+
+# Inizializza core
+core = claude_core.OrchestratorClaudeCore()
+await core.initialize()
+
+# Registra tool
+core.register_tool(claude_core.create_programmatic_tool(
+    name="query_api",
+    description="Query external API",
+    input_schema={"type": "object"}
+))
+
+# Esegui batch (1 round-trip per N chiamate)
+results = await core.execute_programmatic([
+    {"name": "query_api", "input": {"endpoint": "/users"}}
+])
+```
 
 When activated, proceed directly to STEP 1.
 
@@ -82,6 +111,75 @@ Determine per task: description, agent, model, dependencies, mode.
 - Same file edits -> SUBAGENTS sequential (NEVER team)
 
 Routing: [routing-table.md](docs/reference/routing-table.md)
+
+### STEP 4.5: ULTRA-MASSIVE PARALLEL MODE (V15.2.0)
+
+**Trigger:** Task count >= 3 con parallelismo richiesto
+
+**Configurazione:**
+| Setting | Default | Max | Description |
+|---------|---------|-----|-------------|
+| MAX_ROOT_TASKS | 10 | 50 | Task root simultanei |
+| MAX_AGENTS_PER_TASK | 50 | 200 | Agent per task |
+| MAX_SKILLS_PER_TASK | 50 | 200 | Skill per task |
+| MAX_PLUGINS_PER_TASK | 50 | 200 | Plugin per task |
+| MAX_SUBTASKS_PER_TASK | 50 | 500 | Subtask per task |
+| MAX_DEPTH | ∞ | System limit | Profondita ricorsione |
+| WAVE_TIMEOUT | 300s | 600s | Timeout per wave |
+
+**Algoritmo:**
+1. Rileva parallelismo richiesto (task >= 3)
+2. Crea UltraTask per ogni root task
+3. Popola agent/skill/plugin per ogni task
+4. WaveExecutor.costruisci_waves() - BFS dell'albero
+5. Per ogni wave (depth level):
+   a. Alloca risorse da ResourcePool
+   b. Esegui TUTTI i task della wave in parallelo
+   c. BackpressureController.monitora_sovraccarico()
+   d. Raccogli risultati
+   e. Passa a wave successiva
+6. Aggrega risultati da tutte le wave
+7. Ritorna Results aggregati
+
+**Esempio:**
+```python
+# 10 root task, ognuno con 50 agent + 50 skill + 50 plugin
+root_tasks = [
+    UltraTask(name=f"Task-{i}")
+        .add_agent("Coder", model="haiku")
+        .add_agent("Analyzer", model="haiku")
+        # ... 48 more agents
+        .add_skill("code-review")
+        .add_skill("testing-strategy")
+        # ... 48 more skills
+    for i in range(10)
+]
+
+# Ogni task puo spawnare 50 subtask
+for task in root_tasks:
+    for j in range(50):
+        task.spawn_subtask(f"Subtask-{j}")
+        # Ogni subtask puo spawnare altri 50 subtask...
+        # ... all'infinito
+
+# Esecuzione ultra-massiva
+engine = UltraParallelEngine()
+results = await engine.execute_ultra(root_tasks)
+```
+
+**Lib Modules:**
+- ultra_parallel.py - Engine principale
+- ultra_task.py - Modello task gerarchico
+- wave_executor.py - Esecuzione a ondate
+- resource_pool.py - Pool risorse 500+
+- backpressure.py - Controllo sovraccarico
+
+**Protezioni:**
+- Memory guard: kill processi se RAM >80%
+- Rate limit adaptive: rallenta se API throttling
+- Circuit breaker: pausa se error rate >20%
+- Wave timeout: max 5 min per wave
+- Backpressure: riduci parallelismo se CPU >90%
 
 ### STEP 5: SHOW TABLE
 Display (all columns required):
@@ -244,7 +342,7 @@ Use for 3+ parallel tasks needing inter-agent communication.
 
 ## LIB MODULES
 
-agent_performance.py, agent_selector.py, file_locks.py, distributed_lock.py, skill_interface.py, skill_plugin.py, process_manager.py, rule_excerpts.py, lazy_agents.py, predictive_cache.py, adaptive_budget.py, ab_testing.py, auto_tuner.py, facade.py, routing_engine.py, chaos.py, hot_reload.py
+agent_performance.py, agent_selector.py, file_locks.py, distributed_lock.py, skill_interface.py, skill_plugin.py, process_manager.py, rule_excerpts.py, lazy_agents.py, predictive_cache.py, adaptive_budget.py, ab_testing.py, auto_tuner.py, facade.py, routing_engine.py, chaos.py, hot_reload.py, **claude_tool_core.py (V16)**
 
 ---
 
@@ -252,13 +350,13 @@ agent_performance.py, agent_selector.py, file_locks.py, distributed_lock.py, ski
 
 | Version | Date | Changes |
 |---------|------|---------|
+| V16.0.0 | 2026-03-09 | **Claude Tool Calling Core**: Programmatic Tool Calling, Tool Search Tool, Fine-Grained Streaming come cuore del sistema |
+| V15.2.0 | 2026-03-09 | Ultra-Massive Parallel: 10+ root task, 50+ agent/skill/plugin per task, ricorsione infinita, wave executor, backpressure controller |
 | V15.1.0 | 2026-03-08 | Facade API unificata (17 namespaces, 129 exports), ChaosInjector, DistributedLock, RoutingEngineV2, PluginHotReloader |
-| V15.0.4 | 2026-03-07 | +173 test, Facade API, Routing Engine, docs aligned, SKILL.md -14.7% |
-| V14.0.2 | 2026-03-07 | 8 limitazioni risolte, stress test 170 ops, 9015 ops/sec |
 
 Full history: [changelog.md](docs/changelog.md)
 
 ---
 
-**ORCHESTRATOR V15.1.0**
-*AI-NATIVE. 9000+ ops/sec. 0% error rate. Test coverage 85%+*
+**ORCHESTRATOR V16.0.0**
+*CLAUDE TOOL CALLING CORE. 10,000+ tools. Zero round-trip. Token savings 85%+*
