@@ -64,8 +64,12 @@ logger = logging.getLogger(__name__)
 T = TypeVar('T')
 
 # Global import cache per moduli caricati
+# V15.2.1: Aggiunto limite esplicito per prevenire memory leak
+MAX_CACHED_IMPORTS = 100
+
 _import_cache: Dict[str, Any] = {}
 _import_cache_lock = threading.RLock()
+_import_cache_order: List[str] = []  # Per LRU tracking
 
 # Loading metrics globali
 _loading_metrics: Dict[str, Dict[str, Any]] = {
@@ -170,14 +174,32 @@ def get_import_cache() -> Dict[str, Any]:
 
 
 def cache_import(module_name: str, obj: Any) -> None:
-    """Cachea un oggetto importato.
+    """Cachea un oggetto importato con LRU eviction.
+
+    V15.2.1: Aggiunto limite esplicito MAX_CACHED_IMPORTS.
 
     Args:
         module_name: Nome del modulo
         obj: Oggetto da cachare
     """
     with _import_cache_lock:
+        # Se esiste gia', aggiorna solo la posizione LRU
+        if module_name in _import_cache:
+            if module_name in _import_cache_order:
+                _import_cache_order.remove(module_name)
+            _import_cache_order.append(module_name)
+            _import_cache[module_name] = obj
+            return
+
+        # Altrimenti aggiungi nuovo e applica LRU eviction se necessario
         _import_cache[module_name] = obj
+        _import_cache_order.append(module_name)
+
+        # LRU eviction se supera limite
+        while len(_import_cache) > MAX_CACHED_IMPORTS and _import_cache_order:
+            lru_key = _import_cache_order.pop(0)
+            _import_cache.pop(lru_key, None)
+            logger.debug("Evicted import cache entry (LRU): %s", lru_key)
 
 
 def get_cached_import(module_name: str) -> Optional[Any]:
@@ -190,7 +212,13 @@ def get_cached_import(module_name: str) -> Optional[Any]:
         Oggetto cacheato o None
     """
     with _import_cache_lock:
-        return _import_cache.get(module_name)
+        cached = _import_cache.get(module_name)
+        if cached is not None:
+            # Update LRU order on access
+            if module_name in _import_cache_order:
+                _import_cache_order.remove(module_name)
+            _import_cache_order.append(module_name)
+        return cached
 
 
 def get_loading_metrics() -> Dict[str, Any]:
@@ -222,6 +250,50 @@ def reset_loading_metrics() -> None:
         _loading_metrics["cache_misses"] = 0
         _loading_metrics["errors"] = 0
         _loading_metrics["load_times_ms"].clear()
+
+
+def cleanup_import_cache() -> int:
+    """Pulisce la import cache globale.
+
+    V15.2.1: Aggiunto per prevenire memory leak.
+
+    Returns:
+        Numero di entry rimosse
+    """
+    with _import_cache_lock:
+        count = len(_import_cache)
+        _import_cache.clear()
+        _import_cache_order.clear()
+        return count
+
+
+# =============================================================================
+# CLEANUP HANDLERS (V15.2.1)
+# =============================================================================
+
+import atexit
+
+def _cleanup_on_exit() -> None:
+    """Cleanup handler registrato con atexit."""
+    try:
+        # Cleanup import cache
+        cleaned = cleanup_import_cache()
+        logger.debug("atexit cleanup: removed %d import cache entries", cleaned)
+
+        # Reset loading metrics
+        reset_loading_metrics()
+
+        # Cleanup LazyAgentLoader singleton if exists
+        if LazyAgentLoader._instance is not None:
+            LazyAgentLoader._instance.unload_all()
+            LazyAgentLoader._instance.reset_metrics()
+            logger.debug("atexit cleanup: unloaded all L2 agents")
+    except Exception as e:
+        logger.warning("Error during atexit cleanup: %s", e)
+
+
+# Registra cleanup handler
+atexit.register(_cleanup_on_exit)
 
 
 # =============================================================================

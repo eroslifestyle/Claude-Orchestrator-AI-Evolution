@@ -1,58 +1,40 @@
 {
-  "version": "14.0.3",
-  "release_date": "2026-03-07",
-  "status": "active",
-  "features": {
-    "predictive_caching": true,
-    "adaptive_budget": true,
-    "ab_testing": true,
-    "auto_tuning": true,
-    "cold_start_handling": true,
-    "tiered_storage": true,
-    "distributed_lock": true,
-    "adaptive_thresholds": true,
-    "dynamic_rule_budget": true,
-    "multi_variant_testing": true,
-    "gaussian_process": true,
-    "adaptive_candidates": true
-  },
-  "modules": {
-    "predictive_cache": "lib/predictive_cache.py",
-    "adaptive_budget": "lib/adaptive_budget.py",
-    "ab_testing": "lib/ab_testing.py",
-    "auto_tuner": "lib/auto_tuner.py"
-  },
-  "bugfixes": {
-    "V14.0.1": [
-      "Created missing ab_testing.py",
-      "Consolidated agent_performance.py to lib/",
-      "Precompiled regex in adaptive_budget.py"
+    "version": "18.0.0",
+    "codename": "Unified Merge - Claude Tool Core + GLM-5",
+    "channel": "stable",
+    "release_date": "2026-03-10",
+    "installed": "18.0.0",
+    "installDate": "2026-02-26T00:00:00+01:00",
+    "updated_at": "2026-03-10",
+    "components": [
+        "Core Orchestrator V18.0",
+        "Multi-Agent System (6.2)",
+        "Claude Tool Core Integration",
+        "GLM-5 Integration (CCG Profile)",
+        "zai-mcp-server OCR Tools",
+        "PowerShell Profile Integration",
+        "Settings Templates",
+        "Installation Scripts",
+        "Quick Start Documentation",
+        "Rules Engine (common + language-specific)",
+        "Process Manager (centralized cleanup)",
+        "Communication Hub"
     ],
-    "V14.0.2": [
-      "FIX 1: Cold start handling con keyword fallback",
-      "FIX 2: Tiered storage per pattern ad alto valore",
-      "FIX 3: Distributed lock opzionale (Redis)",
-      "FIX 4: Soglie adattive basate su distribuzione",
-      "FIX 5: Rule budget dinamico (20-60%)",
-      "FIX 6: Multi-variant support (A/B/C/D)",
-      "FIX 7: Vero Gaussian Process con RBF kernel",
-      "FIX 8: n_candidates adattivo (5-100)"
-    ]
-  },
-  "stress_test": {
-    "date": "2026-03-07",
-    "operations": 170,
-    "throughput_ops_per_sec": 9015,
-    "error_rate": 0,
-    "memory_bytes_per_op": 39.82,
-    "status": "PASS"
-  },
-  "test_coverage": {
-    "predictive_cache": 31,
-    "adaptive_budget": 24,
-    "ab_testing": 18,
-    "auto_tuner": 18,
-    "total": 264
-  },
-  "previous_version": "14.0.2"
+    "changelog": "V18.0.0 - Unified Merge: Claude Tool Core capabilities + GLM-5 deep thinking (200K context, 128K output) + OCR tools + enhanced multi-agent orchestration",
+    "lastCheck": "2026-03-10",
+    "updateAvailable": false,
+    "glm5": {
+        "model": "glm-5",
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "max_context": 200000,
+        "max_output": 128000,
+        "thinking_enabled": true,
+        "streaming": true,
+        "tool_stream": true
+    },
+    "claude_tool_core": {
+        "version": "integrated",
+        "capabilities": ["mcp_tools", "canva_integration", "web_search", "memory_search", "web_reader"]
+    }
 }

@@ -558,6 +558,21 @@ class ProcessManager:
 
         self._logger.info("Cleanup completed")
 
+    def cleanup(self) -> Dict[str, int]:
+        """Public cleanup method for external callers.
+
+        V1.1.0: Aggiunto per permettere cleanup esplicito.
+
+        Returns:
+            Dict con risultati cleanup (terminated_processes, etc.)
+        """
+        self._cleanup()
+        return {
+            "terminated_processes": self._metrics.total_terminated,
+            "failed_terminations": self._metrics.failed_terminations,
+            "instance_id": self._instance_id,
+        }
+
 
 # ============================================================================
 # Health Check Function

@@ -1000,3 +1000,47 @@ class AgentSelector:
             "total_metrics": len(self._routing_engine_v2.get_metrics()),
         }
 
+    def cleanup(self) -> Dict[str, Any]:
+        """Cleanup caches and resources.
+
+        V14.0.5: Aggiunto per prevenire memory leak e permettere cleanup esplicito.
+
+        Returns:
+            Dict con statistiche cleanup
+        """
+        with self._cache_lock:
+            # Clear keyword cache
+            self._keyword_to_agent_cached.cache_clear()
+
+            # Clear routing table cache
+            self._last_parse_time = None
+            routing_entries = len(self.routing_table)
+
+            # Clear inverted index
+            inverted_keywords = len(self._inverted_index.get_all_keywords())
+            self._inverted_index.clear()
+
+            # Clear hardcoded keywords
+            hardcoded_count = len(self._hardcoded_keywords)
+            self._hardcoded_keywords.clear()
+
+            # Clear budget calculator cache
+            budget_stats = self._budget_calculator.get_cache_stats()
+
+        # Clear RoutingEngineV2 if enabled
+        if self._routing_engine_v2 is not None:
+            self._routing_engine_v2.clear_metrics()
+
+        logger.info(
+            "AgentSelector cleanup completed: cleared %d routing entries, "
+            "%d inverted keywords, %d hardcoded keywords",
+            routing_entries, inverted_keywords, hardcoded_count
+        )
+
+        return {
+            "routing_entries_cleared": routing_entries,
+            "inverted_keywords_cleared": inverted_keywords,
+            "hardcoded_keywords_cleared": hardcoded_count,
+            "budget_cache_stats": budget_stats,
+        }
+

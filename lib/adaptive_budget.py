@@ -8,6 +8,7 @@ Features:
 - Rule budget dinamico (20-60%)
 - BudgetCache con TTL 5min e LRU eviction
 - AI-Native Orchestrator support
+- Config centralizzato per TTL e cache size (V15.2)
 """
 from collections import OrderedDict
 from dataclasses import dataclass, field
@@ -18,6 +19,7 @@ import threading
 import time
 
 from lib.rule_excerpts import RuleExcerptManager, EXCERPT_CATEGORIES
+from lib.config import config  # Config centralizzato
 
 
 # Costanti per range budget
@@ -424,8 +426,8 @@ class AdaptiveTokenBudget:
         default_budget: int = DEFAULT_BUDGET,
         thresholds: Optional[ComplexityThresholds] = None,
         rule_config: Optional[RuleBudgetConfig] = None,
-        cache_size: int = 100,
-        cache_ttl_seconds: float = 300.0,
+        cache_size: Optional[int] = None,
+        cache_ttl_seconds: Optional[float] = None,
     ) -> None:
         """
         Inizializza il calcolatore di budget.
@@ -436,8 +438,8 @@ class AdaptiveTokenBudget:
             default_budget: Budget di default (default 500)
             thresholds: Soglie di complessità configurabili (V14.1)
             rule_config: Configurazione rule budget dinamico (V14.1)
-            cache_size: Dimensione cache (default 100) - V14.2
-            cache_ttl_seconds: TTL cache in secondi (default 300) - V14.2
+            cache_size: Dimensione cache (default da config) - V14.2/V15.2
+            cache_ttl_seconds: TTL cache in secondi (default da config) - V14.2/V15.2
         """
         self.min_budget = min_budget
         self.max_budget = max_budget
@@ -446,8 +448,11 @@ class AdaptiveTokenBudget:
         self.rule_config = rule_config or RuleBudgetConfig()
         self._rule_manager: Optional[RuleExcerptManager] = None
         self._complexity_history: List[float] = []  # Per adattamento soglie
-        # V14.2: Budget cache
-        self._cache = BudgetCache(max_size=cache_size, ttl_seconds=cache_ttl_seconds)
+        # V14.2/V15.2: Budget cache con valori da config centralizzato
+        self._cache = BudgetCache(
+            max_size=cache_size if cache_size is not None else config.MAX_CACHE_ENTRIES,
+            ttl_seconds=cache_ttl_seconds if cache_ttl_seconds is not None else config.CACHE_TTL_SECONDS,
+        )
 
     @property
     def rule_manager(self) -> RuleExcerptManager:

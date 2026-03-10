@@ -246,4 +246,4 @@ Agent Teams allow multiple agents to work in parallel on complex tasks.
 
 ---
 
-*Orchestrator Plugin v10.2 - Making Claude Code a team of experts*
+*Orchestrator Plugin V12.8 - Making Claude Code a team of experts*

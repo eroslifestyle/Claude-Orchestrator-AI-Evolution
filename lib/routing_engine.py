@@ -20,6 +20,7 @@ import logging
 import re
 import threading
 import time
+import atexit
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -704,6 +705,82 @@ class RoutingEngineV2:
                 stats.total_queries = 0
                 stats.successful_matches = 0
                 stats.total_latency_ms = 0.0
+
+    def cleanup(self) -> Dict[str, int]:
+        """Cleanup all caches and metrics.
+
+        V14.0.5: Aggiunto per prevenire memory leak e permettere cleanup esplicito.
+
+        Returns:
+            Dict con statistiche cleanup
+        """
+        with self._lock:
+            # Clear all indices
+            exact_count = len(self._exact_map)
+            self._exact_map.clear()
+
+            keyword_count = len(self._inverted_index.get_all_keywords())
+            self._inverted_index.clear()
+
+            self._prefix_trie.clear()
+            self._semantic_cache.clear()
+
+            # Clear metrics
+            metrics_count = len(self._metrics)
+            self._metrics.clear()
+
+            # Reset layer stats
+            for stats in self._layer_stats.values():
+                stats.total_queries = 0
+                stats.successful_matches = 0
+                stats.total_latency_ms = 0.0
+
+        logger.info(
+            "RoutingEngineV2 cleanup completed: cleared %d exact, %d keywords, %d metrics",
+            exact_count, keyword_count, metrics_count
+        )
+
+        return {
+            "exact_entries_cleared": exact_count,
+            "keywords_cleared": keyword_count,
+            "metrics_cleared": metrics_count,
+        }
+
+    def cleanup(self) -> Dict[str, Any]:
+        """Cleanup all resources and caches.
+
+        V14.0.5: Aggiunto per prevenire memory leak e permettere cleanup esplicito.
+
+        Returns:
+            Dict con statistiche cleanup
+        """
+        with self._lock:
+            # Get stats before cleanup
+            metrics_count = len(self._metrics)
+            exact_count = len(self._exact_map)
+
+            # Clear all indices
+            self._exact_map.clear()
+            self._prefix_trie.clear()
+            self._inverted_index.clear()
+            self._semantic_cache.clear()
+
+            # Clear metrics
+            self._metrics.clear()
+            for stats in self._layer_stats.values():
+                stats.total_queries = 0
+                stats.successful_matches = 0
+                stats.total_latency_ms = 0.0
+
+            logger.info(
+                "RoutingEngineV2 cleanup completed: cleared %d metrics, %d exact mappings",
+                metrics_count, exact_count
+            )
+
+            return {
+                "metrics_cleared": metrics_count,
+                "exact_mappings_cleared": exact_count,
+            }
 
 
 # Singleton instance

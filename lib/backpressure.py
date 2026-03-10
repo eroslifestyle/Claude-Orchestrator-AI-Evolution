@@ -63,6 +63,9 @@ from datetime import datetime
 from enum import Enum, auto
 from typing import Optional, Dict, Any, List, Callable
 
+# Import configurazione centralizzata
+from lib.config import config
+
 logger = logging.getLogger(__name__)
 
 
@@ -406,15 +409,16 @@ class BackpressureController:
         )
 
     def _load_config_from_env(self) -> BackpressureConfig:
-        """Carica configurazione da environment variables.
+        """Carica configurazione da environment variables via config centralizzato.
 
         Returns:
             BackpressureConfig con valori da environment o default.
         """
+        # Usa config centralizzato per soglie principali, con fallback per parametri aggiuntivi
         return BackpressureConfig(
-            cpu_threshold=float(os.getenv("BACKPRESSURE_CPU_THRESHOLD", "70.0")),
+            cpu_threshold=config.BACKPRESSURE_CPU_THRESHOLD * 100,  # Converti da frazione a percentuale
             cpu_critical=float(os.getenv("BACKPRESSURE_CPU_CRITICAL", "90.0")),
-            memory_threshold=float(os.getenv("BACKPRESSURE_MEMORY_THRESHOLD", "75.0")),
+            memory_threshold=config.BACKPRESSURE_RAM_THRESHOLD * 100,  # Converti da frazione a percentuale
             memory_critical=float(os.getenv("BACKPRESSURE_MEMORY_CRITICAL", "90.0")),
             error_rate_threshold=float(os.getenv("BACKPRESSURE_ERROR_RATE_THRESHOLD", "0.1")),
             error_rate_critical=float(os.getenv("BACKPRESSURE_ERROR_RATE_CRITICAL", "0.25")),

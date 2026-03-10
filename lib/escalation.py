@@ -45,8 +45,12 @@ logger = logging.getLogger(__name__)
 # CONSTANTS
 # =============================================================================
 
-DEFAULT_FAILURE_THRESHOLD = 3  # Escalate after 3 consecutive failures
-DEFAULT_ESCALATION_TIMEOUT = 300  # Reset escalation state after 5 minutes
+# Import configurazione centralizzata
+from lib.config import config
+
+# Threshold da config centralizzato (con fallback per backward compatibility)
+DEFAULT_FAILURE_THRESHOLD = config.ESCALATION_FAILURE_THRESHOLD
+DEFAULT_ESCALATION_TIMEOUT = config.ESCALATION_RESET_TIMEOUT
 MAX_FAILURES_PER_TASK = 10  # Cap to prevent runaway counters
 
 

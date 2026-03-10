@@ -63,6 +63,7 @@ from datetime import datetime
 from enum import Enum, auto
 from typing import (
     Any,
+    AsyncGenerator,
     Callable,
     Dict,
     Generator,
@@ -98,22 +99,27 @@ logger = logging.getLogger(__name__)
 # COSTANTI DI CONFIGURAZIONE
 # =============================================================================
 
+# Import configurazione centralizzata
+from lib.config import config
+
 # Limiti di concorrenza
 MAX_CONCURRENT_ROOT = 10  # Task root simultanei
 MAX_CONCURRENT_PER_TASK = 50  # Agent/skill/plugin per task
 MAX_CONCURRENT_PER_SUBTASK = 50  # Sub-agent per subtask
 MAX_TOTAL_CONCURRENT = 500  # Limite globale di operazioni concorrenti
 
-# Soglie di sicurezza
-MEMORY_THRESHOLD = 0.80  # 80% RAM - soglia critica
-MEMORY_WARNING_THRESHOLD = 0.70  # 70% RAM - soglia warning
-CPU_THRESHOLD = 0.90  # 90% CPU - soglia critica
+# Soglie di sicurezza (da config centralizzato)
+MEMORY_THRESHOLD = config.MEMORY_CRITICAL_THRESHOLD  # Soglia critica RAM
+MEMORY_WARNING_THRESHOLD = config.MEMORY_WARNING_THRESHOLD  # Soglia warning RAM
+CPU_THRESHOLD = config.BACKPRESSURE_CPU_THRESHOLD  # Soglia CPU
 
-# Timeout
+# Timeout (GRACEFUL_SHUTDOWN_TIMEOUT da config, altri hardcoded)
 DEFAULT_WAVE_TIMEOUT = 300.0  # 5 minuti per wave
 DEFAULT_TASK_TIMEOUT = 60.0  # 1 minuto per task
 DEFAULT_AGENT_TIMEOUT = 30.0  # 30 secondi per agente
-GRACEFUL_SHUTDOWN_TIMEOUT = 10.0  # 10 secondi per shutdown graceful
+GRACEFUL_SHUTDOWN_TIMEOUT = float(config.GRACEFUL_SHUTDOWN_TIMEOUT)  # Da config
+GRACEFUL_TERMINATE_TIMEOUT = 5.0  # 5 secondi per terminate graceful
+FORCE_KILL_TIMEOUT = 2.0  # 2 secondi prima di force kill
 
 # Backpressure
 BACKPRESSURE_THRESHOLD = 0.75  # Soglia per attivare backpressure
@@ -625,7 +631,8 @@ class MemoryGuard:
     """Monitor memoria di sistema con protezione automatica.
 
     Controlla l'uso della memoria e puo bloccare nuove operazioni
-    se si supera la soglia critica.
+    se si supera la soglia critica. Supporta shutdown graceful con
+    escalation sequence per evitare data loss.
     """
 
     def __init__(
@@ -633,6 +640,9 @@ class MemoryGuard:
         threshold: float = MEMORY_THRESHOLD,
         warning_threshold: float = MEMORY_WARNING_THRESHOLD,
         check_interval: float = 1.0,
+        graceful_shutdown_timeout: float = GRACEFUL_SHUTDOWN_TIMEOUT,
+        graceful_terminate_timeout: float = GRACEFUL_TERMINATE_TIMEOUT,
+        force_kill_timeout: float = FORCE_KILL_TIMEOUT,
     ):
         """Inizializza il MemoryGuard.
 
@@ -640,13 +650,22 @@ class MemoryGuard:
             threshold: Soglia critica (0.0-1.0)
             warning_threshold: Soglia warning (0.0-1.0)
             check_interval: Intervallo controllo in secondi
+            graceful_shutdown_timeout: Timeout per shutdown graceful (secondi)
+            graceful_terminate_timeout: Timeout per terminate graceful (secondi)
+            force_kill_timeout: Timeout prima di force kill (secondi)
         """
         self.threshold = threshold
         self.warning_threshold = warning_threshold
         self.check_interval = check_interval
+        self.graceful_shutdown_timeout = graceful_shutdown_timeout
+        self.graceful_terminate_timeout = graceful_terminate_timeout
+        self.force_kill_timeout = force_kill_timeout
         self._last_check = 0.0
         self._cached_usage = 0.0
         self._lock = threading.Lock()
+        self._cleanup_handlers: List[Callable[[], Any]] = []
+        self._active_tasks: Dict[str, asyncio.Task] = {}
+        self._tasks_lock = threading.Lock()
 
     def get_memory_usage(self) -> float:
         """Ottiene l'uso memoria corrente (0.0-1.0).
@@ -682,6 +701,181 @@ class MemoryGuard:
             self._last_check = now
 
         return usage
+
+    def register_cleanup_handler(self, handler: Callable[[], Any]) -> None:
+        """Registra un cleanup handler da chiamare prima del terminate.
+
+        Args:
+            handler: Funzione di cleanup (sync o async)
+        """
+        with self._lock:
+            self._cleanup_handlers.append(handler)
+        logger.debug(f"Cleanup handler registrato: {handler.__name__}")
+
+    def unregister_cleanup_handler(self, handler: Callable[[], Any]) -> None:
+        """Rimuove un cleanup handler.
+
+        Args:
+            handler: Funzione di cleanup da rimuovere
+        """
+        with self._lock:
+            if handler in self._cleanup_handlers:
+                self._cleanup_handlers.remove(handler)
+        logger.debug(f"Cleanup handler rimosso: {handler.__name__}")
+
+    def register_task(self, task_id: str, task: asyncio.Task) -> None:
+        """Registra un task async per tracking.
+
+        Args:
+            task_id: ID univoco del task
+            task: Task asyncio da tracciare
+        """
+        with self._tasks_lock:
+            self._active_tasks[task_id] = task
+        logger.debug(f"Task registrato: {task_id}")
+
+    def unregister_task(self, task_id: str) -> None:
+        """Rimuove un task dal tracking.
+
+        Args:
+            task_id: ID del task da rimuovere
+        """
+        with self._tasks_lock:
+            self._active_tasks.pop(task_id, None)
+        logger.debug(f"Task rimosso: {task_id}")
+
+    async def _run_cleanup_handlers(self) -> None:
+        """Esegue tutti i cleanup handlers registrati."""
+        with self._lock:
+            handlers = list(self._cleanup_handlers)
+
+        logger.info(f"Esecuzione di {len(handlers)} cleanup handlers...")
+
+        for handler in handlers:
+            try:
+                result = handler()
+                if asyncio.iscoroutine(result):
+                    await asyncio.wait_for(
+                        result,
+                        timeout=self.graceful_shutdown_timeout
+                    )
+                logger.debug(f"Cleanup handler completato: {handler.__name__}")
+            except asyncio.TimeoutError:
+                logger.warning(
+                    f"Cleanup handler timeout: {handler.__name__} "
+                    f"(>{self.graceful_shutdown_timeout}s)"
+                )
+            except Exception as e:
+                logger.error(
+                    f"Errore cleanup handler {handler.__name__}: {e}",
+                    exc_info=True
+                )
+
+    async def graceful_terminate_task(
+        self,
+        task_id: str,
+        task: asyncio.Task,
+    ) -> bool:
+        """Termina un task con escalation sequence.
+
+        Step 1: Chiama cleanup handlers
+        Step 2: Graceful cancel con timeout
+        Step 3: Force cancel
+
+        Args:
+            task_id: ID del task
+            task: Task asyncio da terminare
+
+        Returns:
+            True se terminato con successo
+        """
+        logger.info(
+            f"[GRACEFUL-TERMINATE] Step 1: Avvio terminate per task {task_id}"
+        )
+
+        # Step 1: Graceful cancel
+        task.cancel()
+        logger.info(
+            f"[GRACEFUL-TERMINATE] Step 2: Cancel inviato, "
+            f"attesa {self.graceful_terminate_timeout}s"
+        )
+
+        try:
+            await asyncio.wait_for(task, timeout=self.graceful_terminate_timeout)
+            logger.info(f"[GRACEFUL-TERMINATE] Task {task_id} terminato gracefully")
+            return True
+        except asyncio.CancelledError:
+            logger.info(f"[GRACEFUL-TERMINATE] Task {task_id} cancellato correttamente")
+            return True
+        except asyncio.TimeoutError:
+            logger.warning(
+                f"[GRACEFUL-TERMINATE] Step 3: Timeout graceful, "
+                f"force cancel per task {task_id}"
+            )
+            # Step 3: Force - il task e' gia' cancellato ma non risponde
+            # Non c'e' molto altro da fare per un task asyncio
+            return False
+        except Exception as e:
+            logger.error(f"[GRACEFUL-TERMINATE] Errore task {task_id}: {e}")
+            return False
+
+    async def graceful_shutdown_all(self, reason: str = "memory_critical") -> int:
+        """Esegue shutdown graceful di tutti i task attivi.
+
+        Escalation sequence:
+        1. Esegue cleanup handlers
+        2. Graceful cancel di tutti i task
+        3. Attende timeout
+        4. Logga task che non rispondono
+
+        Args:
+            reason: Motivo dello shutdown
+
+        Returns:
+            Numero di task terminati con successo
+        """
+        logger.warning(
+            f"[MEMORY-GUARD] Avvio graceful shutdown: {reason}, "
+            f"uso memoria: {self.get_memory_usage():.1%}"
+        )
+
+        # Step 1: Esegui cleanup handlers
+        await self._run_cleanup_handlers()
+
+        # Step 2: Ottieni task attivi
+        with self._tasks_lock:
+            active_tasks = dict(self._active_tasks)
+
+        if not active_tasks:
+            logger.info("[MEMORY-GUARD] Nessun task attivo da terminare")
+            return 0
+
+        logger.info(
+            f"[MEMORY-GUARD] Terminazione di {len(active_tasks)} task attivi..."
+        )
+
+        # Step 3: Termina tutti i task in parallelo
+        results = await asyncio.gather(
+            *[
+                self.graceful_terminate_task(task_id, task)
+                for task_id, task in active_tasks.items()
+            ],
+            return_exceptions=True,
+        )
+
+        # Step 4: Conta successi
+        success_count = sum(1 for r in results if r is True)
+
+        # Step 5: Pulisci registro
+        with self._tasks_lock:
+            self._active_tasks.clear()
+
+        logger.info(
+            f"[MEMORY-GUARD] Graceful shutdown completato: "
+            f"{success_count}/{len(active_tasks)} task terminati"
+        )
+
+        return success_count
 
     def is_memory_critical(self) -> bool:
         """Verifica se la memoria e' in stato critico.
@@ -721,6 +915,54 @@ class MemoryGuard:
                 logger.warning(
                     f"Memoria critica dopo operazione: "
                     f"{self.get_memory_usage():.1%}"
+                )
+
+    @asynccontextmanager
+    async def async_memory_check(
+        self,
+        enable_graceful_shutdown: bool = True,
+    ) -> AsyncGenerator[None, None]:
+        """Context manager async con graceful shutdown opzionale.
+
+        A differenza della versione sync, questa permette di eseguire
+        graceful shutdown prima di sollevare l'eccezione.
+
+        Args:
+            enable_graceful_shutdown: Se True, esegue graceful shutdown
+                prima di sollevare ResourceExhaustedError
+
+        Yields:
+            None
+
+        Raises:
+            ResourceExhaustedError: Se memoria critica dopo graceful shutdown
+        """
+        if self.is_memory_critical():
+            usage = self.get_memory_usage()
+            logger.warning(
+                f"[MEMORY-GUARD] Memoria critica rilevata: "
+                f"{usage:.1%} usata (soglia: {self.threshold:.1%})"
+            )
+
+            if enable_graceful_shutdown:
+                # Esegui graceful shutdown
+                await self.graceful_shutdown_all(
+                    reason=f"memory_check: {usage:.1%} usata"
+                )
+
+            # Dopo il graceful shutdown, solleva comunque l'errore
+            raise ResourceExhaustedError(
+                f"Memoria critica: {usage:.1%} usata (soglia: {self.threshold:.1%})"
+            )
+
+        try:
+            yield
+        finally:
+            if self.is_memory_critical():
+                usage = self.get_memory_usage()
+                logger.warning(
+                    f"[MEMORY-GUARD] Memoria critica dopo operazione: "
+                    f"{usage:.1%}"
                 )
 
 

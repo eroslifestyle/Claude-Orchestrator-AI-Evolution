@@ -1,368 +1,395 @@
-# Claude Orchestrator Plugin
+# Claude Orchestrator Plugin V12.8
 
-![Version](https://img.shields.io/badge/version-12.0.0--DEEP--AUDIT-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Claude Code](https://img.shields.io/badge/Claude%20Code-Opus%204.6-orange)
+A powerful multi-agent orchestration system for Claude Code with hierarchical command structure, parallel execution, intelligent cleanup, NO-IMPROVISE protocol, and 100% guaranteed fallback.
 
-> A fully integrated multi-agent orchestrator for Claude Code with 43 specialized agents, Agent Teams support, Memory integration, Health Check system, and Observability.
-
----
-
-## Quick Start
-
-### Windows (One-Liner)
-
-```powershell
-irm https://raw.githubusercontent.com/eroslifestyle/Claude-Orchestrator-Plugin/main/install.ps1 | iex
+```
++==============================================================================+
+|                                                                              |
+|     OOOO   RRRR    CCCC  H   H  EEEEE   SSSS  TTTTT  RRRR    AAAA           |
+|    O    O  R   R  C      H   H  E      S        T    R   R  A    A          |
+|    O    O  RRRR   C      HHHHH  EEEE    SSS     T    RRRR   AAAAAA          |
+|    O    O  R  R   C      H   H  E          S    T    R  R   A    A          |
+|     OOOO   R   R   CCCC  H   H  EEEEE  SSSS     T    R   R  A    A          |
+|                                                                              |
+|               V12.8 - NO-IMPROVISE - 100% CONTEXT BEFORE ACTION             |
+|                                                                              |
++==============================================================================+
 ```
 
-### macOS/Linux (One-Liner)
+## Features
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/eroslifestyle/Claude-Orchestrator-Plugin/main/install.sh | bash
+- **43 Specialized Agents** - 6 Core + 22 Experts + 15 L2 Sub-agents
+- **27 Skills** - Core, Utility, Workflow, Language, Learning categories
+- **6-Level Fallback System** - 100% guaranteed task completion
+- **Forced Global Parallelism** - Up to 64 concurrent agents
+- **Intelligent Model Selection** - Haiku/Sonnet/Opus based on task complexity
+- **Auto-Execute Mode** - No confirmation needed, immediate action
+- **Request Pre-Processing** - Automatic complexity evaluation and expansion
+- **Robust Cleanup System** - Startup + Session + Emergency cleanup
+- **Process Manager** - Centralized process spawning with guaranteed cleanup
+- **Rules Engine** - Context-aware rule injection per task
+- **NO-IMPROVISE Protocol** - 100% context required before any action
+
+## What's New in V12.8
+
+### NO-IMPROVISE Protocol (March 4, 2026)
+- **MANDATORY**: 100% context required before executing ANY task
+- **Context Completeness Score** - Quantitative scoring for request complexity
+- **Anti-Hallucination Protocol** - READ-FIRST rule, hallucination prevention checklist
+- **Overeagerness Control** - EXACT SCOPE rule, no scope creep allowed
+- **Clarifying Questions** - Mandatory if context is incomplete
+- **Profile Support** - Both `cca` (Anthropic) and `ccg` (GLM5/Z.AI) fully supported
+
+### CHANGES TO EXISTING FEATURES
+- **EXECUTION RULES**: Added Rule 4 (NO-IMPROVISE) and Rule 5 (delegation)
+- **SUBAGENT PROTOCOL**: Extended with 4 new mandatory principles
+- **STEP 0.5**: Completely rewritten with Context Completeness Score
+- **prompt-engineering-patterns**: Upgraded to V2.0 with Context-First Principle
+
+### V12.5.2 CLEAN SESSION (March 3, 2026)
+
+### TMP PATTERNS (March 3, 2026)
+- **Extended temp patterns** for Claude Code files:
+  - `*.*.tmp.*` - Any file with .tmp in middle
+  - `*.md.tmp.*` - Markdown temp files
+  - `CLAUDE.md.tmp.*` - Specific CLAUDE.md temps
+  - `*.py.tmp.*` - Python temp files
+- **Comprehensive cleanup** of orphan temp files
+
+### V12.5 ROBUST CLEANUP (March 3, 2026)
+- **STEP 0.6 STARTUP CLEANUP** - Removes stale temp files on session start
+- **STEP 11.5 EMERGENCY CLEANUP** - Signal handlers for crash recovery
+- **25+ temp patterns** - Covers generic, editor, OS, Python, Claude files
+- **Windows Job Objects** - Guaranteed process tree cleanup
+
+### V12.4 REQUEST PRE-PROCESSING (March 3, 2026)
+- **NEW Skill**: `prompt-engineering-patterns` for request optimization
+- **Complexity Evaluation** - Automatic detection of vague/complex requests
+- **Task Type Identification** - BUG_FIX, FEATURE, REFACTOR, ANALYSIS, etc.
+- **Vague Term Expansion** - "fix" -> "Identify root cause → Implement fix → Add tests → Verify"
+
+### V12.3 SKILL INTEGRATION (March 3, 2026)
+- **27 Skills** in catalog (was 26)
+- **NEW**: `prompt-engineering-patterns`, `python-performance-optimization`
+- **Skill Invocation** - Orchestrator can invoke skills directly
+- **Slash Commands** - Integrated skill mapping
+
+## Agent Hierarchy
+
+```
+                       +---------------------+
+                       |    ORCHESTRATOR     |
+                       |   V12.8             |
+                       |  (SUPREME COMMAND)  |
+                       +---------+-----------+
+                                 |
+          +----------------------+----------------------+
+          |                      |                      |
+ +--------v--------+    +--------v--------+    +--------v--------+
+ |   CORE AGENTS   |    | EXPERT AGENTS   |    |  L2 SUB-AGENTS  |
+ |     (6 units)   |    |   (22 units)    |    |   (15 units)    |
+ +--------+--------+    +--------+--------+    +--------+--------+
+          |                      |                      |
+ +--------+--------+    +--------+--------+    +--------+--------+
+ | * analyzer      |    | * gui-super     |    | * gui-layout    |
+ | * coder         |    | * database      |    | * db-query      |
+ | * reviewer      |    | * security      |    | * security-auth |
+ | * documenter    |    | * mql           |    | * api-endpoint  |
+ | * system_coord  |    | * trading       |    | * test-unit     |
+ | * orchestrator  |    | * architect     |    | * mql-optim     |
+ +-----------------+    | * integration   |    | * trading-risk  |
+                        | * devops        |    | * mobile-ui     |
+                        | * languages     |    | * n8n-workflow  |
+                        | * ai_integr     |    | * claude-prompt |
+                        | * claude_sys    |    +-----------------+
+                        | * mobile        |
+                        | * n8n           |
+                        | * social_id     |
+                        | * ... (13 more) |
+                        +-----------------+
 ```
 
-### Manual Installation
+## Installation
 
+### Quick Install (Recommended)
+
+1. **Backup your existing `.claude` directory** (if any):
 ```bash
-# Clone the repository
-git clone https://github.com/eroslifestyle/Claude-Orchestrator-Plugin.git
-
-# Copy to Claude skills directory
 # Windows
-xcopy /E /I Claude-Orchestrator-Plugin "%USERPROFILE%\.claude\skills\orchestrator"
+move %USERPROFILE%\.claude %USERPROFILE%\.claude.backup
 
-# macOS/Linux
-cp -r Claude-Orchestrator-Plugin ~/.claude/skills/orchestrator
+# Linux/Mac
+mv ~/.claude ~/.claude.backup
 ```
 
----
+2. **Clone this repository**:
+```bash
+# Windows
+git clone https://github.com/eroslifestyle/Claude-Orchestrator-Plugin.git %USERPROFILE%\.claude
 
-## Requirements
+# Linux/Mac
+git clone https://github.com/eroslifestyle/Claude-Orchestrator-Plugin.git ~/.claude
+```
 
-| Requirement | Description |
-|-------------|-------------|
-| Claude Code | Must be installed ([Download](https://claude.ai/code)) |
-| PowerShell 5.1+ | Windows users |
-| Bash | macOS/Linux users |
-| Agent Teams (Optional) | Enable via environment variable |
+3. **Set up configuration files**:
+```bash
+# Windows
+cd %USERPROFILE%\.claude
+copy settings.template.json settings.json
+copy settings.local.template.json settings.local.json
 
-### Enable Agent Teams (Optional)
+# Linux/Mac
+cd ~/.claude
+cp settings.template.json settings.json
+cp settings.local.template.json settings.local.json
+```
 
-Add to `~/.claude/settings.json`:
+4. **Install MCP Server dependencies** (optional, for advanced features):
+```bash
+cd plugins/orchestrator-plugin
+npm install
+npm run build
+```
+
+5. **Restart Claude Code** to apply changes.
+
+## Usage
+
+```bash
+/orchestrator <your request>
+```
+
+**Examples:**
+- `/orchestrator Create a GUI for database management`
+- `/orchestrator Fix the auth module bug`
+- `/orchestrator Optimize MetaTrader EA`
+- `/orchestrator Design microservices architecture`
+
+## Model Selection
+
+| Model | When to Use | Task Tool Parameter |
+|-------|-------------|---------------------|
+| **Haiku** | Mechanical tasks, no reasoning | `model: "haiku"` |
+| **Sonnet** | Problem solving, coding, debugging | Omit `model` parameter |
+| **Opus** | Architecture, creative, complex | `model: "opus"` |
+
+### Important: Sonnet Workaround
+
+Due to a known bug in Claude Code Task tool ([GitHub #18873](https://github.com/anthropics/claude-code/issues/18873)), the `model: "sonnet"` parameter causes a 404 error.
+
+**Workaround:** Omit the `model` parameter to use Sonnet (inherits from parent context).
+
+```javascript
+// WRONG - causes 404
+Task({ model: "sonnet", ... })
+
+// CORRECT - uses Sonnet via inheritance
+Task({ ... })  // No model parameter
+```
+
+## Skills Catalog (27 Total)
+
+| Category | Skills |
+|----------|--------|
+| **Core (7)** | orchestrator, code-review, git-workflow, testing-strategy, debugging, api-design, remotion-best-practices |
+| **Utility (6)** | strategic-compact, verification-loop, checkpoint, status, metrics, prompt-engineering-patterns |
+| **Workflow (8)** | plan, tdd-workflow, security-scan, refactor-clean, build-fix, multi-plan, fix, cleanup |
+| **Language (4)** | python-patterns, python-performance-optimization, typescript-patterns, go-patterns |
+| **Learning (2)** | learn, evolve |
+
+## Directory Structure
+
+```
+.claude/
+|
++-- agents/
+|   +-- core/                    # Level 0 - Core Agents (6)
+|   +-- experts/                 # Level 1 - Expert Agents (22)
+|       +-- L2/                  # Level 2 - Sub-Agents (15)
+|
++-- skills/                      # 27 Skills
+|   +-- orchestrator/            # Main orchestrator skill
+|   +-- prompt-engineering-patterns/  # NEW: Request pre-processing
+|   +-- cleanup/                 # Enhanced cleanup skill
+|   +-- ... (28 more)
+|
++-- rules/                       # Context-aware rules engine
+|   +-- common/                  # Universal rules
+|   +-- python/                  # Python-specific
+|   +-- typescript/              # TypeScript-specific
+|   +-- go/                      # Go-specific
+|
++-- lib/                         # Shared libraries
+|   +-- process_manager.py       # Centralized process management
+|
++-- commands/
+|   +-- orchestrator.md          # Main orchestrator command
+|
++-- config/
+|   +-- routing.md               # Agent routing tables
+|   +-- standards.md             # Coding standards
+|
++-- plugins/
+    +-- orchestrator-plugin/     # MCP Server plugin
+```
+
+## 6-Level Fallback System
+
+```
+LEVEL 1: EXACT MATCH
+-> Agent exists? USE IT
+-> Not found? LEVEL 2
+
+LEVEL 2: L2 -> L1 PARENT
+-> L2 sub-agent not found? USE PARENT L1
+
+LEVEL 3: DOMAIN PATTERN
+-> Expert not found? PATTERN MATCH on domain
+
+LEVEL 4: CORE AGENT
+-> No expert match? USE APPROPRIATE CORE AGENT
+
+LEVEL 5: UNIVERSAL CODER
+-> Anything fails? core/coder.md handles it
+
+LEVEL 6: ORCHESTRATOR DIRECT
+-> Everything fails? ORCHESTRATOR executes directly
+
+100% SUCCESS RATE GUARANTEED
+```
+
+## Configuration
+
+### Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | Model ID for Sonnet alias |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL` | Model ID for Opus alias |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | Model ID for Haiku alias |
+| `CLAUDE_CODE_SUBAGENT_MODEL` | Model for Task tool subagents |
+
+### Recommended Settings
 
 ```json
 {
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-5-20250929",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-5-20250929"
   }
 }
 ```
 
-Restart Claude Code after modifying settings.
-
----
-
-## Verify Installation
-
-```bash
-# Start Claude Code
-claude
-
-# Test orchestrator
-/orchestrator help
-```
-
-Expected output:
-```
-ORCHESTRATOR V12.0 DEEP AUDIT | FULLY INTEGRATED EDITION
-Ready to coordinate tasks across 43 specialized agents.
-```
-
----
-
-## Quick Example
-
-```bash
-# Simply type your request - orchestrator activates automatically
-# Example: "Fix the bug in auth.py and add unit tests"
-
-# Or invoke explicitly:
-/orchestrator analyze the codebase structure and suggest improvements
-```
-
-The orchestrator will:
-1. Analyze your request
-2. Route to appropriate agents
-3. Execute tasks in parallel when possible
-4. Return consolidated results
-
----
-
-## Plugin Contents
-
-### Directory Structure
-
-```
-orchestrator/
-├── SKILL.md                    # Main orchestrator skill (V12.0)
-├── README.md                   # This file
-├── docs/
-│   ├── routing-table.md        # Agent routing rules (DEPRECATED)
-│   ├── team-patterns.md        # Agent team patterns (DEPRECATED)
-│   ├── skills-reference.md     # Skill creation guide
-│   ├── examples.md             # Usage examples
-│   ├── memory-integration.md   # Memory system docs
-│   ├── health-check.md         # Diagnostic system
-│   └── observability.md        # Metrics and monitoring
-├── agents/
-│   ├── core/                   # L0 Core agents (6)
-│   ├── experts/                # L1 Expert agents (22)
-│   │   └── L2/                 # L2 Specialists (15)
-│   ├── system/                 # System protocols
-│   ├── config/                 # Configuration files
-│   ├── docs/                   # Agent documentation
-│   ├── templates/              # Task templates
-│   └── workflows/              # Workflow definitions
-└── install.ps1                 # Windows installer
-```
-
-### Included Agents (43)
-
-#### L0 - Core Agents (6)
-
-| Agent | Role | Model |
-|-------|------|-------|
-| Orchestrator | Central coordinator | inherit |
-| Analyzer | Code analysis, exploration | haiku |
-| Coder | Implementation, fixes | inherit |
-| Reviewer | Code review, quality | inherit |
-| Documenter | Documentation updates | haiku |
-| System Coordinator | Cleanup, maintenance | haiku |
-
-#### L1 - Expert Agents (22)
-
-| Agent | Specialization | Keywords |
-|-------|----------------|----------|
-| GUI Super Expert | PyQt5, Qt, NiceGUI, CSS, themes | GUI, UI, widget |
-| Database Expert | SQL, schema, SQLite | database, SQL |
-| Security Unified Expert | Encryption, validation | security, encryption |
-| Offensive Security Expert | Pentesting, OWASP, exploits | pentest, red team |
-| Reverse Engineering Expert | Binary analysis, IDA, Ghidra | disassemble, malware |
-| Integration Expert | REST, webhooks, APIs | API, REST, webhook |
-| Tester Expert | QA, test architecture | test, debug, QA |
-| MQL Expert | MetaTrader, EA development | MQL, EA, MT5 |
-| MQL Decompilation Expert | .ex4/.ex5 reverse engineering | decompile, EA protection |
-| Trading Strategy Expert | Risk management, strategies | trading, strategy |
-| Mobile Expert | iOS, Android, cross-platform | mobile, iOS, Android |
-| N8N Expert | Workflow automation | n8n, automation |
-| AI Integration Expert | LLM APIs, RAG, embeddings | AI, LLM, GPT |
-| Claude Systems Expert | Model selection, tokens | Claude, prompt |
-| Social Identity Expert | OAuth2, OIDC providers | OAuth, social login |
-| Languages Expert | Python, JS, C#, syntax | Python, JS, coding |
-| Architect Expert | System design, patterns | architecture, design |
-| DevOps Expert | CI/CD, Kubernetes, monitoring | DevOps, deploy |
-| Notification Expert | Messaging, alerts | notification, alert |
-| Browser Automation Expert | Playwright, e2e, scraping | playwright, browser |
-| MCP Integration Expert | MCP protocol, tool discovery | MCP, plugin |
-| Payment Integration Expert | Stripe, PayPal, checkout | payment, checkout |
-
-#### L2 - Specialist Agents (15)
-
-| Agent | Parent | Specialization |
-|-------|--------|----------------|
-| GUI Layout Specialist | GUI Super Expert | Layout, sizing, splitters |
-| DB Query Optimizer | Database Expert | Query optimization, indexes |
-| Security Auth Specialist | Security Unified Expert | JWT, MFA, RBAC |
-| API Endpoint Builder | Integration Expert | REST endpoints, CRUD |
-| Test Unit Specialist | Tester Expert | pytest, mocking, TDD |
-| MQL Optimization | MQL Expert | EA performance, memory |
-| Trading Risk Calculator | Trading Strategy Expert | Position sizing, drawdown |
-| Mobile UI Specialist | Mobile Expert | Responsive, SafeArea |
-| N8N Workflow Builder | N8N Expert | Workflow design, error handling |
-| AI Model Specialist | AI Integration Expert | Model selection, fine-tuning |
-| Claude Prompt Optimizer | Claude Systems Expert | Token optimization, few-shot |
-| Social OAuth Specialist | Social Identity Expert | OAuth2 flows, PKCE |
-| Languages Refactor Specialist | Languages Expert | Clean code, code smells |
-| Architect Design Specialist | Architect Expert | SOLID, DDD, microservices |
-| DevOps Pipeline Specialist | DevOps Expert | GitHub Actions, Docker |
-
----
-
-## Configuration
-
-### Agent Teams Mode
-
-Teammate mode is controlled via CLI flag:
-
-```bash
-# Windows default (no tmux)
-claude --teammate-mode in-process
-
-# Auto-detect tmux
-claude --teammate-mode auto
-
-# Force split panes (requires tmux/iTerm2)
-claude --teammate-mode tmux
-```
-
-### MCP Plugin Compatibility
-
-| Plugin | Purpose | Windows | macOS/Linux |
-|--------|---------|---------|-------------|
-| web-reader | Fetch web content | Supported | Supported |
-| web-search-prime | Web search | Supported | Supported |
-| canva | Design/graphics | Supported | Supported |
-| slack | Slack messaging | Supported | Supported |
-| orchestrator-mcp | Multi-agent coordination | Supported | Supported |
-| zai-mcp-server | UI analysis | Supported | Supported |
-| 4_5v_mcp | Image analysis | Supported | Supported |
-| firebase | Real-time DB | Supported | Supported |
+## Changelog
 
-### LSP Plugins
+### V12.8 UNIFIED VERSION (March 6, 2026)
 
-| Plugin | Language | Features |
-|--------|----------|----------|
-| clangd-lsp | C/C++ | IntelliSense, go-to-def |
-| jdtls-lsp | Java | Maven, Gradle, Spring |
-| swift-lsp | Swift | iOS, SwiftUI, Xcode |
+**Version Consolidation**
+- All version references unified to V12.8 across the system
+- VERSION.json: 12.8.0
+- README.md: V12.8
+- orchestrator-manifest.json: 12.8.0
+- Consistent changelog and audit dates
 
----
+### V12.6 NO-IMPROVISE (March 4, 2026)
 
-## Documentation
+**Breaking Changes - Mandatory Protocols**
 
-| Document | Description |
-|----------|-------------|
-| [SKILL.md](SKILL.md) | Main orchestrator instructions (V12.0) |
-| [docs/routing-table.md](docs/routing-table.md) | DEPRECATED - see SKILL.md |
-| [docs/team-patterns.md](docs/team-patterns.md) | DEPRECATED - see SKILL.md |
-| [docs/skills-reference.md](docs/skills-reference.md) | Skill creation guide |
-| [docs/examples.md](docs/examples.md) | Usage examples |
-| [docs/memory-integration.md](docs/memory-integration.md) | Memory system |
-| [docs/health-check.md](docs/health-check.md) | Diagnostic system |
-| [docs/observability.md](docs/observability.md) | Metrics and monitoring |
-| [agents/INDEX.md](agents/INDEX.md) | Agent hierarchy index |
+#### New Features
 
----
+- **NO-IMPROVISE Protocol** (MANDATORY)
+  - 100% context required before executing ANY task
+  - Mandatory clarifying questions if context is incomplete
+  - No assumptions, inventions, or improvisation allowed
+  - Explicit programmer approval required for modifying existing functions
 
-## Troubleshooting
+- **Context Completeness Check** (STEP 0.5)
+  - Quantitative scoring system for request complexity
+  - Score-based decision: proceed, ask questions, or mandatory questions
+  - Anti-patterns documented
 
-### Common Issues
+- **Anti-Hallucination Protocol**
+  - READ-FIRST rule: Read files before modifying
+  - Hallucination prevention checklist
+  - Common hallucination patterns documented
 
-| Issue | Solution |
-|-------|----------|
-| Command not found | Ensure Claude Code is in PATH |
-| Agent Teams not working | Check `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json |
-| MCP tools not loading | Run `ToolSearch(query="plugin_name")` before calling |
-| Permission denied | Check file permissions on `~/.claude/skills/` |
-| Session not resuming | Agent Teams require respawning after restart |
-| `model: "sonnet"` causes 404 | Omit model parameter to inherit from parent |
+- **Overeagerness Control**
+  - EXACT SCOPE rule: Do only what is requested
+  - NO scope creep
+  - Scope verification checklist
 
-### Health Check
+#### Changes to Existing Features
 
-Run diagnostics:
+- **EXECUTION RULES**: Added Rule 4 (NO-IMPROVISE) and Rule 5 (delegation)
+- **SUBAGENT PROTOCOL**: Extended with 4 new mandatory principles
+- **STEP 0.5**: Completely rewritten with Context Completeness Score
+- **prompt-engineering-patterns**: Upgraded to V2.0
+  - Context-First Principle
+  - XML Structure Output
+  - 5 Few-Shot Examples
 
-```bash
-/orchestrator HealthCheck()
-```
+#### Profile Support
 
-Output shows status of all subsystems:
-- Agent Teams status
-- MCP connections
-- Memory loaded
-- Routing table
-- Filesystem space
+Both `cca` (Anthropic Claude Opus 4.6) and `ccg` (GLM5 via Z.AI) profiles are fully supported. All orchestrator features work identically on both profiles.
 
-### Log Location
+#### Files Modified
 
-Session logs stored at:
-```
-~/.claude/logs/orchestrator/session_{timestamp}.log
-```
+- `orchestrator/SKILL.md` - V12.5.2 -> V12.6
+- `prompt-engineering-patterns/SKILL.md` - V1.0 -> V2.0
+- `CLAUDE.md` - Updated with profile references
 
----
+### V12.5.2 (March 3, 2026)
 
-## Version History
+- Cleanup runs only at session end (Step 11)
+- Extended temp patterns
+- Clean session. Clean exit.
 
-| Version | Date | Changes |
-|---------|------|---------|
-| V12.0 DEEP AUDIT | 2026-02-26 | Agent count fix (43), circuit-breaker complete, version alignment, model consistency |
-| V11.3 AUDIT FIX | 2026-02-26 | Step ordering, MCP section, skills catalog (26), 4 new L1 agents |
-| V11.0 NEW GEN | 2026-02-26 | Learning, Rules Engine, Hooks, 24 skills, Slash Commands |
-| V10.2 ULTRA | 2026-02-21 | Notification Expert, inter-teammate communication, fallback chains |
-| V10.0 ULTRA | 2026-02-21 | Memory integration, health check, observability |
-| V8.0 SLIM | 2026-02-15 | Agent Teams edition, 39 agents |
-| V7.0 | 2026-02-10 | MCP integration, LSP support |
-| V6.0 | 2026-02-05 | Parallel execution optimization |
-| V5.0 | 2026-01-28 | Windows support, cleanup automation |
+### V12.5.1 TMP PATTERNS (March 3, 2026)
+- **NEW:** Extended temp patterns for Claude Code files
+- **FIX:** Cleanup of orphan temp files (CLAUDE.md.tmp.*)
+- **IMPROVED:** 25+ temp patterns in cleanup system
 
----
+### V12.5 ROBUST CLEANUP (March 3, 2026)
+- **NEW:** STEP 0.6 STARTUP CLEANUP
+- **NEW:** STEP 11.5 EMERGENCY CLEANUP with signal handlers
+- **NEW:** Process Manager for centralized process spawning
+- **IMPROVED:** Windows Job Objects support
 
-## Key Features
+### V12.4 REQUEST PRE-PROCESSING (March 3, 2026)
+- **NEW:** prompt-engineering-patterns skill
+- **NEW:** STEP 0.5 complexity evaluation
+- **NEW:** Task type identification (BUG_FIX, FEATURE, etc.)
 
-### Maximum Parallelism
+### V12.3 SKILL INTEGRATION (March 3, 2026)
+- **NEW:** 27 skills in catalog
+- **NEW:** Skill invocation from orchestrator
+- **NEW:** python-performance-optimization skill
 
-Independent tasks execute simultaneously. The orchestrator routes N tasks to N agents in a single batch, dramatically reducing execution time.
+### V12.2 PROCESS MANAGER (February 28, 2026)
+- **NEW:** Centralized ProcessManager for Windows orphan prevention
+- **NEW:** 100 process management rules
 
-### Agent Teams
+### V12.0 DEEP AUDIT (February 26, 2026)
+- **NEW:** 100% coherence verification
+- **NEW:** 43 agents verified
+- **NEW:** Full documentation alignment
 
-For complex work requiring coordination, spawn multiple agents that can communicate, share findings, and challenge each other's conclusions.
+## Contributing
 
-### Memory Integration
-
-Project memory persists across sessions. Agents learn from previous decisions and avoid repeating past mistakes.
-
-### Health Check System
-
-Automatic diagnostics detect issues before they impact work. Recovery protocols handle errors gracefully.
-
-### Observability
-
-Real-time metrics dashboard tracks:
-- Task completion rates
-- Agent usage patterns
-- Parallel efficiency
-- Error rates
-- Session duration
-
-### Error Recovery
-
-Comprehensive fallback chains ensure tasks complete even when primary agents fail. Automatic retry with exponential backoff for rate limits.
-
----
-
-## Support
-
-- **GitHub Issues:** [https://github.com/eroslifestyle/Claude-Orchestrator-Plugin/issues](https://github.com/eroslifestyle/Claude-Orchestrator-Plugin/issues)
-- **Documentation:** See `docs/` directory
-
----
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-MIT License
+MIT License - See [LICENSE](LICENSE) for details.
 
-Copyright (c) 2026
+## Author
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Created by [eroslifestyle](https://github.com/eroslifestyle)
 
 ---
 
-**ORCHESTRATOR V12.0 DEEP AUDIT | FULLY INTEGRATED EDITION**
-*Score Target: 10/10 | All Systems Operational*
+**Remember:**
+- Orchestrator commands, agents execute
+- Clean startup. Clean session. Clean exit.
+- 43 agents ready to command
+- 27 skills ready to invoke

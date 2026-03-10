@@ -1,6 +1,5 @@
-# Orchestrator Workflow Examples V14.0.3
+# Orchestrator Workflow Examples (V12.0)
 
-> **Version:** 14.0.2 AI-Native | **Last Updated:** 2026-03-07
 > Practical examples showing end-to-end orchestrator execution.
 
 ---

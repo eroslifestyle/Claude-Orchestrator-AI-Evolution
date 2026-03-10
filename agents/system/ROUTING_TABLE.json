@@ -1,0 +1,330 @@
+{
+  "version": "18.0.0",
+  "description": "Single Source of Truth per agent routing - usato da orchestrator e AGENT_REGISTRY",
+  "last_updated": "2026-03-10",
+  "agent_count": {
+    "core": 6,
+    "L1_expert": 22,
+    "L2_specialist": 15,
+    "total": 43
+  },
+  "routing_rules": {
+    "priority": "Longest keyword match wins. If tie, first match in table wins.",
+    "multi_keyword": [
+      "Extract ALL matching keywords from request",
+      "Count matches per agent",
+      "Select agent with highest match count",
+      "If tie, use table order (first row wins)"
+    ],
+    "default_fallback": "coder",
+    "model_determination": "Explicit model (haiku/opus) > Complexity Score > inherit fallback. inherit = haiku (score 0-6), opus (score 7-10)"
+  },
+  "agents": {
+    "gui-super-expert": {
+      "keywords": ["GUI", "PyQt5", "Qt", "widget", "UI", "NiceGUI", "CSS", "theme"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/gui-super-expert.md"
+    },
+    "gui-layout-specialist": {
+      "keywords": ["layout", "sizing", "splitter"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "gui-super-expert",
+      "fallback": "gui-super-expert"
+    },
+    "database-expert": {
+      "keywords": ["database", "SQL", "schema"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/database_expert.md"
+    },
+    "db-query-optimizer": {
+      "keywords": ["query", "index", "optimize DB"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "database-expert",
+      "fallback": "database-expert"
+    },
+    "security-unified-expert": {
+      "keywords": ["security", "encryption", "security validate", "authorization", "permission check", "sanitize"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/security_unified_expert.md"
+    },
+    "security-auth-specialist": {
+      "keywords": ["auth", "JWT", "session", "login"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "security-unified-expert",
+      "fallback": "security-unified-expert"
+    },
+    "offensive-security-expert": {
+      "keywords": ["offensive security", "pentesting", "exploit", "red team", "OWASP", "vulnerability"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "security-unified-expert"
+    },
+    "reverse-engineering-expert": {
+      "keywords": ["reverse engineer", "binary", "disassemble", "IDA", "Ghidra", "malware", "firmware"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder"
+    },
+    "integration-expert": {
+      "keywords": ["API", "REST", "webhook"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/integration_expert.md"
+    },
+    "api-endpoint-builder": {
+      "keywords": ["endpoint", "route"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "integration-expert",
+      "fallback": "integration-expert"
+    },
+    "tester-expert": {
+      "keywords": ["test", "debug", "QA"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/tester_expert.md"
+    },
+    "test-unit-specialist": {
+      "keywords": ["unit test", "mock", "pytest"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "tester-expert",
+      "fallback": "tester-expert"
+    },
+    "mql-expert": {
+      "keywords": ["MQL", "EA", "MetaTrader"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/mql_expert.md"
+    },
+    "mql-optimization": {
+      "keywords": ["optimize EA", "memory MT5"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "mql-expert",
+      "fallback": "mql-expert"
+    },
+    "mql-decompilation-expert": {
+      "keywords": ["decompile", ".ex4", ".ex5"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "mql-expert"
+    },
+    "trading-strategy-expert": {
+      "keywords": ["trading", "strategy"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/trading_strategy_expert.md"
+    },
+    "trading-risk-calculator": {
+      "keywords": ["risk", "position size"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "trading-strategy-expert",
+      "fallback": "trading-strategy-expert"
+    },
+    "mobile-expert": {
+      "keywords": ["mobile", "iOS", "Android"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/mobile_expert.md"
+    },
+    "mobile-ui-specialist": {
+      "keywords": ["mobile UI", "responsive"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "mobile-expert",
+      "fallback": "mobile-expert"
+    },
+    "n8n-expert": {
+      "keywords": ["n8n", "workflow", "n8n automation"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/n8n_expert.md"
+    },
+    "n8n-workflow-builder": {
+      "keywords": ["workflow builder"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "n8n-expert",
+      "fallback": "n8n-expert"
+    },
+    "claude-systems-expert": {
+      "keywords": ["Claude", "prompt", "token"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/claude_systems_expert.md"
+    },
+    "claude-prompt-optimizer": {
+      "keywords": ["prompt optimize"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "claude-systems-expert",
+      "fallback": "claude-systems-expert"
+    },
+    "architect-expert": {
+      "keywords": ["architettura", "design", "system", "performance", "optimize", "profiling", "benchmark"],
+      "model": "opus",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/architect_expert.md"
+    },
+    "architect-design-specialist": {
+      "keywords": ["design pattern", "DDD", "SOLID"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "architect-expert",
+      "fallback": "architect-expert"
+    },
+    "devops-expert": {
+      "keywords": ["DevOps", "deploy", "CI/CD", "git", "commit", "branch", "merge", "PR", "logging", "monitoring", "metrics", "observability"],
+      "model": "haiku",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/devops_expert.md"
+    },
+    "devops-pipeline-specialist": {
+      "keywords": ["pipeline", "Jenkins", "GitHub Actions"],
+      "model": "haiku",
+      "tier": "L2",
+      "parent": "devops-expert",
+      "fallback": "devops-expert"
+    },
+    "languages-expert": {
+      "keywords": ["Python", "JS", "C#", "coding", "generate", "create", "boilerplate", "scaffold", "type check", "typed", "typing", "lint"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/languages_expert.md"
+    },
+    "languages-refactor-specialist": {
+      "keywords": ["refactor", "clean code", "rename", "restructure", "decompose", "extract method"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "languages-expert",
+      "fallback": "languages-expert"
+    },
+    "ai-integration-expert": {
+      "keywords": ["AI", "LLM", "GPT", "embeddings", "data analysis", "visualization", "report"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder",
+      "file": "experts/ai_integration_expert.md"
+    },
+    "ai-model-specialist": {
+      "keywords": ["model selection", "fine-tuning", "RAG"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "ai-integration-expert",
+      "fallback": "ai-integration-expert"
+    },
+    "social-identity-expert": {
+      "keywords": ["OAuth", "social login"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "security-unified-expert",
+      "file": "experts/social_identity_expert.md"
+    },
+    "social-oauth-specialist": {
+      "keywords": ["OAuth2 flow", "provider integration"],
+      "model": "inherit",
+      "tier": "L2",
+      "parent": "social-identity-expert",
+      "fallback": "social-identity-expert"
+    },
+    "analyzer": {
+      "keywords": ["analyze", "explore", "search"],
+      "model": "haiku",
+      "tier": "core",
+      "fallback": "coder",
+      "file": "core/analyzer.md"
+    },
+    "coder": {
+      "keywords": ["implement", "fix", "code", "skill", "SKILL.md", "slash command", "input validate", "data validation", "schema validate"],
+      "model": "inherit",
+      "tier": "core",
+      "fallback": null,
+      "file": "core/coder.md"
+    },
+    "reviewer": {
+      "keywords": ["review", "quality check", "code review"],
+      "model": "inherit",
+      "tier": "core",
+      "fallback": "coder",
+      "file": "core/reviewer.md"
+    },
+    "documenter": {
+      "keywords": ["document", "changelog"],
+      "model": "haiku",
+      "tier": "core",
+      "fallback": "coder",
+      "file": "core/documenter.md"
+    },
+    "system-coordinator": {
+      "keywords": ["cleanup", "checkpoint", "session state", "compact"],
+      "model": "haiku",
+      "tier": "core",
+      "fallback": "coder"
+    },
+    "notification-expert": {
+      "keywords": ["notification", "alert", "message", "Slack", "Discord"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder"
+    },
+    "browser-automation-expert": {
+      "keywords": ["playwright", "e2e", "browser automation", "scraping"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder"
+    },
+    "mcp-integration-expert": {
+      "keywords": ["MCP", "plugin", "extension", "model context protocol"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder"
+    },
+    "payment-integration-expert": {
+      "keywords": ["Stripe", "PayPal", "payment", "checkout", "subscription"],
+      "model": "inherit",
+      "tier": "L1",
+      "fallback": "coder"
+    }
+  },
+  "l2_to_l1_mapping": {
+    "gui-layout-specialist": "gui-super-expert",
+    "db-query-optimizer": "database-expert",
+    "security-auth-specialist": "security-unified-expert",
+    "api-endpoint-builder": "integration-expert",
+    "test-unit-specialist": "tester-expert",
+    "mql-optimization": "mql-expert",
+    "trading-risk-calculator": "trading-strategy-expert",
+    "mobile-ui-specialist": "mobile-expert",
+    "n8n-workflow-builder": "n8n-expert",
+    "claude-prompt-optimizer": "claude-systems-expert",
+    "architect-design-specialist": "architect-expert",
+    "devops-pipeline-specialist": "devops-expert",
+    "languages-refactor-specialist": "languages-expert",
+    "ai-model-specialist": "ai-integration-expert",
+    "social-oauth-specialist": "social-identity-expert"
+  },
+  "changelog": {
+    "18.0.0": "2026-03-10 - Single source of truth consolidato da SKILL.md e AGENT_REGISTRY.md"
+  }
+}

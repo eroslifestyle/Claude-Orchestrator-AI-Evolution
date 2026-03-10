@@ -1,267 +1,353 @@
-# ORCHESTRATOR CHANGELOG
+# Changelog - Claude Orchestrator Plugin
 
-All notable changes to the Orchestrator skill will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+All notable changes to the Orchestrator are documented here in reverse chronological order (most recent first).
 
 ---
 
-## [V10.3.0] - 2026-02-22
+## [V12.9.3] GLM-5 FULL MIGRATION - 2026-03-06
 
 ### Added
-- **install.sh**: Complete macOS/Linux bash installer script
-  - Supports remote installation via `curl | bash`
-  - Supports local installation from cloned repository
-  - Automatic prerequisite checks (bash, curl/wget, git, jq)
-  - Automatic directory structure creation
-  - Backup of existing files before overwrite
-  - Downloads all orchestrator files from GitHub API
-  - Configures settings.json for Agent Teams
-  - Installation verification with error/warning reporting
-  - Colorful output with progress indicators
-  - --force, --path, --dry-run command-line options
-  - Post-installation instructions and quick test guide
-- **Installation Documentation**: Complete git clone installation support
-  - `.gitclone-instructions.md`: Direct clone and copy methods for all platforms
-  - `QUICKSTART.md`: One-liner installers, verification, and first-use guide
-  - `settings.template.json`: Configuration template with merge instructions
+- Full GLM-5 migration for CCG profile (Z.AI)
+- GLM-5 parameters: temperature=1.0, top_p=0.95
+- Deep thinking enabled: thinking={type: "enabled"}
+- Max context: 200K, Max output: 128K
+- Streaming support: stream=True, tool_stream=True
+- VERSION.json: glm5 configuration block
+- settings.json: GLM5_* environment variables
+
+### Updated
+- docs/glm-ocr-integration.md: V2.0.0 with GLM-5 features
+- Migration checklist completed
+- 3 new practical examples added
 
 ---
 
-## [V10.2.0] - 2026-02-21
+## [V12.9.2] GLM-OCR INTEGRATION - 2026-03-06
 
 ### Added
-- **Notification Expert**: New L1 agent for Slack, notifications, alerts, messaging platforms
-- **Rule 4 - Context Injection Precedence**: Explicit memory vs task prompt conflict resolution
-- **PHASE 4.5 - Inter-Teammate Communication**: Full protocol for teammate-to-teammate messaging
-- **L2 Keyword Routing**: Keywords added for Architect Design, DevOps Pipeline, AI Model, Social OAuth specialists
-- **Complete Fallback Chains**: All 40 agents now have fallback chains defined
+- GLM-OCR integration per profilo CCG (Z.AI)
+- docs/glm-ocr-integration.md - Documentazione completa
+- SKILL.md: Sezione GLM-OCR Tools con routing
+- settings.json: zai-mcp-server wildcard permissions (8 tool OCR)
+
+### Tool MCP Abilitati
+- extract_text_from_screenshot (OCR principale)
+- analyze_image (analisi immagini)
+- analyze_video (analisi video)
+- diagnose_error_screenshot (diagnostica errori)
+- ui_to_artifact (UI → codice)
+- analyze_data_visualization (grafici)
+- ui_diff_check (confronto UI)
+- understand_technical_diagram (diagrammi tecnici)
+
+---
+
+## [V12.9.1] CONSOLIDATION FIX - 2026-03-06
 
 ### Fixed
-- **Slash Commands as Agents**: Removed /code-review, /testing-strategy, /debugging, /api-design; /git-workflow replaced with DevOps Expert
-- **Senior Coder Fallback**: Changed non-existent "Senior Coder" to "Coder" in Architect Expert fallback
-- **Duplicate Routing**: Removed generic "decompile" from Reverse Engineering Expert (MQL Expert has specific .ex4/.ex5)
-- **Broken References**: Fixed agent-teams.md, mcp-setup.md, troubleshooting.md references in health-check.md
-- **Version Alignment**: All modules updated to V10.2
-
-### Changed
-- **Agent Count**: 39 -> 40 agents (added Notification Expert)
-- **Banner**: Updated to reflect 40 agents ready
+- VERSION.json: 12.8.0 → 12.9.0 (version alignment)
+- SKILL.md footer: V12.8 → V12.9 INTERACTIVE REQUIREMENTS
+- docs/INDEX.md: V12.0 → V12.9 (header, changelog, footer)
+- docs/changelog.md: V12.0 → V12.9 (header)
+- Skills count: 26 → 27 standardizzato in 6 file
+- Rules count: 10 → 11 in docs/INDEX.md
+- Docs count: 17 → 22 in manifest e INDEX.md
+- orchestrator-manifest.json: prompt-engineering-patterns aggiunto
 
 ---
 
-## [V10.0.0] - 2026-02-21 - ULTRA EDITION
+## [V12.9] INTERACTIVE REQUIREMENTS GATHERING - 2026-03-06
 
 ### Added
+- STEP 0.7 INTERACTIVE REQUIREMENTS GATHERING per richieste complesse
+- Domande multiple interattive con AskUserQuestion
+- 6 categorie di domande: WHAT, WHERE, WHY, SCOPE, PRIORITY, CONSTRAINTS
+- Ciclo di raccolta requisiti PRIMA di eseguire task
+- Anti-improvvisazione forzata per contesto incompleto
 
-#### Memory Integration Module
-- **MemoryLoader**: Automatic memory loading at orchestrator startup
-- **ContextInjector**: Memory context injection into subagent prompts
-- **MemoryUpdater**: Auto-update MEMORY.md after sessions (threshold-based)
-- **Memory hierarchy**: Project Memory > User Memory > Global Memory
-- **Cross-session persistence**: Full state preservation across Claude Code sessions
-- **Compression**: Auto-compression when memory exceeds 30KB threshold
-- **Backup**: Single .bak file for rollback capability
+---
 
-#### Health Check Module
-- **Environment Check**: Verify required environment variables
-- **Agent Teams Check**: Validate feature flag and storage directories
-- **MCP Check**: Verify MCP server availability and deferred tools
-- **Memory Check**: Validate MEMORY.md existence and validity
-- **Skills Check**: Verify loaded skills and SKILL.md syntax
-- **Network Check**: Test connectivity to API endpoints (optional)
-- **Diagnostic Protocol**: Structured recovery recommendations
-- **Report Generation**: Formatted health check output
+## [V12.8] COMPLEXITY SCORING - 2026-03-06
 
-#### Observability Module
-- **Metrics Collection**: Task, agent, performance, and system health metrics
-- **Logging Protocol**: Structured JSON logging with correlation IDs
-- **Tracing**: OpenTelemetry-compatible trace spans
-- **Alerting Rules**: Severity-based alert definitions and routing
-- **Dashboard Template**: Grafana-compatible dashboard JSON
-- **Export Formats**: JSON, CSV, Prometheus formats
-- **Performance Profiling**: Task-level bottleneck identification
+### Added
+- STEP 4.5 COMPLEXITY SCORING for dynamic model assignment
+- 5-criteria scoring (0-10) replaces static "inherit" model
+- Score 0-6: haiku, Score 7-10: opus
 
-#### Test Suite
-- **47 Tests**: Across 7 categories (Health Check, Memory, Observability, Routing, Agent Teams, MCP, Integration)
-- **Critical Tests**: Environment, Feature Flag, Routing Table, Team Creation, End-to-End
-- **Test Runner**: Automated test execution with reporting
+---
 
-#### Enhanced Error Recovery
-- **Recovery Matrix**: Automatic recovery actions per error type
-- **Fallback Chains**: Primary -> Fallback 1 -> Fallback 2 agent routing
-- **Recovery Logging**: Dedicated recovery.log for troubleshooting
-- **Exponential Backoff**: For rate limits and transient failures
+## [V12.7] OUTPUT_MODE - 2026-03-06
 
-#### Documentation
-- **SKILL.md V10.0**: 1015 lines, 35KB comprehensive orchestrator documentation
-- **Modular Architecture**: 4 standalone module docs + 3 stub files
-- **YAML Frontmatter**: Proper skill metadata for Claude Code integration
+### Added
+- OUTPUT_MODE configuration (verbose/compact/silent)
+- Default: compact
+- Controls subagent output verbosity
 
-### Changed
+### Updated
+- EXECUTION RULES with rule 0
 
-#### Architecture
-- **Consolidated**: Routing table and team patterns now integrated in SKILL.md
-- **Deprecated**: routing-table.md, team-patterns.md, examples.md (kept as stub references)
-- **Streamlined**: Single SKILL.md with cross-references to modules
+---
 
-#### Agent Roster
-- **39 Agents**: L0 (6) + L1 (17) + L2 (16) complete hierarchy
-- **New L1 Agents**: Reverse Engineering Expert, Offensive Security Expert
-- **New L2 Agents**: Claude Prompt Optimizer, Architect Design Specialist, DevOps Pipeline Specialist
-
-#### Algorithm
-- **Step 2**: Added Memory Load before task decomposition
-- **Step 7**: Documentation now includes MemorySync operation
-- **Step 9**: Added Metrics Summary before final report
-- **Startup Sequence**: Added Phase 2 Health Check and Phase 3 Agent Roster Display
-
-#### Windows Support
-- **Enhanced**: NUL file deletion via Win32 API
-- **Documented**: in-process mode as default on Windows
+## [V12.6.1] AUDIT FIX - 2026-03-04
 
 ### Fixed
-
-- Memory not loading at orchestrator startup
-- No visibility into orchestrator operations
-- Error recovery was manual and inconsistent
-- No test coverage for orchestrator components
-- Temp files not cleaned up after sessions
-- Correlation IDs not propagated to subagents
-
-### Removed
-
-- Duplicate routing table content (now in SKILL.md only)
-- Redundant team pattern examples (now in SKILL.md only)
-- Separate examples file (now in SKILL.md only)
+- System Coordinator added to routing table
+- Skills count corrected to 30
+- V12.1 version duplication resolved
+- Learnings directory created
+- CHANGELOG.md regenerated
 
 ---
 
-## Migration Guide (V8.0 -> V10.0)
+## [V12.6] NO-IMPROVISE - 2026-03-04
 
-### No Breaking Changes
-V10.0 is fully backward compatible with V8.0. All existing orchestrator commands and patterns continue to work.
+### Added
+- Mandatory NO-IMPROVISE protocol: 100% context required before execution
+- Mandatory clarifying questions if context incomplete
+- NO assumptions/inventions directive
+- Programmer approval required for existing function modifications
 
-### New Features to Adopt
-
-#### 1. Memory Integration
-```
-Before: No memory context in subagents
-After:  Automatic memory context injection
-
-Action: Create MEMORY.md in project or user directory
-```
-
-#### 2. Health Check
-```
-Before: Manual debugging of configuration issues
-After:  Automatic health check on orchestrator startup
-
-Action: Run /orchestrator to see health check output
-```
-
-#### 3. Observability
-```
-Before: No metrics or tracing
-After:  Full metrics collection and dashboard support
-
-Action: Access metrics in session summary or export
-```
-
-#### 4. Test Suite
-```
-Before: No automated testing
-After:  47 tests across 7 categories
-
-Action: Run test suite for validation after changes
-```
-
-### Configuration Changes
-
-| Setting | V8.0 | V10.0 |
-|---------|------|-------|
-| Agent Teams | Optional | Recommended |
-| Memory | Not used | Auto-loaded |
-| Health Check | Manual | Automatic |
-| Observability | None | Built-in |
-
-### File Structure Changes
-
-```
-V8.0:
-~/.claude/skills/orchestrator/
-├── SKILL.md
-├── routing-table.md
-├── team-patterns.md
-├── examples.md
-└── skills-reference.md
-
-V10.0:
-~/.claude/skills/orchestrator/
-├── SKILL.md (expanded)
-├── memory-integration.md (NEW)
-├── health-check.md (NEW)
-├── observability.md (NEW)
-├── test-suite.md (NEW)
-├── routing-table.md (stub, deprecated)
-├── team-patterns.md (stub, deprecated)
-├── examples.md (stub, deprecated)
-├── skills-reference.md (updated)
-└── CHANGELOG.md (NEW)
-```
+### Enhanced
+- EXECUTION RULES with rules 4-5 added
+- Extended SUBAGENT PROTOCOL with NO-IMPROVISE enforcement
 
 ---
 
-## Score Improvement
+## [V12.5.2] - 2026-03-03
 
-| Category | V8.0 Score | V10.0 Score | Delta |
-|----------|------------|-------------|-------|
-| **Documentation** | 6/10 | 10/10 | +4 |
-| **Error Recovery** | 5/10 | 9/10 | +4 |
-| **Observability** | 2/10 | 10/10 | +8 |
-| **Test Coverage** | 0/10 | 9/10 | +9 |
-| **Memory Support** | 0/10 | 10/10 | +10 |
-| **Health Monitoring** | 3/10 | 10/10 | +7 |
-| **Overall Score** | **6/10** | **10/10** | **+4** |
+### Changed
+- Cleanup runs only at session end (Step 11), never at startup
+- Extended temp patterns coverage
 
-### Key Improvements
-
-1. **Memory Integration** - Full cross-session persistence (+10 points in category)
-2. **Health Check** - Proactive issue detection (+7 points in category)
-3. **Observability** - Complete metrics, logging, tracing (+8 points in category)
-4. **Test Suite** - 47 comprehensive tests (+9 points in category)
-5. **Error Recovery** - Automatic recovery matrix (+4 points in category)
-6. **Documentation** - Modular, comprehensive docs (+4 points in category)
+### Fixed
+- Clean session state maintained
+- Clean exit implementation
 
 ---
 
-## Version History
+## [V12.5] ROBUST CLEANUP - 2026-03-03
 
-| Version | Date | Codename | Description |
-|---------|------|----------|-------------|
-| V10.2.0 | 2026-02-21 | ULTRA | Notification Expert, Rule 4, Phase 4.5 Inter-Teammate Communication, 40 agents |
-| V10.0.0 | 2026-02-21 | ULTRA | Memory Integration, Health Check, Observability, Test Suite |
-| V8.0.0 | 2026-02-15 | SLIM | Agent Teams Edition, 39 agents |
-| V7.0.0 | 2026-02-10 | - | MCP Integration, LSP support |
-| V6.0.0 | 2026-02-05 | - | Parallel execution optimization |
-| V5.0.0 | 2026-01-28 | - | Windows support, cleanup automation |
+### Added
+- STEP 0.6 STARTUP CLEANUP with 25+ temp patterns
+- STEP 11.5 EMERGENCY CLEANUP with signal handlers
+- Enhanced SESSION HOOKS with cleanup hooks
 
----
+### Enhanced
+- STEP 11 with recursive scan
+- Logging and timeout handling
+- Orphan temp files cleanup
 
-## Roadmap
-
-### V10.3 (Planned)
-- [ ] Web dashboard for real-time metrics
-- [ ] Prometheus/Grafana integration
-- [ ] Custom alert webhooks
-
-### V11.0 (Future)
-- [ ] Machine learning for agent selection
-- [ ] Automatic task decomposition
-- [ ] Self-healing orchestrator
+### Fixed
+- Orphan temp files accumulation issue resolved
 
 ---
 
-**ORCHESTRATOR V10.2 ULTRA | FULLY INTEGRATED EDITION**
-*Score: 10/10 | All Systems Operational*
+## [V12.4] REQUEST PRE-PROCESSING - 2026-03-03
+
+### Added
+- STEP 0.5 for request pre-processing with complexity evaluation
+- New skill: prompt-engineering-patterns for expanding vague requests
+
+### Updated
+- Skills catalog: 31 total
+
+---
+
+## [V12.3] SKILL INTEGRATION - 2026-03-03
+
+### Added
+- python-performance-optimization to catalog
+- New SKILL INVOCATION section documenting skill vs agent usage patterns
+
+### Enhanced
+- Explicit skill mapping in slash commands
+- Skill tool invocation in Step 9
+
+### Updated
+- Skills catalog: 27 skills
+
+---
+
+## [V12.2] PROCESS MANAGER - 2026-02-28
+
+### Added
+- Centralized ProcessManager for Windows orphan process prevention
+- New file: lib/process_manager.py
+- New rules: rules/common/process-management.md (100 rules)
+- Tests: lib/tests/test_process_manager.py (45 tests)
+
+### Modified
+- MCP server integrated with ProcessManager
+
+---
+
+## [V12.1.1] VERBOSE START - 2026-02-28
+
+### Changed
+- SILENT_START default changed to false
+- Table now shown at both Step 5 AND Step 12 for better visibility
+
+---
+
+## [V12.1.0] SILENT START - 2026-02-28
+
+### Added
+- CONFIGURATION section with SILENT_START option (default: true)
+- Table always appears in FINAL REPORT (Step 12)
+
+### Modified
+- RULE 3 and STEP 5 to skip initial table output when silent
+
+---
+
+## [V12.0.3] FULL COHERENCE - 2026-02-27
+
+### Fixed
+- All 20 verification checks passed
+- 100% coherence achieved
+
+### Added
+- VERSION HISTORY clarification note
+- Token Budget verified
+
+---
+
+## [V12.0.2] AUTO-FIX - 2026-02-27
+
+### Fixed
+- Agent count 43 verified
+- Skills count 26 verified
+- Slash commands routing corrected
+- 5 docs V11->V12 version alignment
+- Deprecated refs removed
+- Workflow headers standardized
+- Agent structure standardization
+
+---
+
+## [V12.0.1] POST-AUDIT FIX - 2026-02-27
+
+### Fixed
+- Agent count verified (43)
+- MCP prefix standardization (web-reader)
+- Model inheritance docs (Opus 4.6 parent)
+- Multi-keyword matching rules
+- L2 model declarations (sonnet->inherit)
+- Docs version alignment to V12.0
+
+---
+
+## [V12.0] DEEP AUDIT - 2026-02-26
+
+### Fixed
+- Windows NUL code syntax
+- Version alignment (V12.0)
+- MCP web-reader prefix
+- Deprecated docs removed from REFERENCE
+- taskkill made optional
+- Token budget updated
+
+---
+
+## [V11.3] AUDIT FIX - 2026-02-26
+
+### Fixed
+- Step linear ordering (8→9→10→11→12)
+- Skills catalog (26)
+- NUL code fix
+- L2→L1 mapping
+- Error recovery post-retry
+
+### Enhanced
+- MCP section rewrite (native vs MCP)
+- Rules expanded
+- 4 ghost agents created
+
+---
+
+## [V11.2] AUDIT FIX - 2026-02-26
+
+### Fixed
+- Step ordering (verify->doc->cleanup)
+- Agent count (43)
+- 4 orphan agents routed
+- Routing dedup
+- Model column clarity
+
+---
+
+## [V11.1] BUGFIX - 2026-02-26
+
+### Fixed
+- Step ordering
+- Unified learning format
+- Routing fixes
+- Rules injection
+- Steps renumbered 1-13
+
+---
+
+## [V11.0] NEW GEN - 2026-02-26
+
+### Added
+- Continuous Learning system
+- Rules Engine
+- Session Hooks
+- 24 skills
+- Slash Commands
+- Verification loop
+- Strategic Compact
+
+### Reduced
+- Size optimization: ~490 lines vs 1082 in previous version
+
+---
+
+## [V10.2] ULTRA - 2026-02-21
+
+### Added
+- Notification Expert agent
+- Context Injection system
+- Inter-Teammate Communication
+
+### Enhanced
+- Fallback chains
+
+---
+
+## [V10.0] ULTRA - 2026-02-21
+
+### Added
+- Memory integration
+- Health Check system
+- Observability features
+- Error Recovery protocol
+
+---
+
+## [V8.0] SLIM - 2026-02-15
+
+### Added
+- Agent Teams support
+- 39 agents
+
+---
+
+## [V7.0] - 2026-02-10
+
+### Added
+- MCP Integration
+- LSP support
+
+---
+
+## [V5.0-6.0] - 2026-01-28
+
+### Added
+- Windows support
+- Parallel execution
+
+---
+
+**Current Version: V12.8**
+*Last updated: 2026-03-06*

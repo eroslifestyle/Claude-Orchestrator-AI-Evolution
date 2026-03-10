@@ -1,7 +1,7 @@
 {
-  "version": "17.0.0",
-  "codename": "Claude Tool Calling Core",
-  "last_audit": "2026-03-09",
+  "version": "18.1.0",
+  "codename": "Unified Evolution - Modular Architecture",
+  "last_audit": "2026-03-10",
   "agents": {
     "total": 43,
     "core": 6,
@@ -24,7 +24,7 @@
   },
   "docs_files": 30,
   "components": {
-    "orchestrator": "V17.0.0",
+    "orchestrator": "V12.9.1",
     "claude_tool_core": "V17.0.0",
     "rules_engine": "V2.0",
     "continuous_learning": "V2.0",
@@ -53,6 +53,7 @@
     "total_loc": "~25,000"
   },
   "changelog": {
+    "v18.1.0": "Unified Evolution: Modular SKILL.md (algorithm, routing, agents, error-recovery, anti-patterns, slash-commands), Rust/Java/C++ rules, ROUTING_TABLE.json sync, run_coverage scripts, VERSION.json V18.1.0",
     "v17.0.0": "Claude Tool Calling Core: 10K+ tools O(1), 4-layer discovery, Hybrid resilience, Warm cache L1+L2, Fine-grained streaming, Hierarchical budgets, Batch execution, Metrics dashboard, Prometheus exporter, WebSocket server, Cross-platform CI/CD",
     "v16.0.0": "Ultra-Massive Parallel: 10+ root tasks, 50+ agents/skills/plugins per task, Wave executor, Backpressure controller",
     "v15.2.0": "Ultra-parallel execution with ResourcePool 500+ resources",

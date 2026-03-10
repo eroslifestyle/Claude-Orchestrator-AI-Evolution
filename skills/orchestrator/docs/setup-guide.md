@@ -1,6 +1,6 @@
-# Setup Guide - Orchestrator V14.0.3 AI-NATIVE
+# Orchestrator Setup Guide V12.0
 
-> Step-by-step setup for the multi-agent orchestrator system with AI-Native features.
+> Step-by-step setup for the multi-agent orchestrator system.
 
 ---
 
@@ -71,46 +71,3 @@ Optional: Enable additional MCP servers (slack, firebase) by adding to the array
 - Run `/status` to verify system health
 - Run `/metrics` to see baseline metrics
 - Review VERSION.json for component versions
-
----
-
-## Optional Dependencies (V14.0.3)
-
-### Per Distributed Lock (multi-process):
-```bash
-pip install redis
-```
-
-### Per Latin Hypercube Sampling:
-```bash
-pip install scipy
-```
-
-### Per Gaussian Process completo:
-```bash
-pip install scikit-learn numpy
-```
-
-### Environment Variables
-```bash
-# Enable multi-process mode
-export CLAUDE_MULTI_PROCESS=true
-
-# Redis configuration (if using distributed lock)
-export REDIS_HOST=localhost
-export REDIS_PORT=6379
-```
-
----
-
-## Running Tests (V14.0.3)
-
-```bash
-# Run all V14.0.3 tests
-pytest lib/tests/test_predictive_cache_fixes.py -v
-pytest lib/tests/test_adaptive_budget_v14_1.py -v
-pytest lib/tests/test_ab_testing_multi_variant.py -v
-pytest lib/tests/test_auto_tuner_v14_0_2.py -v
-
-# Total: 91 tests
-```

@@ -1,8 +1,8 @@
-> Updated for V14.0.3: Test coverage 343 tests across 11 test files, including new tests for process_manager, lazy_agents, rule_excerpts.
+> Updated for V12.0: Test coverage expanded to include Rules Engine, Learning System, Skills System, Step Ordering, and 27 skills.
 
-# Orchestrator V14.0.3 Test Suite
+# Orchestrator V12.0 Test Suite
 
-> **Version:** 14.0.2 AI-Native | **Last Updated:** 2026-03-07
+> **Version:** 12.0 | **Last Updated:** 2026-02-27
 > **Purpose:** Comprehensive validation of Orchestrator V12.0 systems
 > **Total Tests:** 58 tests across 11 categories
 
@@ -1528,7 +1528,7 @@ Promotion output includes skill name and draft SKILL.md
 
 **Expected Result:**
 ```
-26 skill files found (24 catalog + fix + cleanup)
+27 skill files found (25 catalog + fix + cleanup)
 Each has valid YAML frontmatter with name, description, user-invokable fields
 ```
 

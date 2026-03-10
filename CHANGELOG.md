@@ -1,3 +1,29 @@
+## [2026-03-10] V18.1.0 - Unified Evolution & Modular Architecture
+
+### Added
+- **rules/rust/patterns.md**: Rust coding standards (ownership, borrowing, error handling, async)
+- **rules/java/patterns.md**: Java patterns (Spring Boot, dependency injection, testing)
+- **rules/cpp/patterns.md**: C++ patterns (modern C++17/20, RAII, memory management)
+- **scripts/run_coverage.sh**: Bash script for test coverage on Unix
+- **scripts/run_coverage.ps1**: PowerShell script for test coverage on Windows
+
+### Changed
+- **SKILL.md modularizzato**: Orchestrator SKILL.md ora include docs/ modulari (algorithm.md, routing.md, agents.md, error-recovery.md, anti-patterns.md, slash-commands.md)
+- **VERSION.json**: Aggiornato a V18.1.0, orchestrator V12.9.1
+- **ROUTING_TABLE.json**: Sincronizzato con agent system locale
+
+### Fixed
+- Sincronizzazione completa lib/ (tutti i moduli Python V17)
+- Sincronizzazione skills/orchestrator/ (docs/, SKILL.md, config files)
+- Rimossi file obsoleti e duplicati
+
+### Technical Details
+- Files copiati: 150+ (lib/, skills/, rules/, scripts/)
+- Orchestrator version: V12.9.1 (modular docs)
+- Rules engine: 11 files (common + python + typescript + go + rust + java + cpp)
+
+---
+
 ## [2026-02-18] Orchestrator SKILL.md - Agent Teams Gap Fix
 
 ### Modifiche applicate

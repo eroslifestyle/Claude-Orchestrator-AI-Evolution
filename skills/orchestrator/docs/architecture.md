@@ -1,4 +1,4 @@
-# Orchestrator System Architecture V15.1.0
+# Orchestrator System Architecture V12.8
 
 > Complete system architecture documentation for the multi-agent orchestrator.
 
@@ -9,7 +9,7 @@
 ```
 ================================================================================
                         ORCHESTRATOR SYSTEM ARCHITECTURE
-                              V15.1.0 AI-NATIVE FACADE
+                              V12.8 DEEP AUDIT
 ================================================================================
 
 USER REQUEST
@@ -129,7 +129,7 @@ Task-specific specialists with parent fallback:
 
 ---
 
-## Skills Layer (26 Skills)
+## Skills Layer (27 Skills)
 
 ### Core Skills (7)
 
@@ -143,14 +143,13 @@ Task-specific specialists with parent fallback:
 | api-design | skills/api-design/ | API architecture |
 | remotion-best-practices | skills/remotion-best-practices/ | Video generation |
 
-### Utility Skills (6)
+### Utility Skills (5)
 
 | Skill | Location | Purpose |
 |-------|----------|---------|
 | strategic-compact | skills/strategic-compact/ | Context management |
 | verification-loop | skills/verification-loop/ | Result validation |
 | checkpoint | skills/checkpoint/ | Session state persistence |
-| sessions | skills/sessions/ | Session management |
 | status | skills/status/ | System health |
 | metrics | skills/metrics/ | Performance tracking |
 
@@ -167,13 +166,20 @@ Task-specific specialists with parent fallback:
 | fix | skills/fix/ | Bug fixing |
 | cleanup | skills/cleanup/ | Session cleanup |
 
-### Language Skills (3)
+### Language Skills (4)
 
 | Skill | Location | Purpose |
 |-------|----------|---------|
 | python-patterns | skills/python-patterns/ | Python best practices |
+| python-performance-optimization | skills/python-performance-optimization/ | Python profiling and optimization |
 | typescript-patterns | skills/typescript-patterns/ | TypeScript best practices |
 | go-patterns | skills/go-patterns/ | Go best practices |
+
+### Prompt Engineering Skills (1)
+
+| Skill | Location | Purpose |
+|-------|----------|---------|
+| prompt-engineering-patterns | skills/prompt-engineering-patterns/ | Advanced prompt engineering techniques |
 
 ### Learning Skills (2)
 
@@ -496,287 +502,13 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 
 ---
 
-## AI-NATIVE Architecture (V15.1.0)
-
-### Facade Pattern API (V15.1.0)
-
-```
-================================================================================
-                     UNIFIED FACADE API - 17 NAMESPACES
-================================================================================
-
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        ORCHESTRATOR FACADE                               │
-│                         (129 Total Exports)                              │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│  selection          cache             chaos            distributed       │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │AgentSelector │  │Predictive    │  │ChaosInjector │  │Distributed   │ │
-│  │AgentPerfDB   │  │AgentCache    │  │ChaosConfig   │  │LockManager   │ │
-│  │              │  │              │  │FailureType   │  │RedisBackend  │ │
-│  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘ │
-│                                                                          │
-│  routing            hot_reload        rate_limiter     exceptions        │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │RoutingEngine │  │PluginHot     │  │Adaptive      │  │Orchestrator  │ │
-│  │     V2       │  │Reloader      │  │RateLimiter   │  │Error + 6     │ │
-│  │              │  │VersionTrack  │  │TokenBucket   │  │custom exc    │ │
-│  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘ │
-│                                                                          │
-│  file_locks         process_manager   skill_interface  skill_plugin     │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │FileLock      │  │ProcessManager│  │SkillBase     │  │SkillPlugin   │ │
-│  │LockBackend   │  │CleanupHandler│  │SkillResult   │  │PluginLoader  │ │
-│  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘ │
-│                                                                          │
-│  predictive_cache   adaptive_budget   ab_testing       auto_tuner       │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │PatternEngine │  │Complexity    │  │ABTesting     │  │AutoTuner     │ │
-│  │StorageTiers  │  │Assessment    │  │Framework     │  │BayesianOpt   │ │
-│  │ColdStart     │  │DynamicBudget │  │ZTest/ChiSq   │  │UCBAcquisition│ │
-│  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘ │
-│                                                                          │
-│  lazy_agents        rule_excerpts                                          │
-│  ┌──────────────┐  ┌──────────────┐                                       │
-│  │LazyL2Loader  │  │RuleExcerpts  │                                       │
-│  │AgentCache    │  │Index         │                                       │
-│  └──────────────┘  └──────────────┘                                       │
-│                                                                          │
-│  DIRECT EXPORTS (112 classes/functions)                                  │
-│  ─────────────────────────────────────────────────────                   │
-│  agent_performance, routing_engine, migrations, etc.                     │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-### Namespace Details
-
-| Namespace | Classes/Functions | Purpose |
-|-----------|-------------------|---------|
-| **selection** | AgentSelector, AgentPerformanceDB | ML-based agent selection with performance tracking |
-| **cache** | PredictiveAgentCache | Pattern recognition, agent preloading |
-| **chaos** | ChaosInjector, ChaosConfig, FailureType | Chaos engineering for resilience testing |
-| **distributed** | DistributedLockManager, RedisLockBackend | Multi-process distributed locking |
-| **routing** | RoutingEngineV2 | 4-layer keyword matching for task routing |
-| **hot_reload** | PluginHotReloader, VersionTracker | Hot reload for skill plugins |
-| **rate_limiter** | AdaptiveRateLimiter, TokenBucket | Adaptive rate limiting (10-1000 req/s) |
-| **exceptions** | OrchestratorError + 6 custom | Exception hierarchy with chaining |
-| **file_locks** | FileLock, LockBackend | Cross-platform file locking |
-| **process_manager** | ProcessManager, CleanupHandler | Process lifecycle management |
-| **skill_interface** | SkillBase, SkillResult | Skill interface definitions |
-| **skill_plugin** | SkillPlugin, PluginLoader | Plugin loading and management |
-| **predictive_cache** | PatternEngine, StorageTiers | V14.0.3 predictive caching |
-| **adaptive_budget** | ComplexityAssessment, DynamicBudget | V14.0.3 token budgeting |
-| **ab_testing** | ABTestingFramework, ZTest, ChiSq | V14.0.3 statistical testing |
-| **auto_tuner** | AutoTuner, BayesianOpt, UCB | V14.0.3 hyperparameter optimization |
-| **lazy_agents** | LazyL2Loader | V13.1 lazy loading for L2 specialists |
-| **rule_excerpts** | RuleExcerpts, Index | V13.1 pre-computed rule excerpts |
-
-### V15.1.0 New Lib Modules
-
-| Module | Lines | Purpose |
-|--------|-------|---------|
-| `lib/facade.py` | 350+ | Unified API with 17 namespaces |
-| `lib/routing_engine.py` | 280+ | RoutingEngineV2 with 4-layer matching |
-| `lib/chaos.py` | 450+ | ChaosInjector, ChaosConfig, FailureType |
-| `lib/distributed_lock.py` | 320+ | DistributedLockManager, RedisLockBackend |
-| `lib/hot_reload.py` | 280+ | PluginHotReloader with version tracking |
-| `lib/exceptions.py` | 180+ | Custom exception hierarchy |
-
-### Predictive Cache
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                  PredictiveAgentCache V15.1.0               │
-├─────────────────────────────────────────────────────────────┤
-│  Task Input → Pattern Engine → Agent Predictions           │
-│                                                              │
-│  Storage Tiers:                                              │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐                  │
-│  │ HOT 200  │→ │ WARM 800 │→ │ COLD 500 │                  │
-│  │ patterns │  │ patterns │  │ precious │                  │
-│  └──────────┘  └──────────┘  └──────────┘                  │
-│                                                              │
-│  Cold Start Fallback:                                        │
-│  AgentUsageTracker → Keyword mapping → Default predictions  │
-│                                                              │
-│  Distributed Lock (optional):                                │
-│  ENV[CLAUDE_MULTI_PROCESS=true] → Redis lock                │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Adaptive Budget
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                 AdaptiveTokenBudget V15.1.0                 │
-├─────────────────────────────────────────────────────────────┤
-│  Task → Complexity Assessment → Token Budget               │
-│                                                              │
-│  Adaptive Thresholds (auto-adjust):                         │
-│  - simple:   25th percentile of distribution                │
-│  - medium:   50th percentile (median)                       │
-│  - complex:  75th percentile                                │
-│  - Update: 10% adjustment per 100+ samples                  │
-│                                                              │
-│  Dynamic Rule Budget:                                        │
-│  - Base: 35%                                                 │
-│  - High keyword density: +10%                               │
-│  - Security domain: +15%                                    │
-│  - New project: +10%                                         │
-│  - Range: 20% - 60%                                          │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### A/B Testing
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                  ABTestingFramework V15.1.0                 │
-├─────────────────────────────────────────────────────────────┤
-│  Multi-Variant Support (A/B/C/D):                           │
-│                                                              │
-│  Experiment Configuration:                                   │
-│  - variants: List[RoutingStrategy] (2-4)                    │
-│  - weights: List[float] (e.g., [0.5, 0.3, 0.2])            │
-│                                                              │
-│  Statistical Tests:                                          │
-│  - 2 variants: Z-test (alpha=0.05)                          │
-│  - 3+ variants: Chi-square test                             │
-│  - Min samples: 30 per variant                              │
-│                                                              │
-│  Assignment: SHA-256 hash → weighted distribution           │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Auto-Tuner
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      AutoTuner V15.1.0                      │
-├─────────────────────────────────────────────────────────────┤
-│  Gaussian Process Regressor:                                 │
-│  - Kernel: RBF with length_scale=0.5                        │
-│  - Fit: Cholesky decomposition (fallback: pseudo-inverse)   │
-│  - Predict: Posterior mean + variance                       │
-│                                                              │
-│  Adaptive Candidates:                                        │
-│  - Formula: sqrt(dimensions) * base_factor                  │
-│  - base_factor: 10 (early), 5 (medium), 3 (exploitation)   │
-│  - Range: max(5, 2*dim) to 100                              │
-│                                                              │
-│  Candidate Generation: Latin Hypercube Sampling             │
-│  Acquisition Function: UCB (mu + kappa * sigma)            │
-│  Kappa Decay: 0.95 per iteration, min 0.1                   │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Chaos Engineering (V15.1.0)
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    ChaosInjector V15.1.0                    │
-├─────────────────────────────────────────────────────────────┤
-│  Failure Types:                                              │
-│  - LATENCY: Inject random delays (10-5000ms)               │
-│  - ERROR: Force specific exceptions                         │
-│  - TIMEOUT: Simulate operation timeouts                     │
-│  - RESOURCE: CPU/memory pressure simulation                 │
-│  - NETWORK: Packet loss, connection drops                   │
-│                                                              │
-│  Configuration:                                              │
-│  - rate: float (0.0-1.0) probability per operation         │
-│  - enabled_failures: Set[FailureType]                       │
-│  - target_agents: Optional[Set[str]] for scoping           │
-│                                                              │
-│  Integration: Decorator pattern for agent methods          │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Distributed Lock (V15.1.0)
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│               DistributedLockManager V15.1.0                │
-├─────────────────────────────────────────────────────────────┤
-│  Backends:                                                   │
-│  - RedisLockBackend: Production multi-process              │
-│  - FileLockBackend: Single-process fallback                │
-│                                                              │
-│  Features:                                                   │
-│  - TTL-based expiration (default: 30s)                     │
-│  - Automatic retry with backoff                            │
-│  - Deadlock detection via heartbeat                        │
-│  - Context manager support (with statement)                │
-│                                                              │
-│  Trigger: ENV[CLAUDE_MULTI_PROCESS=true]                   │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Routing Engine V2 (V15.1.0)
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                   RoutingEngineV2 V15.1.0                   │
-├─────────────────────────────────────────────────────────────┤
-│  4-Layer Keyword Matching:                                  │
-│  1. Exact Match: Task keyword = Agent keyword (score: 1.0) │
-│  2. Synonym Match: Known synonyms (score: 0.8)             │
-│  3. Semantic Match: Embedding similarity (score: 0.6)      │
-│  4. Fallback Match: Default routing (score: 0.3)           │
-│                                                              │
-│  Agent Selection:                                            │
-│  - Weighted scoring across all layers                       │
-│  - Performance history integration                          │
-│  - L2 specialist -> L1 parent fallback                      │
-│                                                              │
-│  Performance: 9000+ ops/sec, <1ms latency                   │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Hot Reload (V15.1.0)
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                  PluginHotReloader V15.1.0                  │
-├─────────────────────────────────────────────────────────────┤
-│  Features:                                                   │
-│  - File watcher (watchdog) for skill directories           │
-│  - Version tracking per plugin                              │
-│  - Graceful reload without session interruption            │
-│  - Rollback on failed reload                               │
-│                                                              │
-│  Configuration:                                              │
-│  - watch_paths: List[Path]                                  │
-│  - debounce_ms: 500 (default)                              │
-│  - auto_reload: bool (default: True)                       │
-│                                                              │
-│  Events: on_reload, on_error, on_rollback                  │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### V15.1.0 Performance Targets
-
-| Metric | V14.0.3 | V15.1.0 | Improvement |
-|--------|---------|---------|-------------|
-| Facade Exports | 0 | 129 | NEW |
-| Routing Layers | 1 | 4 | +300% |
-| Chaos Types | 0 | 5 | NEW |
-| Lock Backends | 1 | 2 | +100% |
-| Exception Types | 1 | 7 | +600% |
-| Test Coverage | 85% | 85%+ | Maintained |
-
----
-
 ## Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
-| **V15.1.0** | 2026-03-08 | FACADE API: 17 namespaces, 129 exports, RoutingEngineV2 (4-layer), ChaosInjector (5 types), DistributedLockManager, PluginHotReloader, custom exception hierarchy, +173 tests |
-| **V14.0.3** | 2026-03-07 | AI-NATIVE: PredictiveAgentCache, AdaptiveTokenBudget, ABTestingFramework, AutoTuner, 4 new lib modules (~3208 lines), 54 new tests |
-| **V13.1** | 2026-03-07 | Super-Performance: DB indexes, Rule Excerpts, Lazy L2 loading, 6 bug fixes (HIGH L-6, MEDIUM H-3, M-2, M-1, M-1x2) |
-| **V13.0** | 2026-03-07 | Dynamic Agent Selection, Plugin Skills, File Locks, 5 new lib modules, bug fixes (3 CRITICAL, 4 HIGH) |
-| **V11.3.1 AUDIT FIX** | 2026-02-26 | Deep audit: ~90 issues found, 22 fix categories, Windows syntax, routing entries, MCP honesty, subagent MCP access, learning threshold (0.5->0.6), multi-tag evolution |
+| **V12.8 DEEP AUDIT** | 2026-03-06 | Skills count updated (27): added python-performance-optimization, prompt-engineering-patterns; removed non-existent sessions skill |
+| V12.0 DEEP AUDIT | 2026-02-26 | Deep audit: ~90 issues found, 22 fix categories, Windows syntax, routing entries, MCP honesty, subagent MCP access, learning threshold (0.5->0.6), multi-tag evolution |
+| V11.3 AUDIT FIX | 2026-02-26 | 67 issues: MCP rewrite, step ordering, skills catalog (26), 4 ghost agents, NUL fix, L2->L1 mapping |
 | V11.3 AUDIT FIX | 2026-02-26 | 67 issues: MCP rewrite, step ordering, skills catalog (26), 4 ghost agents, NUL fix, L2->L1 mapping |
 | V11.2 AUDIT FIX | 2026-02-26 | 34 issues: step reorder, agent count (43), 4 orphans routed |
 | V11.1 BUGFIX | 2026-02-26 | 24 fixes: step ordering, learning format, routing |
@@ -794,52 +526,16 @@ context7, github, gitlab, serena, playwright, stripe, supabase, greptile, linear
 | Metric | Value |
 |--------|-------|
 | Total Agents | 43 (6 core + 22 L1 + 15 L2) |
-| Total Skills | 32 (7 core + 8 utility + 9 workflow + 4 language + 2 learning + 2 plugin) |
-| Rules Files | 11 (6 common + 3 language + README + format-standard) |
+| Total Skills | 27 (7 core + 5 utility + 8 workflow + 4 language + 1 prompt + 2 learning) |
+| Rules Files | 10 (6 common + 3 language + README) |
 | MCP Servers | 3 configured (1 active, 2 inactive) |
 | Native Tools | 4 (canva, web-reader, web-search-prime, zai-mcp-server) |
-| Facade Exports | 129 (17 namespaces + 112 direct) |
-| Documentation | 25 files in docs/ |
+| Documentation | 14 files in docs/ |
 | Templates | 3 |
 | Workflows | 4 |
-| Version | 15.1.0 AI-NATIVE FACADE ARCHITECTURE |
+| Version | 12.8 DEEP AUDIT |
 
 ---
 
----
-
-## V13.1 Super-Performance Upgrade
-
-### New Lib Modules
-
-| Module | Lines | Purpose |
-|--------|-------|---------|
-| `lib/migrations/add_agent_score_index.sql` | 22 | DB indexes for agent_metrics |
-| `lib/rule_excerpts.py` | 134 | Pre-computed rule excerpts system |
-| `lib/rule_excerpts_index.json` | 112 | Index for rule categories |
-| `lib/lazy_agents.py` | 320 | Lazy loading for L2 specialists |
-
-### Performance Improvements
-
-| Metric | V13.0 | V13.1 | Improvement |
-|--------|-------|-------|-------------|
-| DB Query Latency | <10ms | <5ms | 20-40% faster |
-| Rules I/O Tokens | ~3000 | ~500 | 70-83% reduction |
-| L2 Agent Memory | 15 loaded | Max 10 loaded | 30% reduction |
-| Startup Time | ~2s | ~1.2s | 40% reduction |
-
-### Bug Fixes (6 total)
-
-| ID | Severity | Bug | Fix |
-|----|----------|-----|-----|
-| L-6 | HIGH | Signal handler deadlock | SystemExit vs sys.exit() |
-| H-3 | MEDIUM | _save_to_disk() lock during I/O | Separate I/O from lock |
-| M-2 | MEDIUM | shutdown() not waiting for flush | Add thread join |
-| M-1 | MEDIUM | _async_events memory leak | cleanup_async_events() |
-| M-1 | MEDIUM | cleanup() exception ignored | Track failures |
-| - | MEDIUM | Missing DB indexes | 3 composite indexes |
-
----
-
-**ORCHESTRATOR SYSTEM ARCHITECTURE V15.1.0 AI-NATIVE FACADE**
-*Unified Facade API. 17 namespaces. 129 exports. 9000+ ops/sec.*
+**ORCHESTRATOR SYSTEM ARCHITECTURE V12.8 DEEP AUDIT**
+*Shorter prompts. Better compliance. Continuous learning.*

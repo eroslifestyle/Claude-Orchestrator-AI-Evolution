@@ -1,8 +1,6 @@
-> Updated for V14.0.3: Health checks now include AI-Native features (Predictive Cache, Adaptive Budget, A/B Testing, Auto-Tuner).
+> Updated for V12.0 DEEP AUDIT: Health checks now include Rules loading status and Learning system integrity.
 
-# Health Check Module V14.0.3
-
-> **Version:** 14.0.2 AI-Native | **Last Updated:** 2026-03-07
+# Health Check Module V12.0
 
 ## Overview
 
@@ -806,7 +804,6 @@ if results['overall_status'] != 'OK':
 
 | Version | Date | Changes |
 |---------|------|---------|
-| V13.0 | 2026-03-07 | Dynamic Agent Selection, Plugin Skills, File Locks validation |
 | V12.0 | 2026-02-26 | Deep audit complete, aligned with orchestrator V12.0 DEEP AUDIT |
 | 10.2 | 2026-02-21 | Updated to Orchestrator V10.2 with enhanced MCP plugin integration |
 | 10.0 | 2026-02-21 | Initial release for Orchestrator V10.0 |
