@@ -154,10 +154,10 @@
     "superpowers@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "C:\\Users\\LeoDg\\.claude\\plugins\\cache\\claude-plugins-official\\superpowers\\4.3.1",
-        "version": "4.3.1",
+        "installPath": "C:\\Users\\LeoDg\\.claude\\plugins\\cache\\claude-plugins-official\\superpowers\\5.0.0",
+        "version": "5.0.0",
         "installedAt": "2026-01-29T21:20:46.852Z",
-        "lastUpdated": "2026-03-08T16:28:42.450Z",
+        "lastUpdated": "2026-03-10T07:33:15.542Z",
         "gitCommitSha": "469a6d81ebb8b827e284d4afb090c6c622d97747"
       }
     ],
