@@ -6,10 +6,65 @@ user-invocable: true
 argument-hint: "[original request]"
 ---
 
-# Prompt Engineering Patterns V1.0
+# Prompt Engineering Patterns V2.0
 
 > **Purpose:** Pre-process and optimize user requests before orchestrator execution.
 > **Trigger:** Vague, ambiguous, or incomplete requests that need expansion.
+
+---
+
+## CONTEXT-FIRST PRINCIPLE
+
+**CRITICAL:** Always structure expanded requests with context BEFORE the specific query.
+
+### Why Context First?
+1. LLMs process information sequentially - context primes the model
+2. Reduces hallucinations by establishing ground truth first
+3. Improves relevance by setting domain boundaries
+
+### Context-First Template
+
+```markdown
+## CONTEXT (Establish Ground Truth)
+[Background information, current state, constraints, why this matters]
+
+## GOAL (What Success Looks Like)
+[Specific outcome, measurable criteria]
+
+## CONSTRAINTS (Boundaries)
+[What must be preserved, limitations, requirements]
+
+## REQUEST (Specific Action)
+[The actual task to perform]
+```
+
+### WRONG vs RIGHT
+
+**WRONG (Query First):**
+```markdown
+Fix the authentication bug. We're using JWT tokens with 24h expiry
+and the issue is users are getting logged out after 5 minutes.
+```
+
+**RIGHT (Context First):**
+```markdown
+## Context
+We use JWT authentication with 24-hour token expiry. Sessions are
+stored in Redis with user ID mapping. Recent logs show users being
+logged out after approximately 5 minutes of activity.
+
+## Goal
+Users should remain logged in for the full 24-hour token duration.
+
+## Constraints
+- Cannot change token expiry time (security policy)
+- Must maintain Redis session storage
+- No breaking changes to existing API
+
+## Request
+Investigate why sessions expire early and implement a fix that
+preserves the 24-hour session duration.
+```
 
 ---
 
@@ -68,32 +123,205 @@ When invoked by the orchestrator for request optimization:
 | "clean up" | Identify smells → Apply clean code → Document |
 ```
 
-### STEP 4: OUTPUT OPTIMIZED REQUEST
+### STEP 4: OUTPUT OPTIMIZED REQUEST (XML STRUCTURE)
 
-```markdown
-## OPTIMIZED REQUEST
+Output the optimized request using XML tags for clear structure:
 
-### Original
-[Original user request verbatim]
+```xml
+<optimized_request>
+  <original>
+    [Original user request verbatim]
+  </original>
 
-### Task Type
-[BUG_FIX | FEATURE | REFACTOR | ANALYSIS | DEBUG | TEST | SECURITY | PERFORMANCE | INTEGRATION]
+  <task_type>
+    [BUG_FIX | FEATURE | REFACTOR | ANALYSIS | DEBUG | TEST | SECURITY | PERFORMANCE | INTEGRATION | MULTI-TASK]
+  </task_type>
 
-### Expanded Request
-[Detailed, specific request with all necessary information]
+  <context>
+    [Why this task matters - business context, user impact, technical background]
+  </context>
 
-### Suggested Approach
-1. [First step]
-2. [Second step]
-...
+  <expanded_request>
+    [Detailed, specific request with all necessary information]
 
-### Files Likely Involved
-- [file path 1]
-- [file path 2]
+    Include:
+    - What needs to be done (specific actions)
+    - Constraints and requirements
+    - Expected behavior changes
+  </expanded_request>
 
-### Success Criteria
-- [Criterion 1]
-- [Criterion 2]
+  <approach>
+    <step_1>[First step with specific action]</step_1>
+    <step_2>[Second step with specific action]</step_2>
+    <step_3>[Third step if needed]</step_3>
+  </approach>
+
+  <files_likely>
+    <file path="[file path 1]" reason="[why this file]" />
+    <file path="[file path 2]" reason="[why this file]" />
+  </files_likely>
+
+  <success_criteria>
+    <criterion>[Specific measurable criterion 1]</criterion>
+    <criterion>[Specific measurable criterion 2]</criterion>
+  </success_criteria>
+
+  <anti_patterns>
+    [What NOT to do - common mistakes to avoid]
+  </anti_patterns>
+</optimized_request>
+```
+
+---
+
+## FEW-SHOT EXAMPLES
+
+> **CRITICAL:** Examples are the most reliable method to guide output. Include 3-5 examples per task type.
+
+### BUG_FIX Examples
+
+**Example 1: Vague Bug Report**
+```xml
+<optimized_request>
+  <original>fix the login</original>
+  <task_type>BUG_FIX</task_type>
+  <context>Login functionality reported as broken but no specific details provided.</context>
+  <expanded_request>
+    Debug and fix login:
+    1. Identify specific symptoms (error message, unexpected behavior)
+    2. Check authentication flow (credentials -> validation -> session)
+    3. Implement minimal fix
+    4. Add regression test
+  </expanded_request>
+  <approach>
+    <step_1>Ask user for specific symptoms and error messages</step_1>
+    <step_2>Read auth files to understand current implementation</step_2>
+    <step_3>Identify and fix root cause</step_3>
+    <step_4>Verify fix and add test</step_4>
+  </approach>
+  <success_criteria>
+    <criterion>Login works for valid credentials</criterion>
+    <criterion>Appropriate error for invalid credentials</criterion>
+  </success_criteria>
+</optimized_request>
+```
+
+**Example 2: Error with Stack Trace**
+```xml
+<optimized_request>
+  <original>Fix TypeError in cart checkout - Cannot read property 'price' of undefined</original>
+  <task_type>BUG_FIX</task_type>
+  <context>TypeError during checkout when accessing price property on undefined object.</context>
+  <expanded_request>
+    Fix TypeError by adding null check for price property access.
+    Location: cart/checkout.ts line 42 based on stack trace.
+  </expanded_request>
+  <files_likely>
+    <file path="cart/checkout.ts" reason="Error location from stack trace" />
+    <file path="cart/types.ts" reason="Type definitions for cart items" />
+  </files_likely>
+  <success_criteria>
+    <criterion>No TypeError on checkout</criterion>
+    <criterion>Handles missing price gracefully</criterion>
+  </success_criteria>
+</optimized_request>
+```
+
+### FEATURE Examples
+
+**Example 1: Vague Feature Request**
+```xml
+<optimized_request>
+  <original>add dark mode</original>
+  <task_type>FEATURE</task_type>
+  <context>Implement dark mode theme support for better user experience in low-light conditions.</context>
+  <expanded_request>
+    Add dark mode:
+    1. Create CSS variables for dark theme
+    2. Add theme toggle component
+    3. Persist preference in localStorage
+    4. Apply theme to all pages
+  </expanded_request>
+  <files_likely>
+    <file path="styles/theme.css" reason="Theme variables" />
+    <file path="components/ThemeToggle.tsx" reason="Toggle component" />
+    <file path="context/ThemeContext.tsx" reason="Theme state management" />
+  </files_likely>
+  <success_criteria>
+    <criterion>Toggle works correctly</criterion>
+    <criterion>Preference persisted across sessions</criterion>
+    <criterion>All pages support dark mode</criterion>
+  </success_criteria>
+  <anti_patterns>
+    - Do NOT redesign entire UI
+    - Do NOT add unrelated features
+    - Focus ONLY on theme switching
+  </anti_patterns>
+</optimized_request>
+```
+
+### REFACTOR Examples
+
+**Example 1: Code Quality Refactor**
+```xml
+<optimized_request>
+  <original>clean up auth module</original>
+  <task_type>REFACTOR</task_type>
+  <context>Auth module needs clean code improvements for better maintainability.</context>
+  <expanded_request>
+    Refactor auth module:
+    1. Extract duplicated logic into helper functions
+    2. Improve variable and function naming
+    3. Split large functions (>30 lines)
+    4. Remove dead code
+    Keep same functionality - no behavior changes.
+  </expanded_request>
+  <files_likely>
+    <file path="auth/*.ts" reason="Auth module files" />
+  </files_likely>
+  <success_criteria>
+    <criterion>All tests still pass</criterion>
+    <criterion>Code coverage maintained or improved</criterion>
+    <criterion>No functional changes to external API</criterion>
+    <criterion>Each function < 30 lines</criterion>
+  </success_criteria>
+  <anti_patterns>
+    - Do NOT change behavior
+    - Do NOT add new features
+    - Do NOT modify public API
+  </anti_patterns>
+</optimized_request>
+```
+
+### MULTI-TASK Examples
+
+**Example 1: Multiple Vague Tasks**
+```xml
+<optimized_request>
+  <original>fix bugs and improve performance</original>
+  <task_type>MULTI-TASK [BUG_FIX, PERFORMANCE]</task_type>
+  <context>Multiple improvements needed but specific bugs and performance issues not identified.</context>
+  <expanded_request>
+    Two-phase approach:
+    Phase 1: Identify and fix bugs (critical bugs first)
+    Phase 2: Profile and optimize performance (after bugs fixed for stable baseline)
+
+    Need clarification:
+    - Which specific bugs?
+    - What performance metrics to improve?
+    - Any specific areas of concern?
+  </expanded_request>
+  <approach>
+    <step_1>Ask user for specific bug reports and performance concerns</step_1>
+    <step_2>Fix identified bugs first</step_2>
+    <step_3>Profile application to find bottlenecks</step_3>
+    <step_4>Optimize identified bottlenecks</step_4>
+  </approach>
+  <success_criteria>
+    <criterion>Reported bugs fixed</criterion>
+    <criterion>Performance improved by measurable metrics</criterion>
+  </success_criteria>
+</optimized_request>
 ```
 
 ---
@@ -459,5 +687,6 @@ This skill returns the optimized request, which the orchestrator uses for task d
 
 ---
 
-**PROMPT ENGINEERING PATTERNS V1.0**
+**PROMPT ENGINEERING PATTERNS V2.0**
 *Better input. Better output. Optimized for orchestrator.*
+*New: Context-First Principle + XML Structure Output*

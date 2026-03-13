@@ -3,13 +3,24 @@ name: Agent Registry
 description: Centralized registry for agent routing and keyword mapping
 ---
 
-# AGENT REGISTRY V2.0 - Registro Centralizzato Competenze
+# AGENT REGISTRY V3.0 - Registro Centralizzato Competenze
 
-> **Versione:** 6.0 - L2 Sub-Agents Integration
-> **Data:** 2 Febbraio 2026
+> **Versione:** 18.0.0 - Single Source of Truth
+> **Data:** 10 Marzo 2026
 > **Scopo:** Mappatura COMPLETA task → agent per routing automatico (3 livelli)
 > **Usato da:** orchestrator.md per selezione agent
 > **Totale Agent:** 43 (6 Core + 22 L1 Expert + 15 L2 Specialist)
+
+---
+
+## SINGLE SOURCE OF TRUTH
+
+> **IMPORTANTE:** La routing table autorevole è in `agents/system/ROUTING_TABLE.json`
+>
+> Questo file documenta la struttura e le regole, ma i dati di routing
+> (keywords, model, tier, fallback) sono definiti nel JSON.
+>
+> **Per aggiornare la routing table:** Modificare `ROUTING_TABLE.json`
 
 ---
 
