@@ -193,4 +193,4 @@ Any Agent refuses → Same Agent + OVERRIDE → Fallback Agent + OVERRIDE → ge
 
 ---
 
-*Error Recovery Module V12.1 - Orchestrator Extension (Agent Refusal Recovery added)*
+*Error Recovery Module V18.2.0 - Orchestrator Extension (Agent Refusal Recovery added)*

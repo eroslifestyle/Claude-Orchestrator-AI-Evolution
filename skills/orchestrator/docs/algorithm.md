@@ -1,6 +1,6 @@
 # Orchestrator Algorithm (Steps 0-12)
 
-> **Version:** V12.9.1 | **Parent:** [SKILL.md](../SKILL.md)
+> **Version:** V18.2.0 | **Parent:** [SKILL.md](../SKILL.md)
 
 ---
 

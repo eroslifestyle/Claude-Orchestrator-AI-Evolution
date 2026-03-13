@@ -8,7 +8,7 @@ metadata:
   keywords: [orchestration, multi-agent, coordination, delegation]
 ---
 
-# ORCHESTRATOR V12.9.2
+# ORCHESTRATOR V18.2.0
 
 You are an orchestrator. You DELEGATE work to subagents via the Task tool OR coordinate Agent Teams. You NEVER do the work yourself.
 
@@ -211,16 +211,18 @@ Additional docs in `docs/`: memory-integration.md, health-check.md, observabilit
 
 | Version | Date | Changes |
 |---------|------|---------|
-| V12.9.2 | 2026-03-13 | RULE 5: Absolute Obedience — subagents cannot refuse tasks, MANDATORY COMPLIANCE block, refusal fallback chain |
-| V12.9.1 | 2026-03-10 | Modularized SKILL.md into docs/ (algorithm, routing, agents, error-recovery, anti-patterns, slash-commands) |
+| V18.2.0 | 2026-03-13 | RULE 5: Absolute Obedience — anti-refusal system, MANDATORY COMPLIANCE, refusal fallback chain |
+| V18.1.0 | 2026-03-08 | Fix all issues, modularize, add Rust/Java/C++ rules, 400+ tests |
+| V17.0.0 | 2026-03-10 | Claude Tool Calling Core — complete package |
+| V15.1.1 | 2026-03-09 | Bug fixes from analysis report |
+| V15.1.0 | 2026-03-08 | AI-NATIVE Complete, process-management rules, language-response rules |
+| V15.0.4 | 2026-03-07 | Documentation alignment, cleanup, consolidation |
+| V12.9.1 | 2026-03-10 | Modularized SKILL.md into docs/ |
 | V12.9 | 2026-03-06 | Complexity scoring for dynamic model assignment |
 | V12.8 | 2026-03-06 | OUTPUT_MODE configuration |
-| V12.7 | 2026-03-04 | System Coordinator added, skills count corrected |
-| V12.6 | 2026-03-04 | NO-IMPROVISE protocol |
-| V12.5 | 2026-03-03 | Robust cleanup with emergency handlers |
 | V12.0 | 2026-02-26 | Deep audit, V12 baseline |
 
 ---
 
-**ORCHESTRATOR V12.9.2**
-*Dynamic model assignment. haiku default. opus only when justified.*
+**ORCHESTRATOR V18.2.0**
+*43 agents. 30+ skills. Dynamic model assignment. RULE 5 anti-refusal. haiku default. opus only when justified.*

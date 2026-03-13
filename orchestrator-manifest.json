@@ -1,7 +1,7 @@
 {
   "manifest_version": "1.0",
-  "system_version": "12.0.3",
-  "generated": "2026-02-27",
+  "system_version": "18.2.0",
+  "generated": "2026-03-13",
   "description": "Claude Orchestrator System - Distribution Manifest",
 
   "directories": {
@@ -336,9 +336,9 @@
   },
 
   "version_history": {
-    "current": "12.0.3",
-    "codename": "full-coherence",
-    "last_audit": "2026-02-27",
+    "current": "18.2.0",
+    "codename": "Absolute Obedience",
+    "last_audit": "2026-03-13",
     "changes": [
       "21 auto-fixes applied in 3 loop iterations",
       "Score improved from 75/100 to 100/100",

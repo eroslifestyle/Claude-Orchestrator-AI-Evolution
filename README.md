@@ -1,6 +1,6 @@
 # Claude Orchestrator AI Evolution
 
-[![Version](https://img.shields.io/badge/version-18.1.0-blue.svg)](https://github.com/eroslifestyle/Claude-Orchestrator-AI-Evolution)
+[![Version](https://img.shields.io/badge/version-18.2.0-blue.svg)](https://github.com/eroslifestyle/Claude-Orchestrator-AI-Evolution)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10+-yellow.svg)](https://www.python.org/)
 [![CI](https://github.com/eroslifestyle/Claude-Orchestrator-AI-Evolution/workflows/CI/badge.svg)](https://github.com/eroslifestyle/Claude-Orchestrator-AI-Evolution/actions)
