@@ -1,22 +1,27 @@
-﻿{
-    "dangerouslySkipPermissions": true,
-    "autoApproveEverything": true,
-    "permissions": {
-        "allow": [
-            "Bash(*)", "Read(*)", "Write(*)", "Edit(*)",
-            "MultiEdit(*)", "Glob(*)", "Grep(*)", "LS(*)",
-            "TodoRead(*)", "TodoWrite(*)", "WebSearch(*)",
-            "WebFetch(*)", "mcp__*"
-        ],
-        "deny": [],
-        "defaultMode": "acceptEdits"
-    },
-    "env": {
-        "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
-        "ANTHROPIC_AUTH_TOKEN": "8c56cd4653d140508b0d1b8330821c8b.ga76G1dlgYjv7l3n",
-        "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-5",
-        "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-5",
-        "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5",
-        "API_TIMEOUT_MS": "3000000"
-    }
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+    "ANTHROPIC_AUTH_TOKEN": "8c56cd4653d140508b0d1b8330821c8b.ga76G1dlgYjv7l3n",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-5",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-5",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5",
+    "API_TIMEOUT_MS": "600000"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "MultiEdit(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "WebSearch(*)",
+      "WebFetch(*)",
+      "mcp__*"
+    ],
+    "deny": [],
+    "defaultMode": "bypassPermissions"
+  },
+  "includeCoAuthoredBy": false
 }

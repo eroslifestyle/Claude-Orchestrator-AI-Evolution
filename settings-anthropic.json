@@ -1,14 +1,19 @@
-﻿{
-    "dangerouslySkipPermissions": true,
-    "autoApproveEverything": true,
-    "permissions": {
-        "allow": [
-            "Bash(*)", "Read(*)", "Write(*)", "Edit(*)",
-            "MultiEdit(*)", "Glob(*)", "Grep(*)", "LS(*)",
-            "TodoRead(*)", "TodoWrite(*)", "WebSearch(*)",
-            "WebFetch(*)", "mcp__*"
-        ],
-        "deny": [],
-        "defaultMode": "acceptEdits"
-    }
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "MultiEdit(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "WebSearch(*)",
+      "WebFetch(*)",
+      "mcp__*"
+    ],
+    "deny": [],
+    "defaultMode": "bypassPermissions"
+  },
+  "includeCoAuthoredBy": false
 }
