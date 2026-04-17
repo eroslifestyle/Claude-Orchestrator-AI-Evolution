@@ -18,6 +18,7 @@ param(
     [switch]$CleanTodos,
     [switch]$ResetMcp,
     [switch]$Nuke,
+    [switch]$UnblockHooks,
     [switch]$DryRun
 )
 
@@ -266,6 +267,46 @@ try {
 } catch {
     Write-Host "[WARN] $target non risponde: $($_.Exception.Message)" -ForegroundColor Yellow
     Write-Host "       Verifica rete / firewall / token." -ForegroundColor Yellow
+}
+
+# --- UnblockHooks: converte hook bash con async:false -> async:true ----------
+# Preserva comportamento ma evita che un hook bash lento (o bash mancante)
+# blocchi il boot di claude su Windows. MANTIENE tutti gli hook attivi.
+if ($UnblockHooks -and (Test-Path $settingsPath)) {
+    try {
+        $current = Get-Content $settingsPath -Raw | ConvertFrom-Json
+        if ($current.hooks) {
+            $changed = 0
+            foreach ($eventName in $current.hooks.PSObject.Properties.Name) {
+                foreach ($entry in $current.hooks.$eventName) {
+                    foreach ($h in $entry.hooks) {
+                        if ($h.command -match "^bash " -and $h.async -eq $false) {
+                            if ($DryRun) {
+                                Write-Host "[DRY] Convertirei $eventName :: $($h.command) -> async:true" -ForegroundColor Yellow
+                            } else {
+                                $h.async = $true
+                                Write-Host "[FIX] $eventName :: $($h.command) -> async:true" -ForegroundColor Green
+                            }
+                            $changed++
+                        }
+                    }
+                }
+            }
+            if ($changed -gt 0 -and -not $DryRun) {
+                $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+                [System.IO.File]::WriteAllText(
+                    $settingsPath,
+                    ($current | ConvertTo-Json -Depth 30),
+                    $utf8NoBom
+                )
+                Write-Host "[OK] $changed hook sbloccati in $settingsPath" -ForegroundColor Green
+            } elseif ($changed -eq 0) {
+                Write-Host "[SKIP] Nessun hook bash sincrono da sbloccare" -ForegroundColor DarkGray
+            }
+        }
+    } catch {
+        Write-Host "[WARN] UnblockHooks fallito: $($_.Exception.Message)" -ForegroundColor Yellow
+    }
 }
 
 Write-Host ""
