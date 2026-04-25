@@ -1,6 +1,4 @@
-﻿{
-    "dangerouslySkipPermissions": true,
-    "autoApproveEverything": true,
+{
     "permissions": {
         "allow": [
             "Bash(*)", "Read(*)", "Write(*)", "Edit(*)",
@@ -9,7 +7,7 @@
             "WebFetch(*)", "mcp__*"
         ],
         "deny": [],
-        "defaultMode": "acceptEdits"
+        "defaultMode": "bypassPermissions"
     },
     "env": {
         "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",

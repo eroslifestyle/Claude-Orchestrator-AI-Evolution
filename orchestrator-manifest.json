@@ -294,7 +294,7 @@
     "debug",
     "paste-cache",
     "plugins/orchestrator-plugin/test-data",
-    "projects/*/\.serena"
+    "projects/*/.serena"
   ],
 
   "distribution_package": {

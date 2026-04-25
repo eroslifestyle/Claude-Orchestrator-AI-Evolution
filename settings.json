@@ -28,8 +28,6 @@
       "Skill(learn:*)"
     ],
     "deny": [],
-    "defaultMode": "acceptEdits"
-  },
-  "dangerouslySkipPermissions": true,
-  "autoApproveEverything": true
+    "defaultMode": "bypassPermissions"
+  }
 }
